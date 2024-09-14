@@ -8,18 +8,24 @@ using System.Threading.Tasks;
 
 namespace Blog.Models.Models
 {
-    public class Category
+    public class Faculty
     {
         [Key]
         public int Id { get; set; }
         [Required]
-        public string CategoryName { get; set; }
+        [Display (Name = "Faculty Name")]
+        public string FacultyName { get; set; }
         [Required]
+        public string Description { get; set; }
+        [Required]
+        [Range(1, 10000, ErrorMessage = "Sorted Order must be grater than 0")]
         public int SortedOrder { get; set; }
-        [Required]
-        public bool IsActive { get; set; }
+        [ValidateNever]
+        public string ImageUrl { get; set; }
         public DateTime CreatedOn { get; set; }
         public DateTime ModifiedOn { get; set; }
+
+
         [ValidateNever]
         public ICollection<Product> Products { get; set; }
     }
