@@ -1,6 +1,7 @@
 ﻿using Blog.DataAccess.Data;
 using Blog.DataAccess.Repository.IRepository;
 using Blog.Models.Models;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -24,6 +25,10 @@ namespace Blog.DataAccess.Repository
             if (objFromDb != null)
             {
                 objFromDb.CategoryName = obj.CategoryName;
+                objFromDb.CategoryName = obj.CategoryName;
+                objFromDb.SortedOrder = obj.SortedOrder;
+                objFromDb.IsActive = obj.IsActive;
+                objFromDb.ModifiedOn = obj.ModifiedOn;
             }
         }
     }

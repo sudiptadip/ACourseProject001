@@ -15,6 +15,10 @@ namespace Blog.DataAccess.Data
         {
         }
         public DbSet<Category> Categories { get; set; }
+        public DbSet<Faculty> Faculties { get; set; }
         public DbSet<ApplicationUser> ApplicationUsers{ get; set; }
+        public DbSet<Product> Products { get; set; }
+        public DbSet<ProductAttribute> ProductAttributes { get; set; }
+ 
     }
 }

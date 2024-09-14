@@ -11,11 +11,15 @@ namespace Blog.DataAccess.Repository
     public class UniteOfWork : IUniteOfWork
     {
         public ICategoryRepository Category {  get; private set; }
+
+        public IFacultyRepository Faculty { get; private set; }
+
         private readonly ApplicationDbContext _db;
         public UniteOfWork(ApplicationDbContext db)
         {
             _db = db;
             Category = new CategoryRepository(_db);
+            Faculty = new FacultyRepository(_db);
         }
 
         public void Save()

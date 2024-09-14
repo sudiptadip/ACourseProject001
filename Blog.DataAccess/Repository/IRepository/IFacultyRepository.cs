@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Blog.Models.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -6,10 +7,8 @@ using System.Threading.Tasks;
 
 namespace Blog.DataAccess.Repository.IRepository
 {
-    public interface IUniteOfWork
+    public interface IFacultyRepository : IRepository<Faculty>
     {
-        IFacultyRepository Faculty { get; }
-        ICategoryRepository Category { get; }
-        void Save();
+        void Update(Faculty obj);
     }
 }
