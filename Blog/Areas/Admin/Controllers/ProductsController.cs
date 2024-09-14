@@ -1,0 +1,169 @@
+﻿using Blog.DataAccess.Data;
+using Blog.Models.Dto;
+using Blog.Models.Models;
+using Blog.Utility.Service;
+using Blog.Utility.Service.IService;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.EntityFrameworkCore;
+using NuGet.Protocol.Plugins;
+using SQLitePCL;
+
+namespace Blog.Areas.Admin.Controllers
+{
+    [Area("Admin")]
+    public class ProductsController : Controller
+    {
+        private readonly ApplicationDbContext _context;
+        private readonly IImageService _imageService;
+
+        public ProductsController(ApplicationDbContext context, IImageService imageService)
+        {
+            _context = context;
+            _imageService = imageService;
+        }
+
+        // GET: Products
+        public async Task<IActionResult> Index()
+        {
+            IEnumerable<Product> products = await _context.Products.ToListAsync();
+
+            return View(products);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> Create(int? id)
+        {
+            // Populate Category and Faculty lists
+            IEnumerable<SelectListItem> categoryList = _context.Categories.Select(u => new SelectListItem
+            {
+                Text = u.CategoryName,
+                Value = u.Id.ToString()
+            }).ToList();
+
+            IEnumerable<SelectListItem> facultyList = _context.Faculties.Select(u => new SelectListItem
+            {
+                Text = u.FacultyName,
+                Value = u.Id.ToString()
+            }).ToList();
+
+            ViewData["CategoryList"] = categoryList;
+            ViewData["FacultyList"] = facultyList;
+
+            // If 'id' is provided, we're editing an existing product
+            if (id.HasValue)
+            {
+                var product = await _context.Products.Include(p => p.ProductAttributes)
+                    .FirstOrDefaultAsync(p => p.Id == id.Value);
+
+                if (product == null)
+                {
+                    return NotFound();
+                }
+
+                // Populate ProductCreateDto with existing product data
+                var productDto = new ProductCreateDto
+                {
+                    ProductName = product.ProductName,
+                    Price = product.Price,
+                    DiscountPrice = product.DiscountPrice,
+                    Category = product.CategoryId,
+                    FacultyId = product.FacultyId,
+                    ProductImageUrl = product.ProductImageUrl,
+                    ProductAttribuets = product.ProductAttributes.Select(a => new ProductAttribuetDto
+                    {
+                        Name = a.AttributeName,
+                        Value = a.Value,
+                        AttributeType = a.AttributeType
+                    }).ToList()
+                };
+
+                ViewBag.ProductId = id;
+                // Send product DTO to the view for editing
+                return View(productDto);
+            }
+
+            // If 'id' is not provided, we're creating a new product
+            return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Create(ProductCreateDto productDto, int? id)
+        {
+            string imageUrl = "";
+
+            if (productDto.ProductImage != null && productDto.ProductImage.Length > 0)
+            {
+                var url = await _imageService.UploadSingleImageAsync(productDto.ProductImage);
+                imageUrl = url ?? throw new Exception("Image upload failed.");
+            }
+
+            // If id is not null, we're updating an existing product
+            if (id.HasValue)
+            {
+                var existingProduct = await _context.Products.Include(p => p.ProductAttributes)
+                    .FirstOrDefaultAsync(p => p.Id == id.Value);
+
+                if (existingProduct != null)
+                {
+                    // Update the existing product
+                    existingProduct.ProductName = productDto.ProductName;
+                    existingProduct.Price = productDto.Price;
+                    existingProduct.DiscountPrice = productDto.DiscountPrice;
+                    existingProduct.CategoryId = productDto.Category;
+                    existingProduct.FacultyId = productDto.FacultyId;
+                    if (!string.IsNullOrEmpty(imageUrl)) existingProduct.ProductImageUrl = imageUrl;
+
+                    // Clear the old attributes and add new ones
+                    _context.ProductAttributes.RemoveRange(existingProduct.ProductAttributes);
+
+                    var productAttributes = productDto.ProductAttribuets.Select(attr => new ProductAttribute
+                    {
+                        ProductId = existingProduct.Id,
+                        AttributeName = attr.Name,
+                        Value = attr.Value,
+                        AttributeType = attr.AttributeType
+                    }).ToList();
+
+                    _context.ProductAttributes.AddRange(productAttributes);
+                    await _context.SaveChangesAsync();
+
+                    return Ok(productDto);
+                }
+            }
+            else
+            {
+                // If id is null, create a new product
+                var product = new Product
+                {
+                    ProductName = productDto.ProductName,
+                    Price = productDto.Price,
+                    DiscountPrice = productDto.DiscountPrice,
+                    CategoryId = productDto.Category,
+                    FacultyId = productDto.FacultyId,
+                    ProductImageUrl = imageUrl,
+                    CreatedOn = DateTime.Now
+                };
+
+                _context.Products.Add(product);
+                await _context.SaveChangesAsync();
+
+                var productAttributes = productDto.ProductAttribuets.Select(attr => new ProductAttribute
+                {
+                    ProductId = product.Id,
+                    AttributeName = attr.Name,
+                    Value = attr.Value,
+                    AttributeType = attr.AttributeType
+                }).ToList();
+
+                _context.ProductAttributes.AddRange(productAttributes);
+                await _context.SaveChangesAsync();
+
+                return Ok(productDto);
+            }
+
+            return BadRequest("Unable to process the request.");
+        }
+
+    }
+}

@@ -1,0 +1,203 @@
+﻿@model Blog.Models.Dto.ProductCreateDto
+
+@{
+    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+    bool isEdit = Model != null && Model.ProductName != null;
+}
+
+<div class="content-body">
+    <div class="container-fluid">
+        <div class="row">
+            <h3>@(isEdit ? "Update Product" : "Create Product")</h3>
+            <form id="productForm">
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label for="productName" class="form-label">Product Name <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control" id="productName" name="productName"
+                               value="@Model?.ProductName" placeholder="Enter product name" required>
+                    </div>
+                    <div class="col-md-6">
+                        <label for="price" class="form-label">Price <span class="text-danger">*</span></label>
+                        <input type="number" class="form-control" id="price" name="price"
+                               value="@Model?.Price" placeholder="Enter product price" required>
+                    </div>
+                    <div class="col-md-6 mt-3">
+                        <label for="discountPrice" class="form-label">Discount Price <span class="text-danger">*</span></label>
+                        <input type="number" class="form-control" id="discountPrice" name="discountPrice"
+                               value="@Model?.DiscountPrice" placeholder="Enter discount price" required>
+                    </div>
+                    <div class="col-md-6 mt-3">
+                        <label for="category" class="form-label">Category <span class="text-danger">*</span></label>
+                        <select asp-items="@(ViewData[" CategoryList"] as IEnumerable<SelectListItem>)" class="form-control" id="category" name="category" required>
+                            <option value="" disabled>Select Category</option>
+                            @foreach (var category in ViewData["CategoryList"] as IEnumerable<SelectListItem>)
+                            {
+                                var isSelected = category.Value == Model?.Category.ToString() ? "selected" : "";
+                                <!option @isSelected value="@category.Value" >@category.Text</!option>
+                            }
+                        </select>
+                    </div>
+                    <div class="col-md-6 mt-3">
+                        <label for="faculty" class="form-label">Faculty <span class="text-danger">*</span></label>
+                        <select value="1" asp-items='@(ViewData["FacultyList"] as IEnumerable<SelectListItem>)'
+                                class="form-control" id="faculty" name="faculty" required>
+                            <option value="" disabled selected>Select Faculty</option>
+                            @foreach (var faculty in ViewData["FacultyList"] as IEnumerable<SelectListItem>)
+                            {
+                                var isSelected = faculty.Value == Model?.Category.ToString() ? "selected" : "";
+                                <!option @isSelected value="@faculty.Value" >@faculty.Text</!option>
+                            }
+                        </select>
+                    </div>
+                    <div class="col-md-6 mt-3">
+                        <label for="ProductImage" class="form-label">Product Image <span class="text-danger">*</span></label>
+                        <input type="file" class="form-control" id="ProductImage" name="ProductImage" @(isEdit ? "" : "required")>
+                        @if (isEdit && !string.IsNullOrEmpty(Model.ProductImageUrl))
+                        {
+                        <img src="@Model.ProductImageUrl" alt="Product Image" class="mt-2" style="width: 100px;" />
+                        }
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <div class="d-flex justify-content-between mb-3 mt-3">
+                        <h5>Product Attributes</h5>
+                        <button type="button" class="btn btn-primary" id="addAttributeBtn">Add New Attribute</button>
+                    </div>
+                    <table class="table table-bordered">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Name</th>
+                                <th>Value</th>
+                                <th>Attribute Type</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="attributeRows">
+                            @if (Model?.ProductAttribuets != null)
+                            {
+                                for (var i = 0; i < Model.ProductAttribuets.Count; i++)
+                                {
+                                    <tr id="row@(i)">
+                                        <td><input type="text" class="form-control" name="attributes[@(i)][name]" value="@Model.ProductAttribuets[i].Name" required></td>
+                                        <td><input type="text" class="form-control" name="attributes[@(i)][value]" value="@Model.ProductAttribuets[i].Value" required></td>
+                                        <td>
+                                            <select class="form-control attributeType" name="attributes[@(i)][attributeType]" required>
+                                                <option value="" disabled selected>Select Attribute Type</option>
+                                                 <!option value="Number" @(Model.ProductAttribuets[i].AttributeType == "Number" ? "selected" : "")>Product Detail (Up)</!option>
+                                                 <!option value="Description" @(Model.ProductAttribuets[i].AttributeType == "Description" ? "selected" : "")>Product Description (Down)</!option>
+                                            </select>
+                                        </td>
+                                        <td><button type="button" class="btn btn-danger" onclick="removeRow(@(i))">Remove</button></td>
+                                    </tr>
+                                }
+                            }
+                        </tbody>
+                    </table>
+                </div>
+
+                <button type="submit" class="btn btn-success">@isEdit ? "Update" : "Create"</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            let attributeCount = $("#attributeRows tr").length || 0;
+
+            // Add new row for product attribute
+            $('#addAttributeBtn').click(function () {
+                attributeCount++;
+                let newRow = `
+                                    <tr id="row${attributeCount}">
+                                        <td><input type="text" class="form-control" name="attributes[${attributeCount}][name]" placeholder="Enter attribute name" required></td>
+                                        <td><input type="text" class="form-control" name="attributes[${attributeCount}][value]" placeholder="Enter attribute value" required></td>
+                                        <td>
+                                            <select class="form-control attributeType" name="attributes[${attributeCount}][attributeType]" required>
+                                                <option value="" disabled selected>Select Attribute Type</option>
+                                                <option value="Number">Product Detail (Up)</option>
+                                                <option value="Description">Product Description (Down)</option>
+                                            </select>
+                                        </td>
+                                        <td><button type="button" class="btn btn-danger" onclick="removeRow(${attributeCount})">Remove</button></td>
+                                    </tr>`;
+                $('#attributeRows').append(newRow);
+            });
+
+            // Remove row function
+            window.removeRow = function (rowId) {
+                $(`#row${rowId}`).remove();
+            };
+
+            // Submit form
+            $('#productForm').submit(function (event) {
+                event.preventDefault();
+
+                let isValid = true;
+
+                // Validate all required fields
+                $('#productForm').find('input, select').each(function () {
+                    if (!$(this).val() && $(this).attr('required')) {
+                        isValid = false;
+                        $(this).addClass('is-invalid');
+                    } else {
+                        $(this).removeClass('is-invalid');
+                    }
+                });
+
+                if (!isValid) {
+                    alert("Please fill all required fields.");
+                    return;
+                }
+
+                // Use FormData to handle file uploads and other form data
+                let formData = new FormData();
+                formData.append('ProductName', $('#productName').val());
+                formData.append('Price', $('#price').val());
+                formData.append('DiscountPrice', $('#discountPrice').val());
+                formData.append('Category', $('#category').val());
+                formData.append('FacultyId', $('#faculty').val());
+
+                // If a product image was selected, append it to the form data
+                let productImage = $('#ProductImage')[0].files[0];
+                if (productImage) {
+                    formData.append('ProductImage', productImage);
+                }
+
+                // Loop through each attribute and add it to FormData
+                $('#attributeRows tr').each(function (index, row) {
+                    formData.append(`ProductAttribuets[${index}].Name`, $(row).find('input[name*="[name]"]').val());
+                    formData.append(`ProductAttribuets[${index}].Value`, $(row).find('input[name*="[value]"]').val());
+                    formData.append(`ProductAttribuets[${index}].AttributeType`, $(row).find('select[name*="[attributeType]"]').val());
+                });
+
+                // For update functionality, append the Product ID if editing
+                let productId = '@ViewBag.ProductId'; // Add ProductId if passed from the controller
+                
+                if (productId) {
+                    formData.append('Id', productId);
+                }
+
+                console.log("ProductID", productId);
+
+                $.ajax({
+                    url: productId ? `/Admin/Products/Create/${productId}` : '/Admin/Products/Create', // Adjust URL based on Create or Edit
+                    type: 'POST',
+                    processData: false,
+                    contentType: false,
+                    data: formData,
+                    success: function (response) {
+                        console.log("Product saved successfully", response);
+                        window.location.href = "/Admin/Products/Index"
+                    },
+                    error: function (error) {
+                        console.error("Error saving product", error);
+                        alert("There was an error saving the product.");
+                    }
+                });
+            });
+        });
+    </script>
+}

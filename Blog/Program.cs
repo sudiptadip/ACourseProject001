@@ -5,6 +5,8 @@ using Blog.Utility;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Blog.DataAccess.Repository.IRepository;
 using Blog.DataAccess.Repository;
+using Blog.Utility.Service.IService;
+using Blog.Utility.Service;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -16,6 +18,7 @@ builder.Services.AddIdentity<IdentityUser, IdentityRole>().AddEntityFrameworkSto
 builder.Services.AddRazorPages();
 builder.Services.AddScoped<IEmailSender, EmailSender>();
 builder.Services.AddScoped<IUniteOfWork, UniteOfWork>();
+builder.Services.AddScoped<IImageService, ImageService>();
 
 var app = builder.Build();
 

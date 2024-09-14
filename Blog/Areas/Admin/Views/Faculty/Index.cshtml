@@ -1,0 +1,145 @@
+﻿@model List<Faculty>
+
+
+
+@{
+    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+}
+
+@section Style {
+    <style>
+        .previous {
+            margin-right: 10px !important;
+            width: 80px !important;
+        }
+
+        .next {
+            margin-left: 10px !important;
+            width: 60px !important;
+        }
+
+        .dataTables_paginate {
+            margin-top: 50px;
+        }
+    </style>
+}
+
+<div class="content-body">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-xl-12">
+                <div class="page-title d-flex justify-content-end mb-4">
+                    <a type="button" class="btn btn-primary" id="addNewfaculty" asp-area="Admin" asp-controller="Faculty" asp-action="Upsert">
+                        + Add New
+                    </a>
+                </div>
+
+                <div class="table-responsive">
+                    <table class="table table-responsive-md" id="facultyTable">
+                        <thead>
+                            <tr>
+                                <th></th>
+                                <th><strong>Faculty Name</strong></th>
+                                <th><strong>Sorted Order</strong></th>
+                                <th><strong>Date</strong></th>
+                                <th><strong>Action</strong></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var faculty in Model)
+                            {
+                                <tr>
+                                    <td><img style="width: 50px; height: 50px" src="@faculty.ImageUrl" /></td>
+                                    <td >@faculty.FacultyName</td>
+                                    <td><strong>@faculty.SortedOrder</strong></td>
+                                    <td>@faculty.CreatedOn.ToString("dd MMM yyyy")</td>
+                                    <td>
+                                        <div class="d-flex">
+                                            <a asp-area="Admin" asp-controller="Faculty" asp-action="Upsert" asp-route-id="@faculty.Id" class="btn btn-primary shadow btn-xs sharp me-1 editfaculty" data-id="@faculty.Id">
+                                                <i class="fa fa-pencil"></i>
+                                            </a>
+                                            <button class="btn btn-danger shadow btn-xs sharp deletefaculty" data-id="@faculty.Id">
+                                                <i class="fa fa-trash"></i>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- Delete Confirmation Modal -->
+<div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="deleteModalLabel">Delete Confirmation</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                Are you sure you want to delete this category?
+            </div>
+            <div class="modal-footer">
+                <form id="deleteForm" method="post">
+                    <input type="hidden" name="Id" id="deleteCategoryId" />
+                    <button type="button" class="btn btn-dark" data-bs-dismiss="modal">Cancel</button>
+                    <button id="confirmDelete" type="button" class="btn btn-danger">Delete</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+@section Scripts {
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            $('#facultyTable').DataTable();
+
+            let facultyIdToDelete;
+
+            $('.deletefaculty').on('click', function () {
+                facultyIdToDelete = $(this).data('id');
+                $('#deleteModal').modal('show');
+                console.log("facultyIdToDelete", facultyIdToDelete);
+            });
+
+
+            $('#confirmDelete').on('click', function () {
+                alert("OK")
+                console.log("Hello World");
+                if (facultyIdToDelete) {
+                    $.ajax({
+                        url: '@Url.Action("DeleteConfirmed", "Faculty", new { area = "Admin" })',
+                        type: 'POST',
+                        data: { id: facultyIdToDelete },
+                        success: function (response) {
+                            if (response.success) {
+                                $('#deleteModal').modal('hide');
+                                $('button.deletefaculty[data-id="' + facultyIdToDelete + '"]').closest('tr').remove();
+                                toastr.success(response.message);
+                            } else {
+                                $('#deleteModal').modal('hide');
+                                toastr.error(response.message);
+                            }
+                        },
+                        error: function () {
+                            $('#deleteModal').modal('hide');
+                            toastr.error('An error occurred while deleting the faculty.');
+                        }
+                    });
+                }
+            });
+        });
+    </script>
+}
+
+
