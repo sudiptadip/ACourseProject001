@@ -1,0 +1,54 @@
+﻿@using Blog.Models.VM
+@model ProductPriceVM
+
+@{
+    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+}
+
+<div class="container mt-4">
+    <h2>Set Prices for Product</h2>
+
+    <form asp-action="SetPrices" method="post">
+        <input type="hidden" asp-for="ProductId" />
+        <div class="table-responsive">
+            <table class="table table-bordered table-striped">
+                <thead class="thead-dark">
+                    <tr>
+                        <th>Mode Of Lecture</th>
+                        <th>Validity (Months)</th>
+                        <th>Views</th>
+                        <th>Price</th>
+                        <th>Discount Price</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @for (int i = 0; i < Model.ProductPrices.Count; i++)
+                    {
+                        <tr>
+                            <td>
+                                @Model.ProductPrices[i].ModeOfLecture
+                                <input asp-for="ProductPrices[i].ModeOfLecture" type="hidden" />
+                            </td>
+                            <td>@Model.ProductPrices[i].ValidityInMonths
+                                <input asp-for="ProductPrices[i].ValidityInMonths" type="hidden" />
+                            </td>
+                            <td>
+                                @Model.ProductPrices[i].Views
+                                <input asp-for="ProductPrices[i].Views" type="hidden" />
+                            </td>
+                            <td>
+                                <input asp-for="ProductPrices[i].Price" class="form-control" />
+                            </td>
+                            <td>
+                                <input asp-for="ProductPrices[i].DiscountPrice" class="form-control" />
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+        <div class="text-right">
+            <button type="submit" class="btn btn-primary">Save Prices</button>
+        </div>
+    </form>
+</div>

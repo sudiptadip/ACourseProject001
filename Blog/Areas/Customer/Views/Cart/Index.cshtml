@@ -1,4 +1,42 @@
-﻿<div class="edu-breadcrumb-area breadcrumb-style-3">
+﻿@model Blog.Models.Models.Cart
+
+@section Styles {
+    <style>
+        .empty-cart-page-area {
+            padding: 100px 0;
+            background-color: #f9f9f9;
+        }
+
+        .empty-cart-content {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+            .empty-cart-content i {
+                color: #bbb;
+            }
+
+            .empty-cart-content h2 {
+                font-size: 36px;
+                color: #333;
+                margin-bottom: 20px;
+            }
+
+            .empty-cart-content p {
+                font-size: 18px;
+                color: #777;
+            }
+
+            .empty-cart-content .btn {
+                font-size: 18px;
+                padding: 10px 20px;
+            }
+
+    </style>
+}
+
+
+<div class="edu-breadcrumb-area breadcrumb-style-3">
     <div class="container">
         <div class="breadcrumb-inner">
             <ul class="edu-breadcrumb">
@@ -15,14 +53,16 @@
         </div>
     </div>
 </div>
-<div class="edu-breadcrum-area mt-4">
-    <div class="section-title section-center"
-         data-sal="slide-up"
-         data-sal-duration="800">
-        <h3 class="title">Shopping Cart</h3>
-    </div>
-</div>
 
+@if (Model.CartItems != null && Model.CartItems.Any())
+{
+    <div class="edu-breadcrum-area mt-4">
+        <div class="section-title section-center"
+             data-sal="slide-up"
+             data-sal-duration="800">
+            <h3 class="title">Shopping Cart</h3>
+        </div>
+    </div>
 
 <section class="cart-page-area edu-section-gap">
     <div class="container-fluid">
@@ -47,37 +87,35 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <tr>
-                                <td class="product-thumbnail">
-                                    <a href="#">CA Final Audit Concept Book</a>
-                                </td>
 
-                                <td class="product-thumbnail" data-title="Qty">
-                                    <div class="pro-qty">
-                                        <input type="number"
-                                               class="quantity-input"
-                                               value="1" />
-                                    </div>
-                                </td>
+                            @foreach (var item in Model.CartItems)
+                            {
+                                <tr>
+                                    <td class="product-thumbnail">
+                                        <a href="#">@item.Product.ProductName</a>
+                                    </td>
+                                    <td class="product-thumbnail d-flex" data-title="Qty">
+                                        <div class="justify-content-center" style="width: 120px" >
+                                            <input type="number" class="quantity-input update-quantity" value="@item.Quantity" data-cart-item-id="@item.Id" />
+                                        </div>
+                                    </td>
+                                    <td class="product-thumbnail">
+                                        <span class="currency-symbol">₹</span>@item.Price
+                                    </td>
+                                    <td class="product-thumbnail">
+                                        <span class="currency-symbol">₹</span>@item.DiscountPrice
+                                    </td>
+                                    <td class="product-thumbnail">
+                                        <span class="currency-symbol">₹</span>@(item.Price - item.DiscountPrice)
+                                    </td>
+                                    <td class="product-remove product-thumbnail">
+                                        <a href="#" class="remove-wishlist remove-cart-item" data-cart-item-id="@item.Id" >
+                                            <i class="fas fa-trash text-danger"></i>
+                                        </a>
+                                    </td>
+                                </tr>
+                            }
 
-                                <td class="product-thumbnail">
-                                    <span class="currency-symbol">₹</span>850
-                                </td>
-
-                                <td class="product-thumbnail">
-                                    <span class="currency-symbol">₹</span>150
-                                </td>
-
-                                <td class="product-thumbnail payable">
-                                    <span class="currency-symbol">₹</span>700
-                                </td>
-
-                                <td class="product-remove product-thumbnail">
-                                    <a href="#" class="remove-wishlist">
-                                        <i class="fas fa-trash text-danger"></i>
-                                    </a>
-                                </td>
-                            </tr>
                         </tbody>
                     </table>
                 </div>
@@ -90,19 +128,22 @@
                     <h4 class="title">Price Summary</h4>
                     <table class="table summery-table">
                         <tbody>
+
+
+
                             <tr class="order-subtotal">
                                 <td>Total Amount</td>
-                                <td>₹2000</td>
+                                <td>₹@Model.CartItems.Sum(ci => ci.Price)</td>
                             </tr>
 
                             <tr class="order-subtotal">
                                 <td>Discount</td>
-                                <td>- ₹500</td>
+                                <td>- ₹@Model.CartItems.Sum(ci => ci.DiscountPrice)</td>
                             </tr>
 
                             <tr class="order-total">
                                 <td>Payable Amount</td>
-                                <td>₹1300</td>
+                                <td>₹@(Model.CartItems.Sum(ci => ci.Price) - Model.CartItems.Sum(ci => ci.DiscountPrice))</td>
                             </tr>
                         </tbody>
                     </table>
@@ -134,11 +175,56 @@
                         </div>
                     </div>
 
-                    <a href="#" class="edu-btn btn-medium checkout-btn">
+                    <a href="@Url.Action("Checkout", "Cart")" class="edu-btn btn-medium checkout-btn">
                         Process to Checkout <i class="icon-4"></i>
                     </a>
+
                 </div>
             </div>
         </div>
     </div>
-</section>
+    </section>
+}
+else
+{
+    <section class="empty-cart-page-area edu-section-gap">
+        <div class="container text-center">
+            <div class="empty-cart-content">
+                <i class="fas fa-shopping-cart fa-5x text-muted mb-4"></i>
+                <h2>Your Cart is Empty</h2>
+                <p class="mb-4">Looks like you haven't added anything to your cart yet.</p>
+                <a href="@Url.Action("Index", "Product")" class="btn btn-primary btn-lg">
+                    <i class="fas fa-shopping-bag"></i> Continue Shopping
+                </a>
+            </div>
+        </div>
+    </section>
+}
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+
+            $('.update-quantity').on('change', function () {
+                
+                console.log("update-quantity");
+
+                var cartItemId = $(this).data('cart-item-id');
+                var quantity = $(this).val();
+
+                $.post('@Url.Action("UpdateQuantity", "Cart")', { cartItemId: cartItemId, quantity: quantity }, function (result) {
+                    location.reload();
+                });
+            });
+
+            // Remove cart item
+            $('.remove-cart-item').on('click', function () {
+                var cartItemId = $(this).data('cart-item-id');
+
+                $.post('@Url.Action("RemoveFromCart", "Cart")', { cartItemId: cartItemId }, function (result) {
+                    location.reload();
+                });
+            });
+        });
+    </script>
+}

@@ -11,8 +11,6 @@ namespace Blog.Models.Models
     {
         public int Id { get; set; }
         public string ProductName { get; set; }
-        public decimal Price { get; set; }
-        public decimal DiscountPrice { get; set; }
         public string ProductImageUrl { get; set; }
         public DateTime CreatedOn { get; set; }
         public DateTime ModifiedOn { get; set; }
@@ -22,13 +20,19 @@ namespace Blog.Models.Models
         public int CategoryId { get; set; }
         public Category Category { get; set; }
 
-        
+
+        [ForeignKey("Subject")]
+        public int SubjectId { get; set; }
+        public Subject Subject { get; set; }
+
+
         [ForeignKey("Faculty")]
         public int FacultyId { get; set; }
         public Faculty Faculty { get; set; }
 
 
         public ICollection<ProductAttribute> ProductAttributes { get; set; }
+        public ICollection<ProductPrice> ProductPrice { get; set; }
 
     }
 }

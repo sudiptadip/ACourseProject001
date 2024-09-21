@@ -19,13 +19,13 @@ namespace Blog.Areas.Admin.Controllers
             _imageService = imageService;
         }
 
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
-            IEnumerable<Faculty> facultyList = _unitOfWork.Faculty.GetAll();
+            IEnumerable<Faculty> facultyList = await _unitOfWork.Faculty.GetAllAsync();
             return View(facultyList);
         }
 
-        public IActionResult Upsert(int? id)
+        public async Task<IActionResult> Upsert(int? id)
         {
             Faculty faculty = new Faculty();
             if (id == null)
@@ -34,7 +34,7 @@ namespace Blog.Areas.Admin.Controllers
             }
             else
             {
-                faculty = _unitOfWork.Faculty.Get(c => c.Id == id);
+                faculty = await _unitOfWork.Faculty.GetAsync(c => c.Id == id);
                 if (faculty == null)
                 {
                     return View(faculty);
@@ -50,7 +50,7 @@ namespace Blog.Areas.Admin.Controllers
             if (ModelState.IsValid)
             {
                 // Check for duplicates
-                var isDuplicate = _unitOfWork.Faculty.Get(c =>
+                var isDuplicate = await _unitOfWork.Faculty.GetAsync(c =>
                     (c.FacultyName == faculty.FacultyName || c.SortedOrder == faculty.SortedOrder)
                     && c.Id != faculty.Id);
 
@@ -66,7 +66,7 @@ namespace Blog.Areas.Admin.Controllers
                     // Optionally, delete the old image if updating
                     if (faculty.Id != 0)
                     {
-                        var existingFaculty = _unitOfWork.Faculty.Get(c => c.Id == faculty.Id);
+                        var existingFaculty = await _unitOfWork.Faculty.GetAsync(c => c.Id == faculty.Id);
                         if (existingFaculty != null && !string.IsNullOrEmpty(existingFaculty.ImageUrl))
                         {
                             await _imageService.DeleteImageAsync(Path.GetFileName(existingFaculty.ImageUrl));
@@ -88,11 +88,11 @@ namespace Blog.Areas.Admin.Controllers
                 if (faculty.Id == 0)
                 {
                     faculty.CreatedOn = DateTime.Now;
-                    _unitOfWork.Faculty.Add(faculty);
+                   await _unitOfWork.Faculty.AddAsync(faculty);
                 }
                 else
                 {
-                    var existingFaculty = _unitOfWork.Faculty.Get(c => c.Id == faculty.Id);
+                    var existingFaculty = await _unitOfWork.Faculty.GetAsync(c => c.Id == faculty.Id);
                     if (existingFaculty == null)
                     {
                         return NotFound();
@@ -116,7 +116,7 @@ namespace Blog.Areas.Admin.Controllers
         [HttpPost]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var faculty = _unitOfWork.Faculty.Get(u => u.Id == id);
+            var faculty = await _unitOfWork.Faculty.GetAsync(u => u.Id == id);
             if (faculty != null)
             {
                 // Delete the associated image if it exists
@@ -131,7 +131,7 @@ namespace Blog.Areas.Admin.Controllers
                     }
                 }
 
-                _unitOfWork.Faculty.Delete(faculty);
+              await  _unitOfWork.Faculty.DeleteAsync(faculty);
                 _unitOfWork.Save();
                 return Json(new { success = true, message = "Faculty deleted successfully!" });
             }

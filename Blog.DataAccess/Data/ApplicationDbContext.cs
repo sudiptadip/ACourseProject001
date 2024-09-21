@@ -15,10 +15,15 @@ namespace Blog.DataAccess.Data
         {
         }
         public DbSet<Category> Categories { get; set; }
+        public DbSet<Subject> Subjects { get; set; }
         public DbSet<Faculty> Faculties { get; set; }
         public DbSet<ApplicationUser> ApplicationUsers{ get; set; }
         public DbSet<Product> Products { get; set; }
+        public DbSet<ProductPrice> ProductPrices { get; set; }
         public DbSet<ProductAttribute> ProductAttributes { get; set; }
+        public DbSet<Cart> Carts { get; set; }
+        public DbSet<CartItem> CartItems { get; set; }
+        public DbSet<Blogs> Blogs { get; set; } 
  
     }
 }

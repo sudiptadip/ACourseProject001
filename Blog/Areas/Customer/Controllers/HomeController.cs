@@ -17,9 +17,34 @@ namespace Blog.Areas.Customer.Controllers
         public IActionResult Index()
         {
             return View();
+        }  
+
+        public IActionResult Contact()
+        {
+            return View();
+        }
+
+        public IActionResult Blogs()
+        {
+            return View();
+        }
+
+        public IActionResult Achivements()
+        {
+            return View();
         }
 
         public IActionResult Privacy()
+        {
+            return View();
+        }
+
+        public IActionResult RefundPolicy()
+        {
+            return View();
+        }
+
+        public IActionResult TermsAndCondition()
         {
             return View();
         }

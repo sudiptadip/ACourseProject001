@@ -1,11 +1,14 @@
 ﻿using Blog.DataAccess.Data;
+using Blog.DataAccess.Repository.IRepository;
 using Blog.Models.Dto;
 using Blog.Models.Models;
+using Blog.Models.VM;
 using Blog.Utility.Service;
 using Blog.Utility.Service.IService;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Identity.Client;
 using NuGet.Protocol.Plugins;
 using SQLitePCL;
 
@@ -15,12 +18,15 @@ namespace Blog.Areas.Admin.Controllers
     public class ProductsController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private readonly IUniteOfWork _unitOfWork;
+
         private readonly IImageService _imageService;
 
-        public ProductsController(ApplicationDbContext context, IImageService imageService)
+        public ProductsController(ApplicationDbContext context, IImageService imageService, IUniteOfWork unitOfWork)
         {
             _context = context;
             _imageService = imageService;
+            _unitOfWork = unitOfWork;
         }
 
         // GET: Products
@@ -41,6 +47,12 @@ namespace Blog.Areas.Admin.Controllers
                 Value = u.Id.ToString()
             }).ToList();
 
+            IEnumerable<SelectListItem> subjectList = _context.Subjects.Select(u => new SelectListItem
+            {
+                Text = u.SubjectName,
+                Value = u.Id.ToString()
+            }).ToList();
+
             IEnumerable<SelectListItem> facultyList = _context.Faculties.Select(u => new SelectListItem
             {
                 Text = u.FacultyName,
@@ -49,6 +61,7 @@ namespace Blog.Areas.Admin.Controllers
 
             ViewData["CategoryList"] = categoryList;
             ViewData["FacultyList"] = facultyList;
+            ViewData["SubjectList"] = subjectList;
 
             // If 'id' is provided, we're editing an existing product
             if (id.HasValue)
@@ -65,10 +78,9 @@ namespace Blog.Areas.Admin.Controllers
                 var productDto = new ProductCreateDto
                 {
                     ProductName = product.ProductName,
-                    Price = product.Price,
-                    DiscountPrice = product.DiscountPrice,
-                    Category = product.CategoryId,
+                    CategoryId = product.CategoryId,
                     FacultyId = product.FacultyId,
+                    SubjectId = product.SubjectId,
                     ProductImageUrl = product.ProductImageUrl,
                     ProductAttribuets = product.ProductAttributes.Select(a => new ProductAttribuetDto
                     {
@@ -108,10 +120,9 @@ namespace Blog.Areas.Admin.Controllers
                 {
                     // Update the existing product
                     existingProduct.ProductName = productDto.ProductName;
-                    existingProduct.Price = productDto.Price;
-                    existingProduct.DiscountPrice = productDto.DiscountPrice;
-                    existingProduct.CategoryId = productDto.Category;
+                    existingProduct.CategoryId = productDto.CategoryId;
                     existingProduct.FacultyId = productDto.FacultyId;
+                    existingProduct.SubjectId = productDto.SubjectId;
                     if (!string.IsNullOrEmpty(imageUrl)) existingProduct.ProductImageUrl = imageUrl;
 
                     // Clear the old attributes and add new ones
@@ -137,10 +148,9 @@ namespace Blog.Areas.Admin.Controllers
                 var product = new Product
                 {
                     ProductName = productDto.ProductName,
-                    Price = productDto.Price,
-                    DiscountPrice = productDto.DiscountPrice,
-                    CategoryId = productDto.Category,
+                    CategoryId = productDto.CategoryId,
                     FacultyId = productDto.FacultyId,
+                    SubjectId = productDto.SubjectId,
                     ProductImageUrl = imageUrl,
                     CreatedOn = DateTime.Now
                 };
@@ -163,6 +173,126 @@ namespace Blog.Areas.Admin.Controllers
             }
 
             return BadRequest("Unable to process the request.");
+        }
+
+        public async Task<IActionResult> SetPrices(int id)
+        {
+            var product = await _unitOfWork.Product.GetProductWithPricesAsync(id);
+            if (product == null)
+            {
+                return NotFound();
+            }
+
+            var model = new ProductPriceVM
+            {
+                ProductId = id,
+                ProductPrices = new List<ProductPriceItemVM>()
+            };
+
+            // Example: Populate all permutations
+            var modesOfLecture = new List<string>
+            {
+                "Google Drive With E-Book",
+                "Google Drive With Hard Copy",
+                "Pen Drive With Hard Copy",
+                "Live At Home with Hard Copy"
+            };
+            var validities = new List<int> { 6, 9, 12 };  
+            var views = new List<int> { 1, 2, 3 };
+
+            // Retrieve existing prices if they exist, or use default values
+            var existingPrices = await _unitOfWork.ProductPrice.GetProductPricesAsync(id);
+
+            // Handle duplicates by grouping and create a dictionary for easy lookup, ensure consistent trimming and case normalization
+            var existingPricesDict = existingPrices
+                .GroupBy(p => (p.ModeOfLecture.Trim().ToLower(), p.ValidityInMonths, p.Views)) // Normalize case and trim
+                .ToDictionary(g => g.Key, g => g.First());
+
+            foreach (var mode in modesOfLecture)
+            {
+                foreach (var validity in validities)
+                {
+                    foreach (var view in views)
+                    {
+                        // Normalize the key in the same way for comparison
+                        var key = (mode.Trim().ToLower(), validity, view);
+
+                        // Check if the key exists in the dictionary and populate accordingly
+                        if (existingPricesDict.TryGetValue(key, out var priceItem))
+                        {
+                            model.ProductPrices.Add(new ProductPriceItemVM
+                            {
+                                ModeOfLecture = mode,
+                                ValidityInMonths = validity,
+                                Views = view,
+                                Price = priceItem.Price, // Set the existing price
+                                DiscountPrice = priceItem.DiscountPrice // Set the existing discount price
+                            });
+                        }
+                        else
+                        {
+                            // Default values for new entries
+                            model.ProductPrices.Add(new ProductPriceItemVM
+                            {
+                                ModeOfLecture = mode,
+                                ValidityInMonths = validity,
+                                Views = view,
+                                Price = 0, // Default to 0 if no existing price
+                                DiscountPrice = 0 // Default to null if no discount
+                            });
+                        }
+                    }
+                }
+            }
+
+            return View(model);
+        }
+
+
+        [HttpPost]
+        public async Task<IActionResult> SetPrices(ProductPriceVM model)
+        {
+            if (ModelState.IsValid)
+            {
+                var product = await _unitOfWork.Product.GetProductWithPricesAsync(model.ProductId);
+                if (product == null)
+                {
+                    return NotFound();
+                }
+
+                // Remove existing prices (if necessary)
+                var existingPrices = await _unitOfWork.ProductPrice.GetProductPricesAsync(model.ProductId);
+                await  _unitOfWork.ProductPrice.DeleteRangeAsync(existingPrices);
+
+                // Add new prices
+                foreach (var priceItem in model.ProductPrices)
+                {
+                    var productPrice = new ProductPrice
+                    {
+                        ProductId = model.ProductId,
+                        ModeOfLecture = priceItem.ModeOfLecture,
+                        ValidityInMonths = priceItem.ValidityInMonths,
+                        Views = priceItem.Views,
+                        Price = priceItem.Price,
+                        DiscountPrice = priceItem.DiscountPrice
+                    };
+
+                  await  _unitOfWork.ProductPrice.AddAsync(productPrice);
+                }
+
+                _unitOfWork.Save();
+
+                return RedirectToAction("Index");
+            }
+
+            // Debug validation errors (Optional, can be removed in production)
+            var errors = ModelState.Values.SelectMany(v => v.Errors);
+            foreach (var error in errors)
+            {
+                Console.WriteLine(error.ErrorMessage); // Check the error messages in the output window
+            }
+
+            return View(model);
         }
 
     }

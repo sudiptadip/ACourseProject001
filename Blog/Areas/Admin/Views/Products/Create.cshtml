@@ -16,7 +16,7 @@
                         <input type="text" class="form-control" id="productName" name="productName"
                                value="@Model?.ProductName" placeholder="Enter product name" required>
                     </div>
-                    <div class="col-md-6">
+                    @* <div class="col-md-6">
                         <label for="price" class="form-label">Price <span class="text-danger">*</span></label>
                         <input type="number" class="form-control" id="price" name="price"
                                value="@Model?.Price" placeholder="Enter product price" required>
@@ -25,27 +25,37 @@
                         <label for="discountPrice" class="form-label">Discount Price <span class="text-danger">*</span></label>
                         <input type="number" class="form-control" id="discountPrice" name="discountPrice"
                                value="@Model?.DiscountPrice" placeholder="Enter discount price" required>
-                    </div>
+                    </div> *@
                     <div class="col-md-6 mt-3">
                         <label for="category" class="form-label">Category <span class="text-danger">*</span></label>
-                        <select asp-items="@(ViewData[" CategoryList"] as IEnumerable<SelectListItem>)" class="form-control" id="category" name="category" required>
+                        <select class="form-control" id="category" name="category" required>
                             <option value="" disabled>Select Category</option>
                             @foreach (var category in ViewData["CategoryList"] as IEnumerable<SelectListItem>)
                             {
-                                var isSelected = category.Value == Model?.Category.ToString() ? "selected" : "";
-                                <!option @isSelected value="@category.Value" >@category.Text</!option>
+                                var isSelected = category.Value == Model?.CategoryId.ToString() ? "selected" : "";
+                                <!option @isSelected value="@category.Value">@category.Text</!option>
                             }
                         </select>
                     </div>
                     <div class="col-md-6 mt-3">
                         <label for="faculty" class="form-label">Faculty <span class="text-danger">*</span></label>
-                        <select value="1" asp-items='@(ViewData["FacultyList"] as IEnumerable<SelectListItem>)'
-                                class="form-control" id="faculty" name="faculty" required>
+                        <select class="form-control" id="faculty" name="faculty" required>
                             <option value="" disabled selected>Select Faculty</option>
                             @foreach (var faculty in ViewData["FacultyList"] as IEnumerable<SelectListItem>)
                             {
-                                var isSelected = faculty.Value == Model?.Category.ToString() ? "selected" : "";
-                                <!option @isSelected value="@faculty.Value" >@faculty.Text</!option>
+                                var isSelected = faculty.Value == Model?.FacultyId.ToString() ? "selected" : "";
+                                <!option @isSelected value="@faculty.Value">@faculty.Text</!option>
+                            }
+                        </select>
+                    </div>
+                    <div class="col-md-6 mt-3">
+                        <label for="subject" class="form-label">Subject <span class="text-danger">*</span></label>
+                        <select class="form-control" id="subject" name="subject" required>
+                            <option value="" disabled selected>Select Subject</option>
+                            @foreach (var subject in ViewData["SubjectList"] as IEnumerable<SelectListItem>)
+                            {
+                                var isSelected = subject.Value == Model?.SubjectId.ToString() ? "selected" : "";
+                                <!option @isSelected value="@subject.Value">@subject.Text</!option>
                             }
                         </select>
                     </div>
@@ -54,7 +64,7 @@
                         <input type="file" class="form-control" id="ProductImage" name="ProductImage" @(isEdit ? "" : "required")>
                         @if (isEdit && !string.IsNullOrEmpty(Model.ProductImageUrl))
                         {
-                        <img src="@Model.ProductImageUrl" alt="Product Image" class="mt-2" style="width: 100px;" />
+                            <img src="@Model.ProductImageUrl" alt="Product Image" class="mt-2" style="width: 100px;" />
                         }
                     </div>
                 </div>
@@ -84,8 +94,10 @@
                                         <td>
                                             <select class="form-control attributeType" name="attributes[@(i)][attributeType]" required>
                                                 <option value="" disabled selected>Select Attribute Type</option>
-                                                 <!option value="Number" @(Model.ProductAttribuets[i].AttributeType == "Number" ? "selected" : "")>Product Detail (Up)</!option>
-                                                 <!option value="Description" @(Model.ProductAttribuets[i].AttributeType == "Description" ? "selected" : "")>Product Description (Down)</!option>
+                                                <!option value="ProductInfo" @(Model.ProductAttribuets[i].AttributeType == "ProductInfo" ? "selected" : "")>Product Info</!option>
+                                                <!option value="Faq" @(Model.ProductAttribuets[i].AttributeType == "Faq" ? "selected" : "")>Faq</!option>
+                                                <!option value="System" @(Model.ProductAttribuets[i].AttributeType == "System" ? "selected" : "")>System</!option>
+                                                <!option value="Demo" @(Model.ProductAttribuets[i].AttributeType == "Demo" ? "selected" : "")>Demo</!option>
                                             </select>
                                         </td>
                                         <td><button type="button" class="btn btn-danger" onclick="removeRow(@(i))">Remove</button></td>
@@ -111,24 +123,26 @@
             $('#addAttributeBtn').click(function () {
                 attributeCount++;
                 let newRow = `
-                                    <tr id="row${attributeCount}">
-                                        <td><input type="text" class="form-control" name="attributes[${attributeCount}][name]" placeholder="Enter attribute name" required></td>
-                                        <td><input type="text" class="form-control" name="attributes[${attributeCount}][value]" placeholder="Enter attribute value" required></td>
-                                        <td>
-                                            <select class="form-control attributeType" name="attributes[${attributeCount}][attributeType]" required>
-                                                <option value="" disabled selected>Select Attribute Type</option>
-                                                <option value="Number">Product Detail (Up)</option>
-                                                <option value="Description">Product Description (Down)</option>
-                                            </select>
-                                        </td>
-                                        <td><button type="button" class="btn btn-danger" onclick="removeRow(${attributeCount})">Remove</button></td>
-                                    </tr>`;
+                        <tr id="row${attributeCount}">
+                            <td><input type="text" class="form-control" name="attributes[${attributeCount}][name]" placeholder="Enter attribute name" required></td>
+                            <td><input type="text" class="form-control" name="attributes[${attributeCount}][value]" placeholder="Enter attribute value" required></td>
+                            <td>
+                                <select class="form-control attributeType" name="attributes[${attributeCount}][attributeType]" required>
+                                    <option value="" disabled selected>Select Attribute Type</option>
+                                    <option value="ProductInfo">Product Info</option>
+                                    <option value="Faq">Faq</option>
+                                    <option value="System">System</option>
+                                    <option value="Demo">Demo</option>
+                                </select>
+                            </td>
+                            <td><button type="button" class="btn btn-danger" onclick="removeRow(${attributeCount})">Remove</button></td>
+                        </tr>`;
                 $('#attributeRows').append(newRow);
             });
 
             // Remove row function
             window.removeRow = function (rowId) {
-                $(`#row${rowId}`).remove();
+                $(`#row${rowId}`).remove(); // Make sure to use backticks here
             };
 
             // Submit form
@@ -155,10 +169,9 @@
                 // Use FormData to handle file uploads and other form data
                 let formData = new FormData();
                 formData.append('ProductName', $('#productName').val());
-                formData.append('Price', $('#price').val());
-                formData.append('DiscountPrice', $('#discountPrice').val());
-                formData.append('Category', $('#category').val());
+                formData.append('CategoryId', $('#category').val());
                 formData.append('FacultyId', $('#faculty').val());
+                formData.append('SubjectId', $('#subject').val());
 
                 // If a product image was selected, append it to the form data
                 let productImage = $('#ProductImage')[0].files[0];
@@ -175,7 +188,7 @@
 
                 // For update functionality, append the Product ID if editing
                 let productId = '@ViewBag.ProductId'; // Add ProductId if passed from the controller
-                
+
                 if (productId) {
                     formData.append('Id', productId);
                 }

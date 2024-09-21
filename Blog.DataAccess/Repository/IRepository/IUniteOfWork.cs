@@ -10,6 +10,12 @@ namespace Blog.DataAccess.Repository.IRepository
     {
         IFacultyRepository Faculty { get; }
         ICategoryRepository Category { get; }
+        IProductRepository Product { get; }
+        IProductPriceRepository ProductPrice { get; }
+        ISubjectRepository Subject { get; }
+        ICartItemRepository CartItem { get; }
+        ICartRepository Cart { get; }
+        IBlogRepository Blog { get; }
         void Save();
     }
 }

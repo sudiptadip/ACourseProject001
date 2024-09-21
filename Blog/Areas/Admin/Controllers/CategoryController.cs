@@ -15,13 +15,13 @@ namespace Blog.Areas.Admin.Controllers
             _unitOfWork = unitOfWork;
         }
 
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
-            IEnumerable<Category> categoryList = _unitOfWork.Category.GetAll();
+            IEnumerable<Category> categoryList = await _unitOfWork.Category.GetAllAsync();
             return View(categoryList);
         }
 
-        public IActionResult Upsert(int? id)
+        public async Task<IActionResult> Upsert(int? id)
         {
             Category category = new Category();
             if (id == null)
@@ -30,7 +30,7 @@ namespace Blog.Areas.Admin.Controllers
             }
             else
             {
-                category = _unitOfWork.Category.Get(c => c.Id == id);
+                category = await _unitOfWork.Category.GetAsync(c => c.Id == id);
                 if (category == null)
                 {
                     return Json(new { success = false, message = "Category not found!" });
@@ -40,11 +40,11 @@ namespace Blog.Areas.Admin.Controllers
         }
 
         [HttpPost]
-        public IActionResult Upsert(Category category)
+        public async Task<IActionResult> Upsert(Category category)
         {
             if (ModelState.IsValid)
             {
-                var isDuplicate = _unitOfWork.Category.Get(c =>
+                var isDuplicate = await _unitOfWork.Category.GetAsync(c =>
                     (c.CategoryName == category.CategoryName || c.SortedOrder == category.SortedOrder)
                     && c.Id != category.Id);
 
@@ -56,13 +56,13 @@ namespace Blog.Areas.Admin.Controllers
                 if (category.Id == 0)
                 {
                     category.CreatedOn = DateTime.Now;
-                    _unitOfWork.Category.Add(category);
+                  await  _unitOfWork.Category.AddAsync(category);
                     _unitOfWork.Save();
                     return Json(new { success = true, message = "Category added successfully!", category = category });
                 }
                 else
                 {
-                    var existingCategory = _unitOfWork.Category.Get(c => c.Id == category.Id);
+                    var existingCategory = await _unitOfWork.Category.GetAsync(c => c.Id == category.Id);
                     if (existingCategory == null)
                     {
                         return Json(new { success = false, message = "Category not found!" });
@@ -82,12 +82,12 @@ namespace Blog.Areas.Admin.Controllers
 
 
         [HttpPost]
-        public IActionResult DeleteConfirmed(int id)
+        public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var category = _unitOfWork.Category.Get(u => u.Id == id);
+            var category = await _unitOfWork.Category.GetAsync(u => u.Id == id);
             if (category != null)
             {
-                _unitOfWork.Category.Delete(category);
+               await _unitOfWork.Category.DeleteAsync(category);
                 _unitOfWork.Save();
                 return Json(new { success = true, message = "Category deleted successfully!" });
             }

@@ -1,0 +1,73 @@
+﻿@model Blogs
+
+@{
+    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+}
+
+<div class="container">
+    <form method="post" enctype="multipart/form-data">
+        <div class="modal-header">
+            <h5 class="modal-title" id="categoryModalLabel">@(Model.Id != 0 ? "Edit Faculty" : "Add Faculty")</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+            @if (Model.Id != 0 && !string.IsNullOrEmpty(Model.ImageUrl))
+            {
+                <div class="mb-3">
+                    <img style="width: 70px;" src="@Model.ImageUrl" alt="Faculty Image" class="img-thumbnail" style="max-width: 200px;" />
+                </div>
+            }
+            <input type="hidden" id="facultyId" name="Id" value="@Model.Id" />
+            <div class="mb-3">
+                <label asp-for="Title" class="form-label"></label>
+                <input asp-for="Title" class="form-control" placeholder="">
+                <span class="text-danger" asp-validation-for="Title"></span>
+            </div>
+            <div class="mb-3">
+                <label asp-for="Description" class="form-label"></label>
+                <input asp-for="Description" class="form-control" placeholder="">
+                <span class="text-danger" asp-validation-for="Description"></span>
+            </div>
+            <div class="mb-3">
+                <label asp-for="CategoryName" class="form-label"></label>
+                <input asp-for="CategoryName" class="form-control" placeholder="">
+                <span class="text-danger" asp-validation-for="CategoryName"></span>
+            </div>
+            <div class="mb-3">
+                <label asp-for="SortedOrder" class="form-label"></label>
+                <input asp-for="SortedOrder" class="form-control" placeholder="">
+                <span class="text-danger" asp-validation-for="SortedOrder"></span>
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Faculty Image</label>
+                <input name="file" type="file" class="form-control" accept=".jpg,.jpeg,.png,.gif" />
+                <small class="form-text text-muted">Allowed formats: jpg, png, gif. Max size: 2MB.</small>
+            </div>
+        </div>
+        <div class="ms-4">
+            <button type="submit" class="btn btn-primary">Save changes</button>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        document.querySelector('form').addEventListener('submit', function (e) {
+            var fileInput = document.querySelector('input[name="file"]');
+            if (fileInput.files.length > 0) {
+                var file = fileInput.files[0];
+                var validTypes = ['image/jpeg', 'image/png', 'image/gif'];
+                var maxSize = 2 * 1024 * 1024; // 2MB
+
+                if (!validTypes.includes(file.type)) {
+                    e.preventDefault();
+                    alert('Only JPG, PNG, and GIF files are allowed.');
+                } else if (file.size > maxSize) {
+                    e.preventDefault();
+                    alert('File size must be less than 2MB.');
+                }
+            }
+        });
+    </script>
+}

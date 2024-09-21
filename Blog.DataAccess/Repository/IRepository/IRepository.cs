@@ -9,10 +9,10 @@ namespace Blog.DataAccess.Repository.IRepository
 {
     public interface IRepository<T> where T : class
     {
-        IEnumerable<T> GetAll();
-        T Get(Expression<Func<T, bool>> filter);
-        void Add(T entity);
-        void Delete(T entity);
-        void DeleteRande(IEnumerable<T> entity);
+        Task<IEnumerable<T>> GetAllAsync(Expression<Func<T, bool>>? filter = null, string? includeProperties = null);
+        Task<T> GetAsync(Expression<Func<T, bool>> filter = null, string? includeProperties = null);
+        Task AddAsync(T entity);
+        Task DeleteAsync(T entity);
+        Task DeleteRangeAsync(IEnumerable<T> entity);
     }
 }

@@ -1,131 +1,126 @@
-﻿<section class="edu-section-gap course-details-area">
+﻿@model Product
+
+<section class="edu-section-gap course-details-area">
     <div class="container">
-        <div class="row row--30 mb-4 pb-30">
-            <div class="col-lg-4">
-                <div class="course-sidebar-3 sidebar-top-position">
-                    <div class="edu-course-widget widget-course-summery">
-                        <div class="inner">
-                            <div class="thumbnail">
-                                <img src="~/images/course/ps-1.webp" alt="Courses" />
-                                <div class="details">
-                                    <span class="notes"> In Stock </span>
+        <form asp-action="AddToCart" asp-controller="Cart" asp-area="Customer" method="post">
+            <input name="productId" value="@Model.Id" hidden />
+            <div class="row row--30 mb-4 pb-30">
+                <div class="col-lg-4">
+                    <div class="course-sidebar-3 sidebar-top-position">
+                        <div class="edu-course-widget widget-course-summery">
+                            <div class="inner">
+                                <div class="thumbnail">
+                                    <img src="@Model.ProductImageUrl" alt="Courses" />
+                                    <div class="details">
+                                        <span class="notes">In Stock</span>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
 
-            <div class="col-lg-8">
-                <div class="course-details-content">
-                    <div class="course-name">
-                        <h4 class="title">
-                            CA Final Financial Reporting (FR) Full Course By CA Parveen
-                            Sharma
-                        </h4>
-                    </div>
-
-                    <div class="d-flex align-items-center justify-content-between md-flex-direction-column">
-                        <div class="brand-name">
-                            <p>CA Praveen Sharma</p>
+                <div class="col-lg-8">
+                    <div class="course-details-content">
+                        <div class="course-name">
+                            <h4 class="title">
+                                @Model.ProductName
+                            </h4>
                         </div>
 
-                        <div class="share-area">
-                            <!-- <span>Share On:</span> -->
-                            <ul class="social-share">
-                                <li class="order-on">Share on:</li>
-                                <li>
-                                    <a href="#"><i class="fa-brands fa-whatsapp"></i></a>
-                                </li>
-                                <li>
-                                    <a href="#"><i class="icon-facebook"></i></a>
-                                </li>
-                                <li>
-                                    <a href="#"><i class="fa-brands fa-telegram"></i></a>
-                                </li>
-                                <li>
-                                    <a href="#"><i class="icon-twitter"></i></a>
-                                </li>
-                            </ul>
-                        </div>
-                    </div>
-
-                    <div class="d-flex align-items-center justify-content-between">
-                        <div class="course-details-price">
-                            <span class="ori_price">₹4999</span>
-                            <span class="del-price">₹6999 </span>
-                            <span class="dis_price">20% off </span>
-                        </div>
-                    </div>
-
-                    <div class="row mt-4">
-                        <div class="col-lg-12 col-md-12 col-sm-12 mb-4">
-                            <div class="mb-4">
-                                <label for="modeoflecture" class="form-label formLabel">Mode Of Lecture</label>
-                                <select class="form-select"
-                                        aria-label="Default select example">
-                                    <option value="1">Google Drive With E-Book</option>
-                                    <option value="2">Google Drive With Hard Copy</option>
-                                    <option value="3">Pen Drive With Hard Copy</option>
-                                </select>
+                        <div class="d-flex align-items-center justify-content-between md-flex-direction-column">
+                            <div class="brand-name">
+                                <p>CA Praveen Sharma</p>
                             </div>
-                        </div>
-                        <div class="col-lg-5 col-md-5 col-sm-12">
-                            <div class="mb-4">
-                                <label for="Validity" class="form-label formLabel">Validity</label>
-                                <select class="form-select"
-                                        aria-label="Default select example">
-                                    <option value="1">12 Months</option>
-                                    <option value="2">6 Months</option>
-                                    <option value="3">9 Months</option>
-                                </select>
+
+                            <div class="share-area">
+                                <ul class="social-share">
+                                    <li class="order-on">Share on:</li>
+                                    <li><a href="#"><i class="fa-brands fa-whatsapp"></i></a></li>
+                                    <li><a href="#"><i class="icon-facebook"></i></a></li>
+                                    <li><a href="#"><i class="fa-brands fa-telegram"></i></a></li>
+                                    <li><a href="#"><i class="icon-twitter"></i></a></li>
+                                </ul>
                             </div>
                         </div>
 
-                        <div class="col-lg-5 col-md-5 col-sm-12">
-                            <div class="mb-4">
-                                <label for="views" class="form-label formLabel">Views</label>
-                                <select class="form-select"
-                                        aria-label="Default select example">
-                                    <option value="1">1.5</option>
-                                    <option value="2">2</option>
-                                    <option value="3">3</option>
-                                </select>
+                        <div class="d-flex align-items-center justify-content-between">
+                            <div class="course-details-price">
+                                <span class="ori_price">₹<span id="calculatedDiscountPrice">0</span></span>
+                                <span class="del-price">₹<span id="calculatedPrice">0</span></span>
+                                <span class="dis_price" id="discountPercentage"></span> off
                             </div>
                         </div>
 
-                        <div class="col-lg-2 col-md-2 col-sm-12">
-                            <div class="mb-4">
-                                <label for="modeoflecture" class="form-label formLabel">Quantity</label>
-                                <div class="pro-qty">
-                                    <input type="number" class="quantity-input" value="1" />
+                        <div class="row mt-4">
+                            <div class="col-lg-12 col-md-12 col-sm-12 mb-4">
+                                <div class="mb-4">
+                                    <label for="modeoflecture" class="form-label formLabel">Mode Of Lecture</label>
+                                    <select name="modeOfLecture" class="form-select" id="modeOfLecture" aria-label="Mode of Lecture">
+                                        <option selected value="Google Drive With E-Book">Google Drive With E-Book</option>
+                                        <option value="Google Drive With Hard Copy">Google Drive With Hard Copy</option>
+                                        <option value="Pen Drive With Hard Copy">Pen Drive With Hard Copy</option>
+                                        <option value="Live At Home with Hard Copy">Live At Home with Hard Copy</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="col-lg-4 col-md-4 col-sm-12">
+                                <div class="mb-4">
+                                    <label for="Validity" class="form-label formLabel">Validity</label>
+                                    <select name="validity" class="form-select" id="validity" aria-label="Validity">
+                                        <option selected value="6">6 Months</option>
+                                        <option value="9">9 Months</option>
+                                        <option value="12">12 Months</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="col-lg-4 col-md-4 col-sm-12">
+                                <div class="mb-4">
+                                    <label for="views" class="form-label formLabel">Views</label>
+                                    <select name="views" class="form-select" id="views" aria-label="Views">
+                                        <option selected value="1">1</option>
+                                        <option value="2">2</option>
+                                        <option value="3">3</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="col-lg-4 col-md-4 col-sm-12">
+                                <div class="mb-4">
+                                    <label for="views" class="form-label formLabel">Attempt</label>
+                                    <select name="attempt" class="form-select" id="attempt" aria-label="Attempt">
+                                        <option selected value="dec">Dec'24</option>
+                                        <option value="jul">July'25</option>
+                                        <option value="dec25">Dec'25</option>
+                                    </select>
                                 </div>
                             </div>
                         </div>
-                    </div>
 
-                    <div class="d-flex align-items-center justify-content-center mt-4">
-                        <div class="buy-now-btn pr-20">
-                            <button type="button" class="btn btn-sm details-btn">
-                                <i class="fa-solid fa-credit-card"></i> Buy Now
-                            </button>
-                        </div>
+                        <div class="d-flex align-items-center  mt-4">
 
-                        <div class="add-cart-btn pr-20">
-                            <button type="button" class="btn btn-sm details-btn">
-                                <i class="fa-solid fa-cart-shopping"></i> Add to Cart
-                            </button>
+                            <div class="buy-now-btn pr-20 d-none">
+                                <button type="button" class="btn btn-sm details-btn">
+                                    <i class="fa-solid fa-credit-card"></i> Buy Now
+                                </button>
+                            </div>
+
+                            <div class="add-cart-btn pr-20">
+                                <button type="submit" class="btn btn-sm details-btn">
+                                    <i class="fa-solid fa-cart-shopping"></i> Add to Cart
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
+        </form>
     </div>
 </section>
 
-<!--=====================================-->
-<!--=     Courses Details Area Start    =-->
-<!--=====================================-->
+
 <section class="edu-section-gap course-details-area">
     <div class="container">
         <div class="row row--30">
@@ -133,88 +128,49 @@
                 <div class="course-details-content">
                     <ul class="nav nav-tabs" id="myTab" role="tablist">
                         <li class="nav-item" role="presentation">
-                            <button class="nav-link active"
-                                    id="overview-tab"
-                                    data-bs-toggle="tab"
-                                    data-bs-target="#overview"
-                                    type="button"
-                                    role="tab"
-                                    aria-controls="overview"
-                                    aria-selected="true">
+                            <button class="nav-link active" id="overview-tab" data-bs-toggle="tab" data-bs-target="#overview"
+                                    type="button" role="tab" aria-controls="overview" aria-selected="true">
                                 Product Info
                             </button>
                         </li>
                         <li class="nav-item" role="presentation">
-                            <button class="nav-link"
-                                    id="carriculam-tab"
-                                    data-bs-toggle="tab"
-                                    data-bs-target="#carriculam"
-                                    type="button"
-                                    role="tab"
-                                    aria-controls="carriculam"
-                                    aria-selected="false">
+                            <button class="nav-link" id="carriculam-tab" data-bs-toggle="tab" data-bs-target="#carriculam"
+                                    type="button" role="tab" aria-controls="carriculam" aria-selected="false">
                                 FAQ
                             </button>
                         </li>
 
                         <li class="nav-item" role="presentation">
-                            <button class="nav-link"
-                                    id="system-tab"
-                                    data-bs-toggle="tab"
-                                    data-bs-target="#system"
-                                    type="button"
-                                    role="tab"
-                                    aria-controls="system"
-                                    aria-selected="false">
+                            <button class="nav-link" id="system-tab" data-bs-toggle="tab" data-bs-target="#system" type="button"
+                                    role="tab" aria-controls="system" aria-selected="false">
                                 System
                             </button>
                         </li>
 
                         <li class="nav-item" role="presentation">
-                            <button class="nav-link"
-                                    id="demo-tab"
-                                    data-bs-toggle="tab"
-                                    data-bs-target="#demo"
-                                    type="button"
-                                    role="tab"
-                                    aria-controls="demo"
-                                    aria-selected="false">
+                            <button class="nav-link" id="demo-tab" data-bs-toggle="tab" data-bs-target="#demo" type="button"
+                                    role="tab" aria-controls="demo" aria-selected="false">
                                 Demo
                             </button>
                         </li>
 
                         <li class="nav-item" role="presentation">
-                            <button class="nav-link"
-                                    id="instructor-tab"
-                                    data-bs-toggle="tab"
-                                    data-bs-target="#instructor"
-                                    type="button"
-                                    role="tab"
-                                    aria-controls="instructor"
-                                    aria-selected="false">
+                            <button class="nav-link" id="instructor-tab" data-bs-toggle="tab" data-bs-target="#instructor"
+                                    type="button" role="tab" aria-controls="instructor" aria-selected="false">
                                 About the Faculty
                             </button>
                         </li>
 
                         <li class="nav-item" role="presentation">
-                            <button class="nav-link"
-                                    id="review-tab"
-                                    data-bs-toggle="tab"
-                                    data-bs-target="#review"
-                                    type="button"
-                                    role="tab"
-                                    aria-controls="review"
-                                    aria-selected="false">
+                            <button class="nav-link" id="review-tab" data-bs-toggle="tab" data-bs-target="#review" type="button"
+                                    role="tab" aria-controls="review" aria-selected="false">
                                 Review
                             </button>
                         </li>
                     </ul>
 
                     <div class="tab-content" id="myTabContent">
-                        <div class="tab-pane fade show active"
-                             id="overview"
-                             role="tabpanel"
-                             aria-labelledby="overview-tab">
+                        <div class="tab-pane fade show active" id="overview" role="tabpanel" aria-labelledby="overview-tab">
                             <div class="course-tab-content">
                                 <div class="course-overview">
                                     <p class="mb--20">
@@ -236,171 +192,19 @@
                                         <div class="table-responsive mt-4">
                                             <table class="table table-hover table-bordered">
                                                 <tbody>
-                                                    <tr>
-                                                        <th scope="row" class="w-t-30">
-                                                            Kit Contents
-                                                        </th>
-                                                        <td>
-                                                            <ul>
-                                                                <li>
-                                                                    Video Lectures + Study Materials (2
-                                                                    Books Companies IND AS Rules 2015 -
-                                                                    Mainly for Lavi & details IND AS Book
-                                                                    (Amended till Nov 22), 4 Main Modules
-                                                                    only Q&A 100% Study materials covered
-                                                                    (RTP MTP covered also), 1 Handwritten
-                                                                    Note of classes (Previous Years classes
-                                                                    notes only with examples))
-                                                                </li>
 
-                                                                <li class="color-orange">
-                                                                    Module 1 | Module 2 | Module 3 | Module
-                                                                    4 | Companies Act 2015 Module 1 |
-                                                                    Companies Act 2015 Module 2
-                                                                </li>
-                                                            </ul>
-                                                        </td>
-                                                    </tr>
-                                                    <tr>
-                                                        <th scope="row" class="w-t-30">
-                                                            Lecture Duration
-                                                        </th>
-                                                        <td>350-360 Hrs - 120 Lectures</td>
-                                                    </tr>
-                                                    <tr>
-                                                        <th scope="row" class="w-t-30">
-                                                            Batch Recording
-                                                        </th>
-                                                        <td>Nov-Dec 2024</td>
-                                                    </tr>
-
-                                                    <tr>
-                                                        <th scope="row" class="w-t-30">
-                                                            Delivery Period
-                                                        </th>
-                                                        <td>
-                                                            Within 6 working days (depends on the
-                                                            location)
-                                                        </td>
-                                                    </tr>
-
-                                                    <tr>
-                                                        <th scope="row" class="w-t-30">Validity</th>
-                                                        <td>
-                                                            Mobile App - 365 days months from the date
-                                                            of activation
-                                                        </td>
-                                                    </tr>
-
-                                                    <tr>
-                                                        <th scope="row" class="w-t-30">
-                                                            System Requirements
-                                                        </th>
-                                                        <td>
-                                                            Windows XP/Vista/win7/win8 with minimum 2 GB
-                                                            RAM, Support 32 bit and 64 bit-OS. Minimum
-                                                            Android 6.0 For Smart Phones
-                                                        </td>
-                                                    </tr>
-
-                                                    <tr>
-                                                        <th scope="row" class="w-t-30">Views</th>
-                                                        <td>
-                                                            2 times on duration every lecture (2X i.e.
-                                                            Classes can be viewed two times the duration
-                                                            of a total class duration of the course. Any
-                                                            class can be viewed any number of times
-                                                            within the watch time limit)
-                                                        </td>
-                                                    </tr>
-
-                                                    <tr>
-                                                        <th scope="row" class="w-t-30">Mode</th>
-                                                        <td>Mobile App</td>
-                                                    </tr>
-
-                                                    <tr>
-                                                        <th scope="row" class="w-t-30">
-                                                            Video Language
-                                                        </th>
-                                                        <td>Hindi-English Mix</td>
-                                                    </tr>
-
-                                                    <tr>
-                                                        <th scope="row" class="w-t-30">
-                                                            Study Material
-                                                        </th>
-                                                        <td>English</td>
-                                                    </tr>
-
-                                                    <tr>
-                                                        <th scope="row" class="w-t-30">
-                                                            Doubt Solving
-                                                        </th>
-                                                        <td>
-                                                            Call your faculty on 9810014495! Faculty
-                                                            prefers calling instead of sending WhatsApp
-                                                            messages. Calls on WhatsApp are also
-                                                            answered.
-                                                        </td>
-                                                    </tr>
-
-                                                    <tr>
-                                                        <th scope="row" class="w-t-30">
-                                                            Technical Support
-                                                        </th>
-                                                        <td>
-                                                            <ul>
-                                                                <li>
-                                                                    Mobile- 9810012674 (Monday to Saturday
-                                                                    10:30 Am to 6PM)
-                                                                </li>
-                                                                <li>Email us at support@zeroinfy.in</li>
-                                                            </ul>
-                                                        </td>
-                                                    </tr>
-
-                                                    <tr>
-                                                        <th scope="row" class="w-t-30">
-                                                            Please Note
-                                                        </th>
-                                                        <td>
-                                                            There Is No Refund In Any Circumstances
-                                                        </td>
-                                                    </tr>
-
-                                                    <tr>
-                                                        <th scope="row" class="w-t-30">Additional</th>
-                                                        <td>
-                                                            <ul>
-                                                                <li>
-                                                                    LMS Access URL:-
-                                                                    https://aplus.aldine.edu.in (LMS
-                                                                    Validity is 365 Days with Unlimited
-                                                                    Views (can be viewed at any time along
-                                                                    with classes students can access Class
-                                                                    Notes, Summary Video, Summary Notes,
-                                                                    Test Papers, etc))
-                                                                </li>
-                                                                <li>
-                                                                    There are 2 LMS - LMS Resources & LMS
-                                                                    for classes
-                                                                </li>
-                                                                <li>
-                                                                    For MCQ Preparation MCQ based tests are
-                                                                    available & subjective tests are also
-                                                                    available
-                                                                </li>
-                                                            </ul>
-                                                        </td>
-                                                    </tr>
-
-                                                    <tr>
-                                                        <th scope="row" class="w-t-30">Demo</th>
-                                                        <td class="color-orange">
-                                                            Start Video Tour of Modules
-                                                        </td>
-                                                    </tr>
+                                                    @foreach (var item in Model.ProductAttributes)
+                                                    {
+                                                        if (item.AttributeType == "ProductInfo")
+                                                        {
+                                                            <tr>
+                                                                <th scope="row" class="w-t-30">
+                                                                    @item.AttributeName
+                                                                </th>
+                                                                <td>@item.Value</td>
+                                                            </tr>
+                                                        }
+                                                    }
                                                 </tbody>
                                             </table>
                                         </div>
@@ -409,39 +213,24 @@
                             </div>
                         </div>
 
-                        <div class="tab-pane fade"
-                             id="carriculam"
-                             role="tabpanel"
-                             aria-labelledby="carriculam-tab">
+                        <div class="tab-pane fade" id="carriculam" role="tabpanel" aria-labelledby="carriculam-tab">
                             <div class="course-tab-content">
                                 <div class="video-description pb-30">
                                     <div class="table-responsive mt-4">
                                         <table class="table table-hover table-bordered">
                                             <tbody>
-                                                <tr>
-                                                    <th scope="row" class="w-30">
-                                                        What is the meaning of the Watch time limit?
-                                                    </th>
-                                                    <td>
-                                                        it means how many hours you can watch our
-                                                        video content in LMS including classes. For
-                                                        example, a watch time of 2X means if the total
-                                                        video content in a course is of 100 hours, you
-                                                        can watch 200 hours of video content.
-                                                    </td>
-                                                </tr>
-                                                <tr>
-                                                    <th scope="row" class="w-30">
-                                                        What is the validity period of the Ca Final
-                                                        Financial Reporting course?
-                                                    </th>
-                                                    <td>
-                                                        The validity period is the maximum allowed
-                                                        period of the course and related LMS. After
-                                                        the expiry of the validity period the login of
-                                                        the courses will be disabled.
-                                                    </td>
-                                                </tr>
+                                                @foreach (var item in Model.ProductAttributes)
+                                                {
+                                                    if (item.AttributeType.ToLower() == "faq")
+                                                    {
+                                                        <tr>
+                                                            <th scope="row" class="w-t-30">
+                                                                @item.AttributeName
+                                                            </th>
+                                                            <td>@item.Value</td>
+                                                        </tr>
+                                                    }
+                                                }
                                             </tbody>
                                         </table>
                                     </div>
@@ -449,27 +238,24 @@
                             </div>
                         </div>
 
-                        <div class="tab-pane fade"
-                             id="system"
-                             role="tabpanel"
-                             aria-labelledby="system-tab">
+                        <div class="tab-pane fade" id="system" role="tabpanel" aria-labelledby="system-tab">
                             <div class="course-tab-content">
                                 <div class="video-description pb-30">
                                     <div class="table-responsive mt-4">
                                         <table class="table table-hover table-bordered">
                                             <tbody>
-                                                <tr>
-                                                    <th scope="row" class="w-t-30">
-                                                        Lecture Duration
-                                                    </th>
-                                                    <td>350-360 Hrs - 120 Lectures</td>
-                                                </tr>
-                                                <tr>
-                                                    <th scope="row" class="w-t-30">
-                                                        Batch Recording
-                                                    </th>
-                                                    <td>Nov-Dec 2024</td>
-                                                </tr>
+                                                @foreach (var item in Model.ProductAttributes)
+                                                {
+                                                    if (item.AttributeType.ToLower() == "system")
+                                                    {
+                                                        <tr>
+                                                            <th scope="row" class="w-t-30">
+                                                                @item.AttributeName
+                                                            </th>
+                                                            <td>@item.Value</td>
+                                                        </tr>
+                                                    }
+                                                }
                                             </tbody>
                                         </table>
                                     </div>
@@ -477,80 +263,49 @@
                             </div>
                         </div>
 
-                        <div class="tab-pane fade"
-                             id="demo"
-                             role="tabpanel"
-                             aria-labelledby="demo-tab">
+                        <div class="tab-pane fade" id="demo" role="tabpanel" aria-labelledby="demo-tab">
                             <div class="course-tab-content">
                                 <div class="video-description pb-30">
                                     <div class="table-responsive mt-4">
-                                        <ul>
-                                            <li>See Here.</li>
-                                        </ul>
+                                        <table class="table table-hover table-bordered">
+                                            <tbody>
+                                                @foreach (var item in Model.ProductAttributes)
+                                                {
+                                                    if (item.AttributeType.ToLower() == "demo")
+                                                    {
+                                                        <tr>
+                                                            <th scope="row" class="w-t-30">
+                                                                @item.AttributeName
+                                                            </th>
+                                                            <td>@item.Value</td>
+                                                        </tr>
+                                                    }
+                                                }
+                                            </tbody>
+                                        </table>
                                     </div>
                                 </div>
                             </div>
                         </div>
 
-                        <div class="tab-pane fade"
-                             id="instructor"
-                             role="tabpanel"
-                             aria-labelledby="instructor-tab">
+                        <div class="tab-pane fade" id="instructor" role="tabpanel" aria-labelledby="instructor-tab">
                             <div class="course-tab-content">
                                 <div class="course-instructor">
                                     <div class="thumbnail">
-                                        <img src="~/images/course/ps-1.webp"
-                                             alt="Author Images" />
+                                        <img src="@Model.Faculty.ImageUrl" alt="Author Images" />
                                     </div>
                                     <div class="author-content">
-                                        <h6 class="title">CA Praveen Sharma</h6>
+                                        <h6 class="title">@Model.Faculty.FacultyName</h6>
                                         <span class="subtitle">Faculty</span>
                                         <p>
-                                            CA Parveen Sharma, your best faculty for CA Final FR
-                                            classes, is an esteemed figure in the field of
-                                            commerce, distinguished by his outstanding academic
-                                            achievements and professional expertise. Graduating
-                                            with top honors from Delhi University's prestigious
-                                            Sri Venkateswara College, he embarked on his journey
-                                            towards becoming a Chartered Accountant.
-                                        </p>
-
-                                        <p>
-                                            Notably, Parveen Sharma's exceptional proficiency in
-                                            Accountancy earned him the distinction of topping
-                                            Delhi University with a perfect score of 100%. He
-                                            pursued further studies, completing his
-                                            post-graduation in Indian Accounting Standards and
-                                            US GAAP in July 2007, thus broadening his expertise
-                                            to encompass international standards. Therefore, if
-                                            you are worried about your upcoming CA Final
-                                            Financial Reporting exams, you’re on the right track
-                                            here!
-                                        </p>
-
-                                        <p>
-                                            As a CA Final FR classes candidate, you’d be excited
-                                            know that Sharma has even gone ahead to earn the
-                                            admiration of his students, who fondly refer to him
-                                            as the "God of Accountancy"!
-                                        </p>
-
-                                        <p>
-                                            With his comprehensive understanding of the subject
-                                            CA Final financial reporting, coupled with his
-                                            remarkable teaching skills, Parveen Sharma continues
-                                            to make significant contributions to the education
-                                            industry.
+                                            @Model.Faculty.Description
                                         </p>
                                     </div>
                                 </div>
                             </div>
                         </div>
 
-                        <div class="tab-pane fade"
-                             id="review"
-                             role="tabpanel"
-                             aria-labelledby="review-tab">
+                        <div class="tab-pane fade" id="review" role="tabpanel" aria-labelledby="review-tab">
                             <div class="course-tab-content">
                                 <div class="course-review">
                                     <h3 class="heading-title">Course Rating</h3>
@@ -576,12 +331,8 @@
                                                         5 <i class="icon-23"></i>
                                                     </div>
                                                     <div class="progress">
-                                                        <div class="progress-bar"
-                                                             role="progressbar"
-                                                             style="width: 100%"
-                                                             aria-valuenow="100"
-                                                             aria-valuemin="0"
-                                                             aria-valuemax="100"></div>
+                                                        <div class="progress-bar" role="progressbar" style="width: 100%" aria-valuenow="100"
+                                                             aria-valuemin="0" aria-valuemax="100"></div>
                                                     </div>
                                                     <span class="rating-value">7</span>
                                                 </div>
@@ -591,12 +342,8 @@
                                                         4 <i class="icon-23"></i>
                                                     </div>
                                                     <div class="progress">
-                                                        <div class="progress-bar"
-                                                             role="progressbar"
-                                                             style="width: 0%"
-                                                             aria-valuenow="0"
-                                                             aria-valuemin="0"
-                                                             aria-valuemax="100"></div>
+                                                        <div class="progress-bar" role="progressbar" style="width: 0%" aria-valuenow="0"
+                                                             aria-valuemin="0" aria-valuemax="100"></div>
                                                     </div>
                                                     <span class="rating-value">0</span>
                                                 </div>
@@ -606,12 +353,8 @@
                                                         4 <i class="icon-23"></i>
                                                     </div>
                                                     <div class="progress">
-                                                        <div class="progress-bar"
-                                                             role="progressbar"
-                                                             style="width: 0%"
-                                                             aria-valuenow="0"
-                                                             aria-valuemin="0"
-                                                             aria-valuemax="100"></div>
+                                                        <div class="progress-bar" role="progressbar" style="width: 0%" aria-valuenow="0"
+                                                             aria-valuemin="0" aria-valuemax="100"></div>
                                                     </div>
                                                     <span class="rating-value">0</span>
                                                 </div>
@@ -621,12 +364,8 @@
                                                         4 <i class="icon-23"></i>
                                                     </div>
                                                     <div class="progress">
-                                                        <div class="progress-bar"
-                                                             role="progressbar"
-                                                             style="width: 0%"
-                                                             aria-valuenow="0"
-                                                             aria-valuemin="0"
-                                                             aria-valuemax="100"></div>
+                                                        <div class="progress-bar" role="progressbar" style="width: 0%" aria-valuenow="0"
+                                                             aria-valuemin="0" aria-valuemax="100"></div>
                                                     </div>
                                                     <span class="rating-value">0</span>
                                                 </div>
@@ -636,12 +375,8 @@
                                                         4 <i class="icon-23"></i>
                                                     </div>
                                                     <div class="progress">
-                                                        <div class="progress-bar"
-                                                             role="progressbar"
-                                                             style="width: 0%"
-                                                             aria-valuenow="0"
-                                                             aria-valuemin="0"
-                                                             aria-valuemax="100"></div>
+                                                        <div class="progress-bar" role="progressbar" style="width: 0%" aria-valuenow="0"
+                                                             aria-valuemin="0" aria-valuemax="100"></div>
                                                     </div>
                                                     <span class="rating-value">0</span>
                                                 </div>
@@ -657,3 +392,57 @@
         </div>
     </div>
 </section>
+
+
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+
+            function calculatePrice() {
+                var modeOfLecture = $('#modeOfLecture').val();
+                var validity = $('#validity').val();
+                var views = $('#views').val();
+                var productId = @Model.Id;
+
+                console.log({
+                    ProductId: productId,
+                    ModeOfLecture: modeOfLecture,
+                    ValidityInMonths: parseInt(validity),
+                    Views: parseInt(views)
+                });
+
+                $.ajax({
+                    url: '/Customer/Product/CalculatePrice',
+                    method: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify({
+                        ProductId: productId,
+                        ModeOfLecture: modeOfLecture,
+                        ValidityInMonths: parseInt(validity),
+                        Views: parseInt(views)
+                    }),
+                    success: function (data) {
+
+                        console.log(data, "NewPriceData");
+
+                        $('#calculatedPrice').text(data.price);
+                        $('#calculatedDiscountPrice').text(data.discountPrice);
+
+                        var discountPercentage = ((data.price - data.discountPrice) / data.price) * 100;
+                        $('#discountPercentage').text(Math.round(discountPercentage) + '%');
+                    },
+                    error: function (xhr, status, error) {
+                        console.error('Error calculating price:', error);
+                    }
+                });
+            }
+
+            $('.form-select').change(function () {
+                calculatePrice();
+            });
+
+            calculatePrice();
+        });
+    </script>
+}

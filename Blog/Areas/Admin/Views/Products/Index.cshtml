@@ -41,7 +41,7 @@
                                 <th></th>
                                 <th><strong>Product Name</strong></th>
                                 <th><strong>Sorted Order</strong></th>
-                                <th><strong>Date</strong></th>
+                                <th><strong>Price</strong></th>
                                 <th><strong>Action</strong></th>
                             </tr>
                         </thead>
@@ -51,10 +51,14 @@
                                 <tr>
                                     <td><img style="width: 50px; height: 50px" src="@product.ProductImageUrl" /></td>
                                     <td>@product.ProductName</td>
-                                    <td>@product.Price</td>
+                                    @* <td>@product.Price</td> *@
+                                    <td>5000</td> 
                                     <td>@product.CreatedOn.ToString("dd MMM yyyy")</td>
                                     <td>
                                         <div class="d-flex">
+                                            <a asp-area="Admin" asp-controller="Products" asp-action="SetPrices" asp-route-id="@product.Id" class="btn btn-dark shadow btn-xs sharp me-1 editfaculty" data-id="@product.Id">
+                                                <i class="fa-solid fa-indian-rupee-sign"></i>
+                                            </a>
                                             <a asp-area="Admin" asp-controller="Products" asp-action="Create" asp-route-id="@product.Id" class="btn btn-primary shadow btn-xs sharp me-1 editfaculty" data-id="@product.Id">
                                                 <i class="fa fa-pencil"></i>
                                             </a>
