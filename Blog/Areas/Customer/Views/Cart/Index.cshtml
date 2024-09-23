@@ -148,34 +148,7 @@
                         </tbody>
                     </table>
 
-                    <div class="row mb-4 payOption">
-                        <div class="col-lg-12">
-                            <div class="payment_method">
-                                <h6>Choose Payment Method</h6>
-                            </div>
-
-                            <div class="form-check">
-                                <input class="form-check-input"
-                                       type="checkbox"
-                                       value=""
-                                       id="online" />
-                                <label class="form-check-label" for="online">
-                                    Online Payment (UPI/Credit/Debit card)
-                                </label>
-                            </div>
-                            <div class="form-check">
-                                <input class="form-check-input"
-                                       type="checkbox"
-                                       value=""
-                                       id="cod" />
-                                <label class="form-check-label" for="cod">
-                                    COD (Cash on delivery)
-                                </label>
-                            </div>
-                        </div>
-                    </div>
-
-                    <a href="@Url.Action("Checkout", "Cart")" class="edu-btn btn-medium checkout-btn">
+                    <a asp-area="Customer" asp-controller="Checkout" asp-action="Index" class="edu-btn btn-medium checkout-btn">
                         Process to Checkout <i class="icon-4"></i>
                     </a>
 

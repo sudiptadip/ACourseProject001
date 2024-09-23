@@ -1,6 +1,5 @@
 ﻿@model ProductVM
 
-
 <div class="edu-breadcrumb-area breadcrumb-style-3">
     <div class="container">
         <div class="breadcrumb-inner">
@@ -8,7 +7,7 @@
                 <li class="breadcrumb-item"><a asp-area="Customer" asp-controller="Home" asp-action="Index">Home</a></li>
                 <li class="separator"><i class="icon-angle-right"></i></li>
                 <li class="breadcrumb-item active" aria-current="page">
-                     COURSES
+                    COURSES
                 </li>
             </ul>
         </div>
@@ -23,20 +22,6 @@
     </div>
 </div>
 
-<div class="row">
-    <div class="col-lg-12">
-        <div class="container-fluid">
-            <div class="edu-sorting-area">
-                <div class="sorting-right">
-                    <h6 class="showing-text">
-                        Showing <span>16</span> out of <span>35</span> results
-                    </h6>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
 <div class="edu-course-area course-area-1 section-gap-equal">
     <div class="container-fluid">
         <div class="row g-5 carts">
@@ -46,20 +31,13 @@
                         <div class="inner">
                             <h5 class="widget-title widget-toggle">Course</h5>
                             <div class="content">
-                                @{
-                                    int i = 0;
-                                }
                                 @foreach (var item in Model.CategoryList)
                                 {
                                     <div class="edu-form-check">
-                                        <input type="checkbox" id='@("cat-check" + i)'  />
-                                        <label for='@("cat-check" + i)'> @item.CategoryName <span>(17)</span></label>
+                                        <input type="checkbox" id="cat-check-@item.Id" class="category-filter" value="@item.Id" />
+                                        <label for="cat-check-@item.Id">@item.CategoryName</label>
                                     </div>
-
-                                    i++;
-
                                 }
-                                
                             </div>
                         </div>
                     </div>
@@ -68,41 +46,28 @@
                         <div class="inner">
                             <h5 class="widget-title widget-toggle">Faculty</h5>
                             <div class="content">
-                                @{
-                                    int j = 0;
-                                }
                                 @foreach (var item in Model.FacultyList)
                                 {
-                                    
                                     <div class="edu-form-check">
-                                        <input type="checkbox" id='@("inst-check" + j)' />
-                                        <label for='@("inst-check" + j)'>@item.FacultyName</label>
+                                        <input type="checkbox" id="faculty-check-@item.Id" class="faculty-filter" value="@item.Id" />
+                                        <label for="faculty-check-@item.Id">@item.FacultyName</label>
                                     </div>
-                                    j++;
                                 }
-                                
                             </div>
                         </div>
                     </div>
-
 
                     <div class="edu-course-widget widget-instructor">
                         <div class="inner">
                             <h5 class="widget-title widget-toggle">Subject</h5>
                             <div class="content">
-                                @{
-                                    int k = 0;
-                                }
                                 @foreach (var item in Model.SubjectList)
                                 {
-
                                     <div class="edu-form-check">
-                                        <input type="checkbox" id='@("sub-check" + k)' />
-                                        <label for='@("sub-check" + k)'>@item.SubjectName</label>
+                                        <input type="checkbox" id="subject-check-@item.Id" class="subject-filter" value="@item.Id" />
+                                        <label for="subject-check-@item.Id">@item.SubjectName</label>
                                     </div>
-                                    k++;
                                 }
-
                             </div>
                         </div>
                     </div>
@@ -110,69 +75,131 @@
             </div>
 
             <div class="col-lg-9 col-pr--35 order-lg-2">
-                <div class="row g-5">
-
+                <div class="row g-5" id="productList">
                     @foreach (var item in Model.ProductList)
                     {
-                        <div class="col-md-6 col-lg-4 col-xl-3"
-                             data-sal-delay="100"
-                             data-sal="slide-up"
-                             data-sal-duration="800">
+                        <div class="col-md-6 col-lg-4 col-xl-3" data-sal-delay="100" data-sal="slide-up" data-sal-duration="800">
                             <div class="edu-course course-style-1 hover-button-bg-white">
                                 <div class="inner">
                                     <div class="thumbnail">
-                                        <a asp-area="Customer" asp-controller="Product" asp-action="Details">
-                                            <img src="@item.ProductImageUrl"
-                                                 alt="Course Meta" />
+                                        <a asp-area="Customer" asp-controller="Product" asp-action="Details" asp-route-id="@item.Id">
+                                            <img src="@item.ProductImageUrl" alt="Course Meta" />
                                         </a>
 
                                         <div class="overlay"></div>
-                                        <div class="button"><a asp-area="Customer" asp-controller="Product" asp-action="Details" asp-route-id="@item.Id" > View </a></div>
+                                        <div class="button">
+                                            <a asp-area="Customer" asp-controller="Product" asp-action="Details" asp-route-id="@item.Id">View</a>
+                                        </div>
                                     </div>
                                     <div class="content">
                                         <h6 class="title">
-                                            <a asp-area="Customer" asp-controller="Product" asp-action="Details" asp-route-id="@item.Id">
-                                                @item.ProductName
-                                            </a>
+                                            <a asp-area="Customer" asp-controller="Product" asp-action="Details" asp-route-id="@item.Id">@item.ProductName</a>
                                         </h6>
 
                                         <div class="d-flex align-items-center mb-3">
                                             <a href="#" class="faculty_name">@item.Faculty.FacultyName</a>
                                         </div>
                                         <div class="course-price">
-                                           @*  <span class="ori_price">
-                                                <i class="fa-solid fa-indian-rupee-sign"></i> @item.DiscountPrice
-                                            </span> *@
-                                            @* <span class="del-price">
-                                                <i class="fa-solid fa-indian-rupee-sign"></i> @item.Price
+                                            <span class="ori_price">
+                                                <i class="fa-solid fa-indian-rupee-sign"></i> @item.DefaultDiscountPrice
+                                            </span>
+                                            <span class="del-price">
+                                                <i class="fa-solid fa-indian-rupee-sign"></i> @item.DefaultPrice
                                             </span>
                                             <span class="dis_price">
-                                                <i class="fa-solid fa-indian-rupee-sign"></i> @(item.Price - item.DiscountPrice)
-                                                off
-                                            </span> *@
+                                                <i class="fa-solid fa-indian-rupee-sign"></i> @(item.DefaultPrice - item.DefaultDiscountPrice) off
+                                            </span>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     }
-  
                 </div>
             </div>
         </div>
 
         <ul class="edu-pagination">
-            <li>
-                <a href="#" aria-label="Previous"><i class="icon-west"></i></a>
-            </li>
-            <li class="active"><a href="#">1</a></li>
-            <li><a href="#">2</a></li>
-            <li><a href="#">3</a></li>
-            <li class="more-next"><a href="#"></a></li>
-            <li><a href="#">8</a></li>
-            <li>
-                <a href="#" aria-label="Next"><i class="icon-east"></i></a>
-            </li>
+            @if (ViewBag.CurrentPage > 1)
+            {
+                <li><a href="#" data-page="@((int)ViewBag.CurrentPage - 1)" aria-label="Previous"><i class="icon-west"></i></a></li>
+            }
+
+            @for (int i = 1; i <= ViewBag.TotalPages; i++)
+            {
+                if (i == ViewBag.CurrentPage)
+                {
+                    <li class="active"><a href="#" data-page="@i">@i</a></li>
+                }
+                else
+                {
+                    <li><a href="#" data-page="@i">@i</a></li>
+                }
+            }
+
+            @if (ViewBag.CurrentPage < ViewBag.TotalPages)
+            {
+                <li><a href="#" data-page="@((int)ViewBag.CurrentPage + 1)" aria-label="Next"><i class="icon-east"></i></a></li>
+            }
         </ul>
     </div>
 </div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            // Detect changes in any checkbox (for categories, faculties, subjects)
+            $('.category-filter, .faculty-filter, .subject-filter').on('change', function () {
+                applyFilters(1);  // Reset to page 1 when filter changes
+            });
+
+            // Handle pagination link clicks
+            $(document).on('click', '.edu-pagination a', function (e) {
+                e.preventDefault(); // Prevent default link behavior
+                const page = $(this).attr('data-page');  // Get the page number from the link
+                applyFilters(page);  // Fetch the selected page
+            });
+
+            function applyFilters(page) {
+                let categories = [];
+                let faculties = [];
+                let subjects = [];
+
+                // Collect selected category filters
+                $('.category-filter:checked').each(function () {
+                    categories.push($(this).val());
+                });
+
+                // Collect selected faculty filters
+                $('.faculty-filter:checked').each(function () {
+                    faculties.push($(this).val());
+                });
+
+                // Collect selected subject filters
+                $('.subject-filter:checked').each(function () {
+                    subjects.push($(this).val());
+                });
+
+                // Send AJAX request to filter products and handle pagination
+                $.ajax({
+                    url: '@Url.Action("FilterProducts", "Product")',
+                    type: 'POST',
+                    data: {
+                        categories: categories,
+                        faculties: faculties,
+                        subjects: subjects,
+                        page: page  // Pass the current page number
+                    },
+                    success: function (response) {
+                        $('#productList').html(response.productsHtml);  // Update the product list
+                        $('.edu-pagination').html(response.paginationHtml);  // Update the pagination
+                        sal();  // Reinitialize animations (if needed)
+                    },
+                    error: function (error) {
+                        console.error("Error filtering products:", error);
+                    }
+                });
+            }
+        });
+    </script>
+}

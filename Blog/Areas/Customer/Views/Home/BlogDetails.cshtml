@@ -1,0 +1,39 @@
+﻿@model Blogs
+
+<div class="edu-breadcrumb-area breadcrumb-style-3">
+    <div class="container">
+        <div class="breadcrumb-inner">
+            <ul class="edu-breadcrumb">
+                <li class="breadcrumb-item"><a href="index.html">Home</a></li>
+                <li class="separator"><i class="icon-angle-right"></i></li>
+                <li class="breadcrumb-item active" aria-current="page">
+                    Blog Details
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<div class="edu-breadcrum-area mt-4">
+    <div class="section-title section-center" data-sal="slide-up" data-sal-duration="800">
+        <h3 class="title">Blog Details</h3>
+    </div>
+</div>
+
+<div class="container mt-5">
+    <div class="row">
+        <!-- Blog Image Section -->
+        <div class="col-md-12 text-center">
+            <img src="@Model.ImageUrl" class="img-fluid rounded" alt="Blog Image">
+        </div>
+
+        <!-- Blog Title and Description -->
+        <div class="col-md-12 mt-4">
+            <h1 class="display-5 text-center">@Model.Title</h1>
+            <p class="lead text-center text-muted">Published on @Model.CreatedOn.ToString("dd-mm-yyyy")</p>
+            <p class="mt-4">
+                 @Html.Raw(Model.Description) 
+            </p>
+        </div>
+    </div>
+</div>

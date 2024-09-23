@@ -24,6 +24,8 @@ namespace Blog.DataAccess.Data
         public DbSet<Cart> Carts { get; set; }
         public DbSet<CartItem> CartItems { get; set; }
         public DbSet<Blogs> Blogs { get; set; } 
- 
+        public DbSet<OrderItem> OrderItems { get; set; } 
+        public DbSet<Order> Order { get; set; }
+        public DbSet<SosalMedia> SosalMedia { get; set; }
     }
 }

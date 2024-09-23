@@ -16,6 +16,11 @@ namespace Blog.DataAccess.Repository.IRepository
         ICartItemRepository CartItem { get; }
         ICartRepository Cart { get; }
         IBlogRepository Blog { get; }
+        IOrderItemRepository OrderItem { get; }
+        IOrderRepository Order { get; }
+        ISosalMediaRepository SosalMedia { get; }
+        IApplicationUserRepository ApplicationUser { get; }
+
         void Save();
     }
 }

@@ -1,0 +1,41 @@
+﻿@model IEnumerable<Product>
+
+@foreach (var item in Model)
+{
+    <div class="col-md-6 col-lg-4 col-xl-3" data-sal-delay="100" data-sal="slide-up" data-sal-duration="800">
+        <div class="edu-course course-style-1 hover-button-bg-white">
+            <div class="inner">
+                <div class="thumbnail">
+                    <a asp-area="Customer" asp-controller="Product" asp-action="Details" asp-route-id="@item.Id">
+                        <img src="@item.ProductImageUrl" alt="Course Meta" />
+                    </a>
+
+                    <div class="overlay"></div>
+                    <div class="button">
+                        <a asp-area="Customer" asp-controller="Product" asp-action="Details" asp-route-id="@item.Id">View</a>
+                    </div>
+                </div>
+                <div class="content">
+                    <h6 class="title">
+                        <a asp-area="Customer" asp-controller="Product" asp-action="Details" asp-route-id="@item.Id">@item.ProductName</a>
+                    </h6>
+
+                    <div class="d-flex align-items-center mb-3">
+                        <a href="#" class="faculty_name">@item.Faculty.FacultyName</a>
+                    </div>
+                    <div class="course-price">
+                        <span class="ori_price">
+                            <i class="fa-solid fa-indian-rupee-sign"></i> @item.DefaultDiscountPrice
+                        </span>
+                        <span class="del-price">
+                            <i class="fa-solid fa-indian-rupee-sign"></i> @item.DefaultPrice
+                        </span>
+                        <span class="dis_price">
+                            <i class="fa-solid fa-indian-rupee-sign"></i> @(item.DefaultPrice - item.DefaultDiscountPrice) off
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}

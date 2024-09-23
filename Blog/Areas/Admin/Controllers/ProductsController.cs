@@ -29,7 +29,6 @@ namespace Blog.Areas.Admin.Controllers
             _unitOfWork = unitOfWork;
         }
 
-        // GET: Products
         public async Task<IActionResult> Index()
         {
             IEnumerable<Product> products = await _context.Products.ToListAsync();
@@ -40,7 +39,6 @@ namespace Blog.Areas.Admin.Controllers
         [HttpGet]
         public async Task<IActionResult> Create(int? id)
         {
-            // Populate Category and Faculty lists
             IEnumerable<SelectListItem> categoryList = _context.Categories.Select(u => new SelectListItem
             {
                 Text = u.CategoryName,
@@ -63,7 +61,6 @@ namespace Blog.Areas.Admin.Controllers
             ViewData["FacultyList"] = facultyList;
             ViewData["SubjectList"] = subjectList;
 
-            // If 'id' is provided, we're editing an existing product
             if (id.HasValue)
             {
                 var product = await _context.Products.Include(p => p.ProductAttributes)
@@ -74,12 +71,15 @@ namespace Blog.Areas.Admin.Controllers
                     return NotFound();
                 }
 
-                // Populate ProductCreateDto with existing product data
                 var productDto = new ProductCreateDto
                 {
                     ProductName = product.ProductName,
                     CategoryId = product.CategoryId,
                     FacultyId = product.FacultyId,
+                    DefaultPrice = product.DefaultPrice,
+                    DefaultDiscountPrice = product.DefaultDiscountPrice,
+                    IsActive = product.IsActive,
+                    ProductDescription = product.ProductDescription,
                     SubjectId = product.SubjectId,
                     ProductImageUrl = product.ProductImageUrl,
                     ProductAttribuets = product.ProductAttributes.Select(a => new ProductAttribuetDto
@@ -91,11 +91,10 @@ namespace Blog.Areas.Admin.Controllers
                 };
 
                 ViewBag.ProductId = id;
-                // Send product DTO to the view for editing
                 return View(productDto);
             }
 
-            // If 'id' is not provided, we're creating a new product
+
             return View();
         }
 
@@ -118,14 +117,18 @@ namespace Blog.Areas.Admin.Controllers
 
                 if (existingProduct != null)
                 {
-                    // Update the existing product
                     existingProduct.ProductName = productDto.ProductName;
                     existingProduct.CategoryId = productDto.CategoryId;
                     existingProduct.FacultyId = productDto.FacultyId;
                     existingProduct.SubjectId = productDto.SubjectId;
+                    existingProduct.ProductDescription = productDto.ProductDescription;
+                    existingProduct.DefaultDiscountPrice = productDto.DefaultDiscountPrice;
+                    existingProduct.DefaultPrice = productDto.DefaultPrice;
+                    existingProduct.IsActive = productDto.IsActive;
+                    
+
                     if (!string.IsNullOrEmpty(imageUrl)) existingProduct.ProductImageUrl = imageUrl;
 
-                    // Clear the old attributes and add new ones
                     _context.ProductAttributes.RemoveRange(existingProduct.ProductAttributes);
 
                     var productAttributes = productDto.ProductAttribuets.Select(attr => new ProductAttribute
@@ -137,14 +140,13 @@ namespace Blog.Areas.Admin.Controllers
                     }).ToList();
 
                     _context.ProductAttributes.AddRange(productAttributes);
-                    await _context.SaveChangesAsync();
+                    _unitOfWork.Save();
 
                     return Ok(productDto);
                 }
             }
             else
             {
-                // If id is null, create a new product
                 var product = new Product
                 {
                     ProductName = productDto.ProductName,
@@ -152,11 +154,15 @@ namespace Blog.Areas.Admin.Controllers
                     FacultyId = productDto.FacultyId,
                     SubjectId = productDto.SubjectId,
                     ProductImageUrl = imageUrl,
-                    CreatedOn = DateTime.Now
+                    CreatedOn = DateTime.Now,
+                    DefaultDiscountPrice = productDto.DefaultDiscountPrice,
+                    DefaultPrice = productDto.DefaultPrice,
+                    IsActive = productDto.IsActive,
+                    ProductDescription = productDto.ProductDescription,
                 };
 
                 _context.Products.Add(product);
-                await _context.SaveChangesAsync();
+                _context.SaveChanges();
 
                 var productAttributes = productDto.ProductAttribuets.Select(attr => new ProductAttribute
                 {
@@ -167,7 +173,7 @@ namespace Blog.Areas.Admin.Controllers
                 }).ToList();
 
                 _context.ProductAttributes.AddRange(productAttributes);
-                await _context.SaveChangesAsync();
+                _unitOfWork.Save();
 
                 return Ok(productDto);
             }

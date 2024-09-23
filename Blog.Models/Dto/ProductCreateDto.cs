@@ -13,6 +13,10 @@ namespace Blog.Models.Dto
         public int CategoryId { get; set; }
         public int FacultyId { get; set; }
         public int SubjectId { get; set; }
+        public string ProductDescription { get; set; }
+        public bool IsActive { get; set; }
+        public decimal DefaultPrice { get; set; }
+        public decimal DefaultDiscountPrice { get; set; }
         public IFormFile ProductImage { get; set; }
         public string ProductImageUrl { get; set; }
         public List<ProductAttribuetDto> ProductAttribuets { get; set; }

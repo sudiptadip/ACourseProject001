@@ -12,9 +12,12 @@ namespace Blog.Models.Models
         public int Id { get; set; }
         public string ProductName { get; set; }
         public string ProductImageUrl { get; set; }
+        public string ProductDescription { get; set; }
+        public bool IsActive { get; set; }
+        public decimal DefaultPrice { get; set; }
+        public decimal DefaultDiscountPrice { get; set; }
         public DateTime CreatedOn { get; set; }
         public DateTime ModifiedOn { get; set; }
-
 
         [ForeignKey("Category")]
         public int CategoryId { get; set; }

@@ -5,26 +5,130 @@
     ViewData["ActivePage"] = ManageNavPages.Index;
 }
 
-<h3>@ViewData["Title"]</h3>
-<partial name="_StatusMessage" for="StatusMessage" />
-<div class="row">
-    <div class="col-md-6">
-        <form id="profile-form" method="post">
-            <div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div>
-            <div class="form-floating mb-3">
-                <input asp-for="Username" class="form-control" placeholder="Please choose your username." disabled />
-                <label asp-for="Username" class="form-label"></label>
+
+
+<div class="edu-breadcrumb-area breadcrumb-style-3">
+    <div class="container">
+        <div class="breadcrumb-inner">
+            <ul class="edu-breadcrumb">
+                <li class="breadcrumb-item"><a href="index.html">Home</a></li>
+                <li class="separator"><i class="icon-angle-right"></i></li>
+                <li class="breadcrumb-item active" aria-current="page">
+                    Order History
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>
+<div class="edu-breadcrum-area mt-4">
+    <div class="section-title section-center" data-sal="slide-up" data-sal-duration="800">
+        <h3 class="title">Order History</h3>
+    </div>
+</div>
+
+<!--=====================================-->
+<!--=           order history Area Start         =-->
+<!--=====================================-->
+<section class="cart-page-area edu-section-gap">
+    <div class="container">
+         @if (!Model.Input.OrderHistoryVM.Any())
+    {
+        <p>You have no orders yet.</p>
+    }
+    else
+    {
+        int i = 1; 
+
+        @foreach (var order in Model.Input.OrderHistoryVM)
+        {
+
+                <div class="table-responsive mt-5 shadow-sm">
+                    <h4 class="py-3">
+                        Order No: @(i++)
+                        <i class="fas fa-info-circle"
+                           data-toggle="tooltip"
+                           data-placement="right"
+                           title="Address: @order.FirstName @order.LastName, @order.Address, @order.City, @order.State, @order.PostalCode, @order.Country"></i>
+                    </h4>
+                    <table class="table cart-table">
+                        <thead>
+                            <tr>
+                                <th scope="col" class="product-thumbnail"></th>
+                                <th scope="col" class="product-title">Product Name</th>
+                                <th scope="col" class="product-quantity">Quantity</th>
+                                <th scope="col" class="product-price">Price</th>
+                                <th scope="col" class="product-price">Details</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in order.OrderItems)
+                            {
+                                <tr>
+                                    <td class="product-thumbnail">
+                                        <a asp-area="Customer" asp-action="Details" asp-controller="Product" asp-route-id="@item.ProductId" >
+                                            <img src="@item.ProductImage" alt="Course Meta">
+                                        </a>
+                                    </td>
+                                    <td class="product-title text-center">
+                                        <a asp-area="Customer" asp-action="Details" asp-controller="Product" asp-route-id="@item.ProductId">@item.ProductName</a>
+                                    </td>
+                                    <td class="product-quantity text-center" data-title="Qty">
+                                        @item.Quantity
+                                    </td>
+                                    <td class="product-price text-center" data-title="Price">
+                                        <span class="currency-symbol">₹</span> @item.Price
+                                    </td>
+                                    <td>
+                                        <span>Mode Of Lecture : @item.ModeOfLecture</span> <br />
+                                        <span>Validity : @item.ValidityInMonths Month</span> <br />
+                                        <span>Views: @item.Views</span> <br />
+                                        <span>Attempt : @item.Attempt</span>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+        }
+    }
+    </div>
+</section>
+
+<!-- Start CTA Area  -->
+<div class="home-one-cta-two cta-area-1">
+    <div class="container-fluid">
+        <div class="row justify-content-center">
+            <div class="col-xl-12">
+                <div class="home-one-cta edu-cta-box">
+                    <div class="inner">
+                        <div class="content">
+                            <span class="subtitle">Need to speak with us? Give us a ring at - </span>
+                            <span><a href="tel:+919836832223" target="_blank"> 9836832223 / </a></span>
+                            <span><a href="tel:+919051399390" target="_blank"> 9051399390</a></span>
+                        </div>
+                    </div>
+                    <ul class="shape-group">
+                        <li class="shape-01 scene">
+                            <img data-depth="2" src="~/images/cta/shape-06.png" alt="shape" />
+                        </li>
+                        <li class="shape-02 scene">
+                            <img data-depth="-2" src="~/images/cta/shape-12.png" alt="shape" />
+                        </li>
+                        <li class="shape-03 scene">
+                            <img data-depth="-3" src="~/images/cta/shape-04.png" alt="shape" />
+                        </li>
+                    </ul>
+                </div>
             </div>
-            <div class="form-floating mb-3">
-                <input asp-for="Input.PhoneNumber" class="form-control" placeholder="Please enter your phone number."/>
-                <label asp-for="Input.PhoneNumber" class="form-label"></label>
-                <span asp-validation-for="Input.PhoneNumber" class="text-danger"></span>
-            </div>
-            <button id="update-profile-button" type="submit" class="w-100 btn btn-lg btn-primary">Save</button>
-        </form>
+        </div>
     </div>
 </div>
 
 @section Scripts {
+    <script>
+        $(function () {
+            $('[data-toggle="tooltip"]').tooltip()
+        })
+    </script>
     <partial name="_ValidationScriptsPartial" />
 }

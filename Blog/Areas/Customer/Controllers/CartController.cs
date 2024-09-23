@@ -172,6 +172,5 @@ namespace Blog.Areas.Customer.Controllers
             return RedirectToAction("Index", "Cart");
         }
 
-
     }
 }

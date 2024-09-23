@@ -46,7 +46,7 @@ namespace Blog.Areas.Admin.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Upsert(Blogs blogs, IFormFile file)
+        public async Task<IActionResult> Upsert(Blogs blogs, IFormFile? file)
         {
             if (ModelState.IsValid)
             {
@@ -101,7 +101,12 @@ namespace Blog.Areas.Admin.Controllers
                     existingBlog.Description = blogs.Description;
                     existingBlog.SortedOrder = blogs.SortedOrder;
                     existingBlog.CategoryName = blogs.CategoryName;
-                    existingBlog.ImageUrl = blogs.ImageUrl;
+
+                    if (!String.IsNullOrEmpty(blogs.ImageUrl))
+                    {
+                        existingBlog.ImageUrl = blogs.ImageUrl;
+                    }
+
 
                     _unitOfWork.Blog.Update(existingBlog);
                 }

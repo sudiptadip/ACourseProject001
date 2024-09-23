@@ -1,0 +1,100 @@
+﻿@model SosalMedia
+
+<div class="edu-footer footer-lighten bg-image footer-style-1">
+    <div class="footer-top">
+        <div class="container-fluid">
+            <div class="row g-5 carts">
+                <div class="col-lg-3 col-md-6 col-xs-6">
+                    <div class="edu-footer-widget">
+                        <div class="inner">
+                            <h4 class="widget-title">TOPCLASSES</h4>
+                            <ul class="footer-link link-hover">
+                                <li><a asp-area="Customer" asp-controller="Home" asp-action="Achivements">Achivement</a></li>
+                                <li><a asp-area="Customer" asp-controller="Home" asp-action="Blogs">Blogs</a></li>
+                                <li><a href="#">Sitemap</a></li>
+                                <li><a href="#">FAQ</a></li>
+                                <li><a asp-area="Customer" asp-controller="Home" asp-action="Contact">Contact Us</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-3 col-md-6 col-xs-6">
+                    <div class="edu-footer-widget quick-link-widget">
+                        <h6 class="widget-title">Our Policies</h6>
+                        <div class="inner">
+                            <ul class="footer-link link-hover">
+                                <li><a asp-area="Customer" asp-controller="Home" asp-action="Privacy">Privacy Policy</a></li>
+                                <li><a asp-area="Customer" asp-controller="Home" asp-action="RefundPolicy">Refund Policy</a></li>
+                                <li><a asp-area="Customer" asp-controller="Home" asp-action="TermsAndCondition">Terms & Condition</a></li>
+                                <li><a href="#">Cookies Policy</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-3 col-md-6">
+                    <div class="edu-footer-widget explore-widget">
+                        <h6 class="widget-title">Follow Us</h6>
+                        <div class="inner">
+                            <ul class="social-share icon-transparent">
+                                <li>
+                                    <a target="_blank" href="@Model.Facebook" class="color-fb">
+                                        <i class="icon-facebook"></i>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a target="_blank" href="@Model.LinkedIn" class="color-linkd">
+                                        <i class="icon-linkedin2"></i>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a target="_blank" href="@Model.Instagram" class="color-ig">
+                                        <i class="icon-instagram"></i>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a target="_blank" href="@Model.Twitter" class="color-twitter">
+                                        <i class="fa-brands fa-telegram"></i>
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-3 col-md-6 col-sm-12">
+                    <div class="edu-footer-widget">
+                        <h6 class="widget-title">Get Latest Updates</h6>
+                        <p>Subrcibe now for our updates and newsletters</p>
+                        <div class="inner">
+                            <div class="input-group footer-subscription-form">
+                                <input type="email"
+                                       class="form-control"
+                                       placeholder="Your email" />
+                                <button class="edu-btn btn-small" type="button">
+                                    Subscribe <i class="icon-4"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="copyright-area">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="inner text-center">
+                        <p>
+                            Copyright 2024 <a href="#" target="_blank">Topclasses</a>
+                            <!-- Designed By <a href="#" target="_blank">Solution Infotech</a>. -->
+                            All Rights Reserved
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

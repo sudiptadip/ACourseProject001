@@ -1,0 +1,186 @@
+﻿@model CheckoutVM
+
+<div class="edu-breadcrumb-area breadcrumb-style-3">
+    <div class="container">
+        <div class="breadcrumb-inner">
+            <ul class="edu-breadcrumb">
+                <li class="breadcrumb-item"><a href="index.html">Home</a></li>
+                <li class="separator"><i class="icon-angle-right"></i></li>
+                <li class="breadcrumb-item active" aria-current="page">
+                    Checkout
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>
+<div class="edu-breadcrum-area mt-4">
+    <div class="section-title section-center" data-sal="slide-up" data-sal-duration="800">
+        <h3 class="title">Checkout</h3>
+    </div>
+</div>
+
+<!--=====================================-->
+<!--=       Checkout Area Start         =-->
+<!--=====================================-->
+
+<section class="checkout-page-area section-gap-equal">
+    <div class="container">
+        <form method="post" asp-area="Customer" asp-controller="Checkout" asp-action="PlaceOrder">
+            <div class="row row--25">
+                <div class="col-lg-6">
+                    <div class="checkout-billing">
+                        <h3 class="title">Billing Details</h3>
+                        <div class="row g-lg-5">
+                            <div class="col-lg-6">
+                                <div class="form-group">
+                                    <label asp-for="FirstName">First Name*</label>
+                                    <input asp-for="FirstName"  />
+                                    <span asp-validation-for="FirstName" class="text-danger" ></span>
+                                </div>
+                            </div>
+                            <div class="col-lg-6">
+                                <div class="form-group">
+                                    <label asp-for="LastName">Last Name*</label>
+                                    <input asp-for="LastName" type="text" id="last-name">
+                                    <span asp-validation-for="LastName" class="text-danger"></span>
+
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="Email" >Email Address*</label>
+                            <input asp-for="Email" type="email">
+                            <span asp-validation-for="Email" class="text-danger"></span>
+
+                        </div>
+                        <div class="row g-lg-5">
+                            <div class="col-lg-6">
+                                <div class="form-group">
+                                    <label asp-for="PhoneNumber" >Phone*</label>
+                                    <input asp-for="PhoneNumber" type="tel" >
+                                    <span asp-validation-for="PhoneNumber" class="text-danger"></span>
+
+                                </div>
+                            </div>
+                            <div class="col-lg-6">
+                                <div class="form-group">
+                                    <label asp-for="Country" >Country*</label>
+                                    <select asp-for="Country" id="country">
+                                        <option value="">Select Option</option>
+                                        <option selected >India</option>
+                                    </select>
+                                    <span asp-validation-for="Country" class="text-danger"></span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="Address">Address*</label>
+                            <input asp-for="Address">
+                            <span asp-validation-for="Address" class="text-danger"></span>
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="City" >Town/ City*</label>
+                            <input asp-for="City">
+                            <span asp-validation-for="City" class="text-danger"></span>
+                        </div>
+                        <div class="row g-lg-5">
+                            <div class="col-lg-6">
+                                <div class="form-group">
+                                    <label asp-for="State">State*</label>
+                                    <select asp-for="State">
+                                        <option value="" >Select Option</option>
+                                        <option value="WestBengal">West Bengal</option>
+                                        <option value="Gujrat">Gujrat</option>
+                                        <option value="Tamilnadu">Tamilnadu</option>
+                                    </select>
+                                    <span asp-validation-for="State" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="col-lg-6">
+                                <div class="form-group">
+                                    <label asp-for="PostalCode" >Zip Code*</label>
+                                    <input  asp-for="PostalCode">
+                                    <span asp-validation-for="PostalCode" class="text-danger"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-6">
+                    <div class="order-summery checkout-summery">
+                        <div class="summery-table-wrap">
+                            <h4 class="title">Your Orders</h4>
+                            <table class="table summery-table">
+                                <tbody>
+                                    
+                                    @foreach (var item in Model.Cart.CartItems)
+                                    {
+                                        <tr>
+                                            <td>
+                                                <span class="fs-3">@item.Product.ProductName</span> <span class="quantity fs-3">x @item.Quantity</span>
+                                               <br />
+                                                <span>Mode Of Lecture : @item.ModeOfLecture</span> <br />
+                                                <span>Validity : @item.ValidityInMonths - Month</span> <br />
+                                                <span>Views: @item.Views</span> <br />
+                                                <span>Attempt : @item.Attempt</span>
+                                            </td>
+                                            <td>₹ @item.Price</td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="order-payment">
+                        <h4 class="title">Payment</h4>
+                        <div class="payment-method">
+                            <div class="form-group">
+                                <div class="edu-form-check">
+                                    <input checked type="radio" id="pay-bank" name="payment">
+                                    <label for="pay-bank">Online Payment</label>
+                                </div>
+                            </div>
+                        </div>
+                        <button class="edu-btn order-place">Place Your order <i class="icon-4"></i></button>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</section>
+
+<!-- Start CTA Area  -->
+<div class="home-one-cta-two cta-area-1">
+    <div class="container-fluid">
+        <div class="row justify-content-center">
+            <div class="col-xl-12">
+                <div class="home-one-cta edu-cta-box">
+                    <div class="inner">
+                        <div class="content">
+                            <span class="subtitle">Need to speak with us? Give us a ring at - </span>
+                            <span><a href="tel:+919836832223" target="_blank"> 9836832223 / </a></span>
+                            <span><a href="tel:+919051399390" target="_blank"> 9051399390</a></span>
+                        </div>
+                    </div>
+                    <ul class="shape-group">
+                        <li class="shape-01 scene">
+                            <img data-depth="2" src="assets/images/cta/shape-06.png" alt="shape" />
+                        </li>
+                        <li class="shape-02 scene">
+                            <img data-depth="-2" src="assets/images/cta/shape-12.png" alt="shape" />
+                        </li>
+                        <li class="shape-03 scene">
+                            <img data-depth="-3" src="assets/images/cta/shape-04.png" alt="shape" />
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

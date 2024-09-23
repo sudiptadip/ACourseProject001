@@ -27,6 +27,14 @@ namespace Blog.DataAccess.Repository
 
         public IBlogRepository Blog { get; private set; }
 
+        public IOrderItemRepository OrderItem { get; private set; }
+
+        public IOrderRepository Order { get; private set; }
+
+        public ISosalMediaRepository SosalMedia { get; private set; }
+
+        public IApplicationUserRepository ApplicationUser { get; private set; }
+
         private readonly ApplicationDbContext _db;
         public UniteOfWork(ApplicationDbContext db)
         {
@@ -39,6 +47,10 @@ namespace Blog.DataAccess.Repository
             Cart = new CartRepository(_db);
             CartItem = new CartItemRepository(_db);
             Blog = new BlogRepository(_db);
+            Order = new OrderRepository(_db);
+            OrderItem = new OrderItemRepository(_db);
+            SosalMedia = new SosalMediaRepository(_db);
+            ApplicationUser = new ApplicationUserRepository(_db);
         }
 
         public void Save()

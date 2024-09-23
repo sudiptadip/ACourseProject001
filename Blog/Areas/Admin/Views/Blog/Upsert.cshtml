@@ -25,7 +25,7 @@
             </div>
             <div class="mb-3">
                 <label asp-for="Description" class="form-label"></label>
-                <input asp-for="Description" class="form-control" placeholder="">
+                <textarea asp-for="Description" class="form-control" id="description-editor"></textarea>
                 <span class="text-danger" asp-validation-for="Description"></span>
             </div>
             <div class="mb-3">
@@ -52,7 +52,20 @@
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
+
+    <!-- CKEditor Script -->
+    <script src="https://cdn.ckeditor.com/ckeditor5/35.0.1/classic/ckeditor.js"></script>
+
     <script>
+        // Initialize CKEditor
+
+        ClassicEditor
+            .create(document.querySelector('#description-editor'))
+            .catch(error => {
+                console.error(error);
+            });
+
+        // Validate file size and type
         document.querySelector('form').addEventListener('submit', function (e) {
             var fileInput = document.querySelector('input[name="file"]');
             if (fileInput.files.length > 0) {

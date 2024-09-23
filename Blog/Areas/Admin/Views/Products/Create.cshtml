@@ -16,20 +16,10 @@
                         <input type="text" class="form-control" id="productName" name="productName"
                                value="@Model?.ProductName" placeholder="Enter product name" required>
                     </div>
-                    @* <div class="col-md-6">
-                        <label for="price" class="form-label">Price <span class="text-danger">*</span></label>
-                        <input type="number" class="form-control" id="price" name="price"
-                               value="@Model?.Price" placeholder="Enter product price" required>
-                    </div>
-                    <div class="col-md-6 mt-3">
-                        <label for="discountPrice" class="form-label">Discount Price <span class="text-danger">*</span></label>
-                        <input type="number" class="form-control" id="discountPrice" name="discountPrice"
-                               value="@Model?.DiscountPrice" placeholder="Enter discount price" required>
-                    </div> *@
                     <div class="col-md-6 mt-3">
                         <label for="category" class="form-label">Category <span class="text-danger">*</span></label>
                         <select class="form-control" id="category" name="category" required>
-                            <option value="" disabled>Select Category</option>
+                            <option value="" disabled selected >Select Category</option>
                             @foreach (var category in ViewData["CategoryList"] as IEnumerable<SelectListItem>)
                             {
                                 var isSelected = category.Value == Model?.CategoryId.ToString() ? "selected" : "";
@@ -37,6 +27,7 @@
                             }
                         </select>
                     </div>
+
                     <div class="col-md-6 mt-3">
                         <label for="faculty" class="form-label">Faculty <span class="text-danger">*</span></label>
                         <select class="form-control" id="faculty" name="faculty" required>
@@ -48,6 +39,7 @@
                             }
                         </select>
                     </div>
+
                     <div class="col-md-6 mt-3">
                         <label for="subject" class="form-label">Subject <span class="text-danger">*</span></label>
                         <select class="form-control" id="subject" name="subject" required>
@@ -59,6 +51,35 @@
                             }
                         </select>
                     </div>
+
+                    <!-- New fields for Product Description, IsActive, DefaultPrice, and DefaultDiscountPrice -->
+
+                    <div class="col-md-12 mt-3">
+                        <label for="productDescription" class="form-label">Product Description</label>
+                        <textarea class="form-control" id="productDescription" name="productDescription"
+                                  placeholder="Enter product description">@Model?.ProductDescription</textarea>
+                    </div>
+
+                    <div class="col-md-6 mt-3">
+                        <label for="isActive" class="form-label">Is Active</label>
+                        <select class="form-control" id="isActive" name="isActive" required>
+                            <!option value="true" @(Model?.IsActive == true ? "selected" : "")>Active</!option>
+                            <!option value="false" @(Model?.IsActive == false ? "selected" : "")>Inactive</!option>
+                        </select>
+                    </div>
+
+                    <div class="col-md-6 mt-3">
+                        <label for="defaultPrice" class="form-label">Default Price</label>
+                        <input type="number" class="form-control" id="defaultPrice" name="defaultPrice" step="0.01"
+                               value="@Model?.DefaultPrice" placeholder="Enter default price" required>
+                    </div>
+
+                    <div class="col-md-6 mt-3">
+                        <label for="defaultDiscountPrice" class="form-label">Default Discount Price</label>
+                        <input type="number" class="form-control" id="defaultDiscountPrice" name="defaultDiscountPrice" step="0.01"
+                               value="@Model?.DefaultDiscountPrice" placeholder="Enter default discount price" required>
+                    </div>
+
                     <div class="col-md-6 mt-3">
                         <label for="ProductImage" class="form-label">Product Image <span class="text-danger">*</span></label>
                         <input type="file" class="form-control" id="ProductImage" name="ProductImage" @(isEdit ? "" : "required")>
@@ -69,6 +90,7 @@
                     </div>
                 </div>
 
+                <!-- Product Attributes Section -->
                 <div class="mb-3">
                     <div class="d-flex justify-content-between mb-3 mt-3">
                         <h5>Product Attributes</h5>
@@ -93,7 +115,7 @@
                                         <td><input type="text" class="form-control" name="attributes[@(i)][value]" value="@Model.ProductAttribuets[i].Value" required></td>
                                         <td>
                                             <select class="form-control attributeType" name="attributes[@(i)][attributeType]" required>
-                                                <option value="" disabled selected>Select Attribute Type</option>
+                                                <!option value="" disabled selected>Select Attribute Type</!option>
                                                 <!option value="ProductInfo" @(Model.ProductAttribuets[i].AttributeType == "ProductInfo" ? "selected" : "")>Product Info</!option>
                                                 <!option value="Faq" @(Model.ProductAttribuets[i].AttributeType == "Faq" ? "selected" : "")>Faq</!option>
                                                 <!option value="System" @(Model.ProductAttribuets[i].AttributeType == "System" ? "selected" : "")>System</!option>
@@ -108,16 +130,24 @@
                     </table>
                 </div>
 
-                <button type="submit" class="btn btn-success">@isEdit ? "Update" : "Create"</button>
+                <button type="submit" class="btn btn-success">@(isEdit ? "Update" : "Create")</button>
             </form>
         </div>
     </div>
 </div>
 
 @section Scripts {
+    <script src="https://cdn.ckeditor.com/ckeditor5/35.0.1/classic/ckeditor.js"></script>
     <script>
         $(document).ready(function () {
             let attributeCount = $("#attributeRows tr").length || 0;
+
+            // Initialize CKEditor for the product description
+            ClassicEditor
+                .create(document.querySelector('#productDescription'))
+                .catch(error => {
+                    console.error(error);
+                });
 
             // Add new row for product attribute
             $('#addAttributeBtn').click(function () {
@@ -142,7 +172,8 @@
 
             // Remove row function
             window.removeRow = function (rowId) {
-                $(`#row${rowId}`).remove(); // Make sure to use backticks here
+                $(`#row${rowId}`).remove(); 
+                attributeCount--; // Decrease attribute count when row is removed
             };
 
             // Submit form
@@ -161,8 +192,13 @@
                     }
                 });
 
+                // Check if attributeRows has at least one row
+                if ($('#attributeRows tr').length === 0) {
+                    isValid = false;
+                    alert("Please add at least one product attribute.");
+                }
+
                 if (!isValid) {
-                    alert("Please fill all required fields.");
                     return;
                 }
 
@@ -172,6 +208,10 @@
                 formData.append('CategoryId', $('#category').val());
                 formData.append('FacultyId', $('#faculty').val());
                 formData.append('SubjectId', $('#subject').val());
+                formData.append('ProductDescription', $('#productDescription').val());
+                formData.append('IsActive', $('#isActive').val());
+                formData.append('DefaultPrice', $('#defaultPrice').val());
+                formData.append('DefaultDiscountPrice', $('#defaultDiscountPrice').val());
 
                 // If a product image was selected, append it to the form data
                 let productImage = $('#ProductImage')[0].files[0];
@@ -192,8 +232,6 @@
                 if (productId) {
                     formData.append('Id', productId);
                 }
-
-                console.log("ProductID", productId);
 
                 $.ajax({
                     url: productId ? `/Admin/Products/Create/${productId}` : '/Admin/Products/Create', // Adjust URL based on Create or Edit

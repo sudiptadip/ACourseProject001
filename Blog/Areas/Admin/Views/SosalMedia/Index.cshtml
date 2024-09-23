@@ -1,0 +1,58 @@
+﻿@model SosalMedia
+
+@{
+    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+}
+
+<div class="container">
+    <form method="post" enctype="multipart/form-data">
+        <div class="modal-header">
+            <h5 class="modal-title" id="categoryModalLabel">Update Sosal Media</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body row">
+            <input type="hidden" id="facultyId" name="Id" value="@Model.Id" />
+            <div class="mb-3 col-md-6">
+                <label asp-for="Mobile" class="form-label"></label>
+                <input asp-for="Mobile" class="form-control" placeholder="">
+                <span asp-validation-for="Mobile" class="text-danger"></span>
+            </div>
+            <div class="mb-3 col-md-6">
+                <label asp-for="Email" class="form-label"></label>
+                <input asp-for="Email" class="form-control" placeholder="">
+                <span asp-validation-for="Email" class="text-danger" ></span>
+            </div>
+            <div class="mb-3 col-md-6">
+                <label asp-for="Facebook" class="form-label"></label>
+                <input asp-for="Facebook" class="form-control" placeholder="">
+            </div>
+            <div class="mb-3 col-md-6">
+                <label asp-for="YouTube" class="form-label"></label>
+                <input asp-for="YouTube" class="form-control" placeholder="">
+            </div>
+            <div class="mb-3 col-md-6">
+                <label asp-for="WhatsApp" class="form-label"></label>
+                <input asp-for="WhatsApp" class="form-control" placeholder="">
+            </div>
+            <div class="mb-3 col-md-6">
+                <label asp-for="Instagram" class="form-label"></label>
+                <input asp-for="Instagram" class="form-control" placeholder="">
+            </div>
+            <div class="mb-3 col-md-6">
+                <label asp-for="LinkedIn" class="form-label"></label>
+                <input asp-for="LinkedIn" class="form-control" placeholder="">
+            </div>
+            <div class="mb-3 col-md-6">
+                <label asp-for="Telegram" class="form-label"></label>
+                <input asp-for="Telegram" class="form-control" placeholder="">
+            </div>
+            <div class="mb-3 col-md-6">
+                <label asp-for="Twitter" class="form-label"></label>
+                <input asp-for="Twitter" class="form-control" placeholder="">
+            </div>
+        </div>
+        <div class="ms-4">
+            <button type="submit" class="btn btn-primary">Save changes</button>
+        </div>
+    </form>
+</div>

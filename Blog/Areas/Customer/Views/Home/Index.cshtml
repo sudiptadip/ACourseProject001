@@ -1,4 +1,5 @@
-﻿ <!-- test-series starts -->
+﻿@model HomePageVM
+
 <div class="test-series pt-10rem">
     <div class="alert-box">
         <div class="alert alert-orange alert-dismissible fade show" role="alert">
@@ -15,7 +16,7 @@
                     <img src="~/images/icons/book2.gif" class="avatar" />
                     <h1 class="titleTest">CA</h1>
                     <div class="content d-flex align-items-center mt-4">
-                        <a asp-area="Admin" asp-controller="Products" asp-action="Index" class="edu-btn btn-secondary btn-small">View Course</a>
+                        <a asp-area="Customer" asp-controller="Product" asp-action="Index" class="edu-btn btn-secondary btn-small">View Course</a>
                     </div>
                 </div>
             </div>
@@ -25,7 +26,7 @@
                     <img src="~/images/icons/notebook.gif" class="avatar" />
                     <h1 class="titleTest">CMA</h1>
                     <div class="content d-flex align-items-center mt-4">
-                        <a asp-area="Admin" asp-controller="Products" asp-action="Index" class="edu-btn btn-secondary btn-small">View Course</a>
+                        <a asp-area="Customer" asp-controller="Product" asp-action="Index" class="edu-btn btn-secondary btn-small">View Course</a>
                     </div>
                 </div>
             </div>
@@ -113,354 +114,62 @@
                 <div class="heading">CA Lectures</div>
 
                 <div>
-                    <a asp-area="Admin" asp-controller="Products" asp-action="Index" class="btn btn-sm view-btn">View all</a>
+                    <a asp-area="Customer" asp-controller="Product" asp-action="Index" class="btn btn-sm view-btn">View all</a>
                 </div>
             </div>
         </div>
         <div class="slider slider-nav">
-            <div class="edu-course course-style-1 hover-button-bg-white">
-                <div class="inner">
-                    <div class="thumbnail">
-                        <a href="course-details.html">
-                            <img src="~/images/course/1.jpg" alt="Course Meta" />
-                        </a>
-                        <div class="time-top">
-                            <span class="duration pink-gradient">
-                                <!-- <i class="icon-61"></i> -->
-                                CA FINAL
-                            </span>
-                        </div>
-                    </div>
-                    <div class="content">
-                        <h6 class="title">
-                            <a href="#">CA Final – Audit Fast Track Batch (New Syllabus)Google Drive </a>
-                        </h6>
+           
 
-                        <div class="mb-3">
-                            <a href="" class="faculty_name">CA Praveen Sharma</a>
-                        </div>
-
-                        <div class="course-price">
-                            <span class="ori_price"><i class="fa-solid fa-indian-rupee-sign"></i>5400</span>
-                            <span class="del-price">
-                                <i class="fa-solid fa-indian-rupee-sign"></i>5900
-                            </span>
-                            <span class="dis_price">
-                                <i class="fa-solid fa-indian-rupee-sign"></i>500
-                                off
-                            </span>
-                        </div>
-                    </div>
-                </div>
-                <div class="course-hover-content-wrapper">
-                    <!-- <button class="wishlist-btn"><i class="icon-22"></i></button> -->
-                </div>
-
-                <div class="course-hover-content">
-                    <div class="content">
-                        <!-- <button class="wishlist-btn"><i class="icon-22"></i></button> -->
-                        <span class="course-level">Regular Batch</span>
-                        <h6 class="title">
-                            <a href="#">CA Final – Audit Fast Track Batch (New Syllabus)Google Drive</a>
-                        </h6>
-
-                        <!-- <ul class="course-meta">
-                                            <li><i class="icon-24"></i>13 Lessons</li>
-                                            <li><i class="icon-25"></i>28 Students</li>
-                                        </ul> -->
-                        <a href="#" class="edu-btn btn-small mt-4">View <i class="icon-4"></i></a>
-                    </div>
-                </div>
-            </div>
-
-            <div class="edu-course course-style-1 hover-button-bg-white">
-                <div class="inner">
-                    <div class="thumbnail">
-                        <a href="#">
-                            <img src="~/images/course/2.jpg" alt="Course Meta" />
-                        </a>
-                        <div class="time-top">
-                            <span class="duration blue-gradient">
-                                <!-- <i class="icon-61"></i> -->
-                                CA FINAL
-                            </span>
-                        </div>
-                    </div>
-                    <div class="content">
-                        <h6 class="title">
-                            <a href="#">
-                                CA Final (New Course) -Financial Reporting (FR) by CA Parveen Sharma
+            @foreach (var item in Model.Products)
+            {
+                <div class="edu-course course-style-1 hover-button-bg-white">
+                    <div class="inner">
+                        <div class="thumbnail">
+                            <a href="course-details.html">
+                                <img src="@item.ProductImageUrl" alt="Course Meta" />
                             </a>
-                        </h6>
-
-                        <div class="mb-3">
-                            <a href="" class="faculty_name">CA Praveen Sharma</a>
+                            <div class="time-top">
+                                <span class="duration pink-gradient">
+                                    @item.Category.CategoryName
+                                </span>
+                            </div>
                         </div>
+                        <div class="content">
+                            <h6 class="title">
+                                <a href="#"> @item.ProductName </a>
+                            </h6>
 
-                        <div class="course-price">
-                            <span class="ori_price"><i class="fa-solid fa-indian-rupee-sign"></i>17500</span>
-                            <span class="del-price">
-                                <i class="fa-solid fa-indian-rupee-sign"></i>20500
-                            </span>
-                            <span class="dis_price">
-                                <i class="fa-solid fa-indian-rupee-sign"></i>3000
-                                off
-                            </span>
-                        </div>
-                    </div>
-                </div>
-                <div class="course-hover-content-wrapper">
-                    <!-- <button class="wishlist-btn"><i class="icon-22"></i></button> -->
-                </div>
+                            <div class="mb-3">
+                                <a href="" class="faculty_name">@item.Faculty.FacultyName</a>
+                            </div>
 
-                <div class="course-hover-content">
-                    <div class="content">
-                        <!-- <button class="wishlist-btn"><i class="icon-22"></i></button> -->
-                        <span class="course-level">Regular Batch</span>
-                        <h6 class="title">
-                            <a href="#">CA Final (New Course) -Financial Reporting (FR) by CA Parveen Sharma</a>
-                        </h6>
-
-                        <!-- <ul class="course-meta">
-                                            <li><i class="icon-24"></i>13 Lessons</li>
-                                            <li><i class="icon-25"></i>28 Students</li>
-                                        </ul> -->
-                        <a href="#" class="edu-btn btn-small mt-4">View <i class="icon-4"></i></a>
-                    </div>
-                </div>
-            </div>
-
-            <div class="edu-course course-style-1 hover-button-bg-white">
-                <div class="inner">
-                    <div class="thumbnail">
-                        <a href="#">
-                            <img src="~/images/course/3.jpg" alt="Course Meta" />
-                        </a>
-                        <div class="time-top">
-                            <span class="duration dark-blue">
-                                <!-- <i class="icon-61"></i> -->
-                                CA FINAL
-                            </span>
+                            <div class="course-price">
+                                <span class="ori_price"><i class="fa-solid fa-indian-rupee-sign"></i>@item.DefaultDiscountPrice</span>
+                                <span class="del-price">
+                                    <i class="fa-solid fa-indian-rupee-sign"></i>@item.DefaultPrice
+                                </span>
+                                <span class="dis_price">
+                                    <i class="fa-solid fa-indian-rupee-sign"></i>@(@item.DefaultPrice - @item.DefaultDiscountPrice)
+                                    off
+                                </span>
+                            </div>
                         </div>
                     </div>
-                    <div class="content">
-                        <h6 class="title">
-                            <a href="#">
-                                CA Final (New Course)-Advanced Financial Management (AFM)
-                            </a>
-                        </h6>
+                    <div class="course-hover-content-wrapper">
+                    </div>
 
-                        <div class="mb-3">
-                            <a href="" class="faculty_name">CFA Sanjay Saraf</a>
-                        </div>
-
-                        <div class="course-price">
-                            <span class="ori_price"><i class="fa-solid fa-indian-rupee-sign"></i>12400</span>
-                            <span class="del-price">
-                                <i class="fa-solid fa-indian-rupee-sign"></i>17000
-                            </span>
-                            <span class="dis_price">
-                                <i class="fa-solid fa-indian-rupee-sign"></i>4600
-                                off
-                            </span>
+                    <div class="course-hover-content">
+                        <div class="content">
+                            <span class="course-level">Regular Batch</span>
+                            <h6 class="title">
+                                <a href="#">CA Final – Audit Fast Track Batch (New Syllabus)Google Drive</a>
+                            </h6>
+                            <a href="#" class="edu-btn btn-small mt-4">View <i class="icon-4"></i></a>
                         </div>
                     </div>
                 </div>
-                <div class="course-hover-content-wrapper">
-                    <!-- <button class="wishlist-btn"><i class="icon-22"></i></button> -->
-                </div>
-
-                <div class="course-hover-content">
-                    <div class="content">
-                        <!-- <button class="wishlist-btn"><i class="icon-22"></i></button> -->
-                        <span class="course-level">Regular Batch</span>
-                        <h6 class="title">
-                            <a href="#">
-                                CA Final (New Course)-Advanced Financial Management (AFM)
-                            </a>
-                        </h6>
-
-                        <!-- <ul class="course-meta">
-                                            <li><i class="icon-24"></i>13 Lessons</li>
-                                            <li><i class="icon-25"></i>28 Students</li>
-                                        </ul> -->
-                        <a href="#" class="edu-btn btn-small mt-4">View <i class="icon-4"></i></a>
-                    </div>
-                </div>
-            </div>
-
-            <div class="edu-course course-style-1 hover-button-bg-white">
-                <div class="inner">
-                    <div class="thumbnail">
-                        <a href="#">
-                            <img src="~/images/course/4.jpg" alt="Course Meta" />
-                        </a>
-                        <div class="time-top">
-                            <span class="duration purple-gradient">
-                                <!-- <i class="icon-61"></i> -->
-                                CA FINAL
-                            </span>
-                        </div>
-                    </div>
-                    <div class="content">
-                        <h6 class="title">
-                            <a href="#">
-                                CA Final (New Course)-Advanced Financial Management (AFM)
-                            </a>
-                        </h6>
-
-                        <div class="mb-3">
-                            <a href="" class="faculty_name">Prof Archana Khetan</a>
-                        </div>
-
-                        <div class="course-price">
-                            <span class="ori_price"><i class="fa-solid fa-indian-rupee-sign"></i>16000</span>
-                            <span class="del-price">
-                                <i class="fa-solid fa-indian-rupee-sign"></i>16500
-                            </span>
-                            <span class="dis_price">
-                                <i class="fa-solid fa-indian-rupee-sign"></i>500
-                                off
-                            </span>
-                        </div>
-                    </div>
-                </div>
-                <div class="course-hover-content-wrapper">
-                    <!-- <button class="wishlist-btn"><i class="icon-22"></i></button> -->
-                </div>
-
-                <div class="course-hover-content">
-                    <div class="content">
-                        <!-- <button class="wishlist-btn"><i class="icon-22"></i></button> -->
-                        <span class="course-level">Regular Batch</span>
-                        <h6 class="title">
-                            <a href="#">CA Final (New Course)-Advanced Financial Management (AFM)</a>
-                        </h6>
-
-                        <!-- <ul class="course-meta">
-                                            <li><i class="icon-24"></i>13 Lessons</li>
-                                            <li><i class="icon-25"></i>28 Students</li>
-                                        </ul> -->
-                        <a href="#" class="edu-btn btn-small mt-4">View <i class="icon-4"></i></a>
-                    </div>
-                </div>
-            </div>
-
-            <div class="edu-course course-style-1 hover-button-bg-white">
-                <div class="inner">
-                    <div class="thumbnail">
-                        <a href="#">
-                            <img src="~/images/course/5.jpg" alt="Course Meta" />
-                        </a>
-                        <div class="time-top">
-                            <span class="duration pink-gradient">
-                                <!-- <i class="icon-61"></i> -->
-                                CA FINAL
-                            </span>
-                        </div>
-                    </div>
-                    <div class="content">
-                        <h6 class="title">
-                            <a href="#">CA Final (New Course)-Advanced, Auditing Assurance & Professional Ethics (AUDIT) </a>
-                        </h6>
-
-                        <div class="mb-3">
-                            <a href="" class="faculty_name">CA Praveen Sharma</a>
-                        </div>
-
-                        <div class="course-price">
-                            <span class="ori_price"><i class="fa-solid fa-indian-rupee-sign"></i>9900</span>
-                            <span class="del-price">
-                                <i class="fa-solid fa-indian-rupee-sign"></i>10500
-                            </span>
-                            <span class="dis_price">
-                                <i class="fa-solid fa-indian-rupee-sign"></i>600
-                                off
-                            </span>
-                        </div>
-                    </div>
-                </div>
-                <div class="course-hover-content-wrapper">
-                    <!-- <button class="wishlist-btn"><i class="icon-22"></i></button> -->
-                </div>
-
-                <div class="course-hover-content">
-                    <div class="content">
-                        <!-- <button class="wishlist-btn"><i class="icon-22"></i></button> -->
-                        <span class="course-level">Regular Batch</span>
-                        <h6 class="title">
-                            <a href="#">CA Final (New Course)-Advanced, Auditing Assurance & Professional Ethics (AUDIT)</a>
-                        </h6>
-
-                        <!-- <ul class="course-meta">
-                                            <li><i class="icon-24"></i>13 Lessons</li>
-                                            <li><i class="icon-25"></i>28 Students</li>
-                                        </ul> -->
-                        <a href="#" class="edu-btn btn-small">View <i class="icon-4"></i></a>
-                    </div>
-                </div>
-            </div>
-
-            <div class="edu-course course-style-1 hover-button-bg-white">
-                <div class="inner">
-                    <div class="thumbnail">
-                        <a href="#">
-                            <img src="~/images/course/6.jpg" alt="Course Meta" />
-                        </a>
-                        <div class="time-top">
-                            <span class="duration blue-gradient">
-                                <!-- <i class="icon-61"></i> -->
-                                CA FINAL
-                            </span>
-                        </div>
-                    </div>
-                    <div class="content">
-                        <h6 class="title">
-                            <a href="#">
-                                CA Final (New Course)-Combo- AUDIT & AFM(Pankaj Sir & Archana Mam) (Regular
-                                Batch)
-                            </a>
-                        </h6>
-
-                        <div class="mb-3">
-                            <a href="" class="faculty_name">Pankaj Sir & Archana Mam</a>
-                        </div>
-
-                        <div class="course-price">
-                            <span class="ori_price"><i class="fa-solid fa-indian-rupee-sign"></i>20720</span>
-                            <span class="del-price">
-                                <i class="fa-solid fa-indian-rupee-sign"></i>25900
-                            </span>
-                            <span class="dis_price">
-                                <i class="fa-solid fa-indian-rupee-sign"></i>5180
-                                off
-                            </span>
-                        </div>
-                    </div>
-                </div>
-                <div class="course-hover-content-wrapper">
-                    <!-- <button class="wishlist-btn"><i class="icon-22"></i></button> -->
-                </div>
-
-                <div class="course-hover-content">
-                    <div class="content">
-                        <!-- <button class="wishlist-btn"><i class="icon-22"></i></button> -->
-                        <span class="course-level">Regular Batch</span>
-                        <h6 class="title">
-                            <a href="#">
-                                CA Final (New Course)-Combo- AUDIT & AFM(Pankaj Sir & Archana Mam) (Regular
-                                Batch)
-                            </a>
-                        </h6>
-
-                        <!-- <ul class="course-meta">
-                                            <li><i class="icon-24"></i>13 Lessons</li>
-                                            <li><i class="icon-25"></i>28 Students</li>
-                                        </ul> -->
-                        <a href="#" class="edu-btn btn-small mt-4">View <i class="icon-4"></i></a>
-                    </div>
-                </div>
-            </div>
+            }
         </div>
     </div>
 </div>
@@ -591,144 +300,52 @@
         </div>
         <div class="isotope-wrapper mt-4">
             <div class="isotop-button isotop-filter">
-                <button data-filter=".undergraduate" class="is-checked">
-                    <span class="filter-text">CA BLOGS</span>
-                </button>
-                <!-- <button data-filter=".graduate">
-                  <span class="filter-text">ACCA BLOGS</span>
-                </button> -->
-                <button data-filter=".online">
-                    <span class="filter-text">CMA BLOGS</span>
-                </button>
+                
+                @{
+                    int j = 1;
+                }
+                @foreach (var item in Model.BlogCategoryViewModel)
+                {
+                    <button data-filter=".@item.CategoryName" class='@(j == 1 ? "is-checked" : "")'>
+                        <span class="filter-text"> @item.CategoryName </span>
+                    </button>                    
+                   { j++; }
+                }
             </div>
             <div class="row g-5 isotope-list">
-                <!-- Start Single Course  -->
-                <div class="col-lg-3 col-md-6 isotope-item undergraduate online">
-                    <div class="edu-event event-style-1">
-                        <div class="inner bx-shadow">
-                            <div class="thumbnail">
-                                <a href="#">
-                                    <img src="~/images/course/bs-3.webp" alt="Blog Images" />
-                                </a>
-                                <!-- <div class="event-time">
-                                                    <span><i class="icon-33"></i>08:00AM-10:00PM</span>
-                                                </div> -->
-                            </div>
-                            <div class="content">
-                                <div class="event-date">
-                                    <span class="day">02</span>
-                                    <span class="month">AUG</span>
-                                </div>
-                                <h5 class="title">
-                                    <a href="#">CA FINAL BEST SCMPE ONLINE CLASSES</a>
-                                </h5>
-                                <p>
-                                    The main objectives of SCMPE are to apply different
-                                    types of cost management techniques for planning and
-                                    controlling...
-                                </p>
 
-                                <div class="read-more-btn">
-                                    <a class="edu-btn btn-small" href="#">Learn More <i class="icon-4"></i></a>
+                @foreach (var item in Model.BlogCategoryViewModel)
+                {
+                    foreach (var blog in item.Blogs)
+                    {
+                        <div class="col-lg-3 col-md-6 isotope-item @item.CategoryName">
+                            <div class="edu-event event-style-1">
+                                <div class="inner bx-shadow">
+                                    <div class="thumbnail">
+                                        <a asp-area="Customer" asp-controller="Home" asp-action="BlogDetails" asp-route-id="@blog.Id" >
+                                            <img src="@blog.ImageUrl" alt="Blog Images" />
+                                        </a>
+                                    </div>
+                                    <div class="content">
+                                        <div class="event-date">
+                                            <span class="month">@blog.CreatedOn.ToString("yyyy")</span>
+                                        </div>
+                                        <h5 class="title">
+                                            <a asp-area="Customer" asp-controller="Home" asp-action="BlogDetails" asp-route-id="@blog.Id">@blog.Title</a>
+                                        </h5>
+                                        <p>
+                                            @blog.Description
+                                        </p>
+
+                                        <div class="read-more-btn">
+                                            <a class="edu-btn btn-small" asp-area="Customer" asp-controller="Home" asp-action="BlogDetails" asp-route-id="@blog.Id">Learn More <i class="icon-4"></i></a>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                </div>
-                <!-- End Single Course  -->
-                <!-- Start Single Course  -->
-                <div class="col-lg-3 col-md-6 isotope-item undergraduate">
-                    <div class="edu-event event-style-1">
-                        <div class="inner bx-shadow">
-                            <div class="thumbnail">
-                                <a href="#">
-                                    <img src="~/images/course/ps-2.webp" alt="Blog Images" />
-                                </a>
-                            </div>
-                            <div class="content">
-                                <div class="event-date">
-                                    <span class="day">05</span>
-                                    <span class="month">AUG</span>
-                                </div>
-                                <h5 class="title">
-                                    <a href="#">CA FINAL BEST FRM ONLINE CLASSES</a>
-                                </h5>
-                                <p>
-                                    The CA Final syllabus has an optional paper where
-                                    students can choose one from six available options. The
-                                    examination is designed to be an
-                                </p>
-
-                                <div class="read-more-btn">
-                                    <a class="edu-btn btn-small" href="#">Learn More <i class="icon-4"></i></a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <!-- End Single Course  -->
-                <!-- Start Single Course  -->
-                <div class="col-lg-3 col-md-6 isotope-item undergraduate online">
-                    <div class="edu-event event-style-1">
-                        <div class="inner bx-shadow">
-                            <div class="thumbnail">
-                                <a href="#">
-                                    <img src="~/images/course/bs-4.webp" alt="Blog Images" />
-                                </a>
-                            </div>
-                            <div class="content">
-                                <div class="event-date">
-                                    <span class="day">08</span>
-                                    <span class="month">AUG</span>
-                                </div>
-                                <h5 class="title">
-                                    <a href="#">CA FINAL BEST SFM ONLINE CLASSES</a>
-                                </h5>
-                                <p>
-                                    The study of Strategic Financial Management is essential
-                                    for any student trying to make a career in the industry
-                                    and that is why they need CA FINAL
-                                </p>
-
-                                <div class="read-more-btn">
-                                    <a class="edu-btn btn-small" href="#">Learn More <i class="icon-4"></i></a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <!-- End Single Course  -->
-                <!-- Start Single Course  -->
-                <div class="col-lg-3 col-md-6 isotope-item undergraduate online">
-                    <div class="edu-event event-style-1">
-                        <div class="inner bx-shadow">
-                            <div class="thumbnail">
-                                <a href="#">
-                                    <img src="~/images/course/ps-4.webp" alt="Blog Images" />
-                                </a>
-                            </div>
-                            <div class="content">
-                                <div class="event-date">
-                                    <span class="day">08</span>
-                                    <span class="month">AUG</span>
-                                </div>
-                                <h5 class="title">
-                                    <a href="#">CA FINAL BEST SFM ONLINE CLASSES</a>
-                                </h5>
-                                <p>
-                                    The study of Strategic Financial Management is essential
-                                    for any student trying to make a career in the industry
-                                    and that is why they need CA FINAL
-                                </p>
-
-                                <div class="read-more-btn">
-                                    <a class="edu-btn btn-small" href="#">Learn More <i class="icon-4"></i></a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <!-- End Single Course  -->
+                    }
+                }
             </div>
         </div>
 
