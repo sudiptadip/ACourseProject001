@@ -35,7 +35,9 @@ namespace Blog.DataAccess.Repository
 
         public IApplicationUserRepository ApplicationUser { get; private set; }
 
-        private readonly ApplicationDbContext _db;
+        public IContactRepository Contact { get; private set; }
+
+    private readonly ApplicationDbContext _db;
         public UniteOfWork(ApplicationDbContext db)
         {
             _db = db;
@@ -51,6 +53,7 @@ namespace Blog.DataAccess.Repository
             OrderItem = new OrderItemRepository(_db);
             SosalMedia = new SosalMediaRepository(_db);
             ApplicationUser = new ApplicationUserRepository(_db);
+            Contact = new ContactRepository(_db);
         }
 
         public void Save()

@@ -20,7 +20,7 @@ namespace Blog.DataAccess.Repository.IRepository
         IOrderRepository Order { get; }
         ISosalMediaRepository SosalMedia { get; }
         IApplicationUserRepository ApplicationUser { get; }
-
+        IContactRepository Contact { get; }
         void Save();
     }
 }

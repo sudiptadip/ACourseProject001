@@ -2,6 +2,7 @@ using Blog.DataAccess.Repository.IRepository;
 using Blog.Models.Models;
 using Blog.Models.VM;
 using Microsoft.AspNetCore.Mvc;
+using NuGet.Packaging.Signing;
 using System.Diagnostics;
 
 namespace Blog.Areas.Customer.Controllers
@@ -42,6 +43,20 @@ namespace Blog.Areas.Customer.Controllers
         public IActionResult Contact()
         {
             return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Contact(Contact contact)
+        {
+            if(!ModelState.IsValid)
+            {
+                return View(contact);
+            }
+
+            await _uniteOfWork.Contact.AddAsync(contact);
+            _uniteOfWork.Save();
+            TempData["success"] = "Successfully send your message";
+            return RedirectToAction("Contact", "Home");
         }
 
         public async Task<IActionResult> Blogs()
@@ -85,6 +100,12 @@ namespace Blog.Areas.Customer.Controllers
         public IActionResult TermsAndCondition()
         {
             return View();
+        }
+
+        public async Task<IActionResult> YourMentor()
+        {
+            var allMentor = await _uniteOfWork.Faculty.GetAllAsync();
+            return View(allMentor);
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]

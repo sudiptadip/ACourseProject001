@@ -27,5 +27,6 @@ namespace Blog.DataAccess.Data
         public DbSet<OrderItem> OrderItems { get; set; } 
         public DbSet<Order> Order { get; set; }
         public DbSet<SosalMedia> SosalMedia { get; set; }
+        public DbSet<Contact> Contacts { get; set; }
     }
 }
