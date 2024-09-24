@@ -18,6 +18,6 @@ namespace Blog.Models.Models
         [Required]
         public string PhoneNumber { get; set; }
         [Required]
-        public string Message { get; set; }
+        public string Message { get; set; } 
     }
 }
