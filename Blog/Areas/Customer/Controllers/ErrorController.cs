@@ -5,16 +5,14 @@ namespace Blog.Areas.Customer.Controllers
     [Area("Customer")]
     public class ErrorController : Controller
     {
-        [Route("Error/404")]
         public IActionResult PageNotFound()
         {
-            return View("404");
+            return View();
         }
 
-        [Route("Error/500")]
         public IActionResult InternalServerError()
         {
-            return View("500");
+            return View();
         }
     }
 }

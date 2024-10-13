@@ -142,6 +142,7 @@ namespace Blog.Areas.Identity.Pages.Account
                 user.City = Input.City;
                 user.State = Input.State;
                 user.Pin = Input.Pin;
+                user.CretedOn = DateTime.Now;
 
                 var result = await _userManager.CreateAsync(user, Input.Password);
 
@@ -149,7 +150,7 @@ namespace Blog.Areas.Identity.Pages.Account
                 {
                     _logger.LogInformation("User created a new account with password.");
 
-                    await _userManager.AddToRoleAsync(user, SD.Role_Admin);
+                    await _userManager.AddToRoleAsync(user, SD.Role_Customer);
 
                     var userId = await _userManager.GetUserIdAsync(user);
                     var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);

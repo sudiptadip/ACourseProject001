@@ -22,5 +22,6 @@ namespace Blog.Models.Models
         public string? State { get; set; }
         public string? City { get; set; }
         public string? Pin { get; set; }
+        public DateTime CretedOn { get; set; }
     }
 }
