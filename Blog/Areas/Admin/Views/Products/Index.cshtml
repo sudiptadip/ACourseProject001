@@ -40,8 +40,9 @@
                             <tr>
                                 <th></th>
                                 <th><strong>Product Name</strong></th>
-                                <th><strong>Sorted Order</strong></th>
                                 <th><strong>Price</strong></th>
+                                <th><strong>Status</strong></th>
+                                <th><strong>Created On</strong></th>
                                 <th><strong>Action</strong></th>
                             </tr>
                         </thead>
@@ -52,7 +53,8 @@
                                     <td><img style="width: 50px; height: 50px" src="@product.ProductImageUrl" /></td>
                                     <td>@product.ProductName</td>
                                     @* <td>@product.Price</td> *@
-                                    <td>5000</td> 
+                                    <td>@product.DefaultDiscountPrice</td> 
+                                    <td>@(product.IsActive ? "Active" : "In Active")</td> 
                                     <td>@product.CreatedOn.ToString("dd MMM yyyy")</td>
                                     <td>
                                         <div class="d-flex">
@@ -106,43 +108,37 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script>
     <script>
         $(document).ready(function () {
+            // Initialize DataTables
             $('#productTable').DataTable();
 
             let productIdToDelete;
 
-            // $('.deletefaculty').on('click', function () {
-            //     facultyIdToDelete = $(this).data('id');
-            //     $('#deleteModal').modal('show');
-            //     console.log("facultyIdToDelete", facultyIdToDelete);
-            // });
+            $(document).on('click', '.deletefaculty', function () {
+                productIdToDelete = $(this).data('id');
+                $('#deleteModal').modal('show'); 
+            });
 
-
-            // $('#confirmDelete').on('click', function () {
-            //     alert("OK")
-            //     console.log("Hello World");
-            //     if (facultyIdToDelete) {
-            //         $.ajax({
-            //             url: '@Url.Action("DeleteConfirmed", "Faculty", new { area = "Admin" })',
-            //             type: 'POST',
-            //             data: { id: facultyIdToDelete },
-            //             success: function (response) {
-            //                 if (response.success) {
-            //                     $('#deleteModal').modal('hide');
-            //                     $('button.deletefaculty[data-id="' + facultyIdToDelete + '"]').closest('tr').remove();
-            //                     toastr.success(response.message);
-            //                 } else {
-            //                     $('#deleteModal').modal('hide');
-            //                     toastr.error(response.message);
-            //                 }
-            //             },
-            //             error: function () {
-            //                 $('#deleteModal').modal('hide');
-            //                 toastr.error('An error occurred while deleting the faculty.');
-            //             }
-            //         });
-            //     }
-            // });
-        
+            $('#confirmDelete').on('click', function () {
+                $.ajax({
+                    type: "POST",
+                    url: '@Url.Action("Delete", "Products", new { area = "Admin" })',
+                    data: { id: productIdToDelete },  
+                    success: function (response) {
+                        if (response.success) {
+                            toastr.success(response.message);  
+                            $('#deleteModal').modal('hide');  
+                            setTimeout(function () {
+                                location.reload();
+                            }, 1000);
+                        } else {
+                            toastr.error(response.message);  
+                        }
+                    },
+                    error: function () {
+                        toastr.error("An error occurred while deleting the product.");
+                    }
+                });
+            });
         });
     </script>
 }

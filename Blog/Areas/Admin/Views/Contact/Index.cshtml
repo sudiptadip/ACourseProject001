@@ -1,0 +1,100 @@
+﻿@model List<Contact>
+
+@{
+    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+}
+
+@section Style {
+    <style>
+        .previous {
+            margin-right: 10px !important;
+            width: 80px !important;
+        }
+
+        .next {
+            margin-left: 10px !important;
+            width: 60px !important;
+        }
+
+        .dataTables_paginate {
+            margin-top: 50px;
+        }
+    </style>
+}
+
+<div class="row" style="margin-top: 100px">
+    <!--column-->
+    <div class="col-xl-12">
+        <div class="card">
+            <div class="card-header py-3 border-0 px-3">
+                <h4 class="heading m-0">Sales Table</h4>
+            </div>
+            <div class="card-body p-0">
+                <div class="table-responsive basic-tbl px-5" style=" margin-left: 15%">
+                    <h3 class="text-center py-3">Contact List</h3>
+                    <table id="contactTable" class="tech-data" style="min-width: 798px;">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Email</th>
+                                <th>Phone Number</th>
+                                <th>Message Time</th>
+                                <th class="text-center">View Message</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model)
+                            {
+                                <tr>
+                                    <td>@item.Name</td>
+                                    <td>@item.Email</td>
+                                    <td>@item.PhoneNumber</td>
+                                    <td>@item.CratedOn.ToString("dddd, MMMM d, yyyy")</td>
+                                    <td class="text-center" style="cursor: pointer; text: 18px; font-size: 18px">
+                                        <i class="fa-solid fa-eye viewMessageIcon" data-message="@item.Message"></i> <!-- Added viewMessageIcon class -->
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+
+                    <!-- Contact Message Modal -->
+                    <div class="modal fade" id="contactMessageModal" tabindex="-1" aria-labelledby="contactMessageModalLabel" aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="contactMessageModalLabel">Contact Message</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <p id="contactMessageContent"></p> <!-- This will display the contact message -->
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- End Contact Message Modal -->
+
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--/column-->
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            $('#contactTable').DataTable();
+
+            // When the eye icon is clicked
+            $(document).on('click', '.viewMessageIcon', function () {
+                var message = $(this).data('message'); // Get the message from the data attribute
+                $('#contactMessageContent').text(message); // Set the message in the modal content
+                $('#contactMessageModal').modal('show'); // Show the modal
+            });
+        });
+    </script>
+}

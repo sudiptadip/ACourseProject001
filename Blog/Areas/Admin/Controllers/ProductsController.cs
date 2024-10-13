@@ -5,6 +5,7 @@ using Blog.Models.Models;
 using Blog.Models.VM;
 using Blog.Utility.Service;
 using Blog.Utility.Service.IService;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -15,6 +16,7 @@ using SQLitePCL;
 namespace Blog.Areas.Admin.Controllers
 {
     [Area("Admin")]
+    [Authorize(Roles = "Admin")]
     public class ProductsController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -300,6 +302,33 @@ namespace Blog.Areas.Admin.Controllers
 
             return View(model);
         }
+
+
+        [HttpPost]
+        public async Task<IActionResult> Delete(int id)
+        {
+            var product = await _context.Products.Include(p => p.ProductAttributes).Include(p => p.ProductPrice)
+                                                 .FirstOrDefaultAsync(p => p.Id == id);
+
+            if (product == null)
+            {
+                return Json(new { success = false, message = "Product not found" });
+            }
+
+            _context.ProductAttributes.RemoveRange(product.ProductAttributes);
+
+            _context.ProductPrices.RemoveRange(product.ProductPrice);
+
+            _context.Products.Remove(product);
+
+            await _context.SaveChangesAsync();
+
+            return Json(new { success = true, message = "Product deleted successfully" });
+        }
+
+
+
+
 
     }
 }

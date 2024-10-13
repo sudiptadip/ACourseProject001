@@ -46,7 +46,7 @@
                     <img src="~/images/icons/book3.gif" class="avatar" />
                     <h1 class="titleTest">KNOW YOUR MENTOR</h1>
                     <div class="content d-flex align-items-center mt-4">
-                        <a href="#" class="edu-btn btn-secondary btn-small">Click Here</a>
+                        <a asp-area="Customer" asp-controller="Home" asp-action="YourMentor" class="edu-btn btn-secondary btn-small">Click Here</a>
                     </div>
                 </div>
             </div>
@@ -126,7 +126,7 @@
                 <div class="edu-course course-style-1 hover-button-bg-white">
                     <div class="inner">
                         <div class="thumbnail">
-                            <a href="course-details.html">
+                            <a asp-area="Customer" asp-controller="Product" asp-action="Details" asp-route-id="@item.Id" >
                                 <img src="@item.ProductImageUrl" alt="Course Meta" />
                             </a>
                             <div class="time-top">
@@ -137,11 +137,11 @@
                         </div>
                         <div class="content">
                             <h6 class="title">
-                                <a href="#"> @item.ProductName </a>
+                                <a asp-area="Customer" asp-controller="Product" asp-action="Details" asp-route-id="@item.Id"> @item.ProductName </a>
                             </h6>
 
                             <div class="mb-3">
-                                <a href="" class="faculty_name">@item.Faculty.FacultyName</a>
+                                <a asp-area="Customer" asp-controller="Product" asp-action="Details" asp-route-id="@item.Id" class="faculty_name">@item.Faculty.FacultyName</a>
                             </div>
 
                             <div class="course-price">
@@ -163,9 +163,9 @@
                         <div class="content">
                             <span class="course-level">Regular Batch</span>
                             <h6 class="title">
-                                <a href="#">CA Final – Audit Fast Track Batch (New Syllabus)Google Drive</a>
+                                <a asp-area="Customer" asp-controller="Product" asp-action="Details" asp-route-id="@item.Id" > @Html.Raw(item.ProductDescription) </a>
                             </h6>
-                            <a href="#" class="edu-btn btn-small mt-4">View <i class="icon-4"></i></a>
+                            <a asp-area="Customer" asp-controller="Product" asp-action="Details" asp-route-id="@item.Id" class="edu-btn btn-small mt-4">View <i class="icon-4"></i></a>
                         </div>
                     </div>
                 </div>
@@ -328,13 +328,14 @@
                                     </div>
                                     <div class="content">
                                         <div class="event-date">
+                                            <span class="month">@blog.CreatedOn.ToString("mm")</span>
                                             <span class="month">@blog.CreatedOn.ToString("yyyy")</span>
                                         </div>
                                         <h5 class="title">
                                             <a asp-area="Customer" asp-controller="Home" asp-action="BlogDetails" asp-route-id="@blog.Id">@blog.Title</a>
                                         </h5>
                                         <p>
-                                            @blog.Description
+                                            @Html.Raw(blog.Description)
                                         </p>
 
                                         <div class="read-more-btn">

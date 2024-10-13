@@ -1,6 +1,7 @@
 ﻿using Blog.DataAccess.Repository.IRepository;
 using Blog.Models.Models;
 using Blog.Models.VM;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 
@@ -8,6 +9,7 @@ using System.Security.Claims;
 namespace Blog.Areas.Customer.Controllers
 {
     [Area("Customer")]
+    [Authorize]
     public class CheckoutController : Controller
     {
         private readonly IUniteOfWork _unitOfWork;
@@ -123,7 +125,7 @@ namespace Blog.Areas.Customer.Controllers
                 {
                     ProductId = ci.ProductId,
                     Quantity = ci.Quantity,
-                    Price = ci.Price,
+                    Price = ci.DiscountPrice,
                     ModeOfLecture = ci.ModeOfLecture,
                     Attempt = ci.Attempt,
                     ValidityInMonths = ci.ValidityInMonths,
@@ -138,7 +140,7 @@ namespace Blog.Areas.Customer.Controllers
             _unitOfWork.Save();
 
             TempData["success"] = "Order placed successfully!";
-            return RedirectToAction("OrderConfirmation", new { orderId = order.Id });
+            return RedirectToAction("Index", "Product");
         }
 
     }

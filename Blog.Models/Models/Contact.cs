@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -18,6 +19,9 @@ namespace Blog.Models.Models
         [Required]
         public string PhoneNumber { get; set; }
         [Required]
-        public string Message { get; set; } 
+        public string Message { get; set; }
+        [ValidateNever]
+        public DateTime CratedOn { get; set; }
+        
     }
 }

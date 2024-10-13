@@ -1,11 +1,13 @@
 ﻿using Blog.DataAccess.Repository.IRepository;
 using Blog.Models.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 
 namespace Blog.Areas.Admin.Controllers
 {
     [Area("Admin")]
+    [Authorize(Roles = "Admin")]
     public class CategoryController : Controller
     {
         private readonly IUniteOfWork _unitOfWork;
@@ -84,6 +86,15 @@ namespace Blog.Areas.Admin.Controllers
         [HttpPost]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
+
+            var product = await _unitOfWork.Product.GetAsync(c => c.CategoryId == id);
+
+            if (product != null)
+            {
+                TempData["error"] = "Category Assosiated With Product";
+                return RedirectToAction(nameof(Index));
+            }
+
             var category = await _unitOfWork.Category.GetAsync(u => u.Id == id);
             if (category != null)
             {

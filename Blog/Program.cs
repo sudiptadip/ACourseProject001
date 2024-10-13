@@ -22,15 +22,26 @@ builder.Services.AddScoped<IImageService, ImageService>();
 builder.Services.AddSingleton<ViewRenderingService>();
 
 
+builder.Services.ConfigureApplicationCookie(options =>
+{
+    options.LoginPath = $"/Identity/Account/Login";
+    options.AccessDeniedPath = $"/Identity/Account/AccessDenied";
+    options.ExpireTimeSpan = TimeSpan.FromMinutes(30);
+});
+
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {
-    app.UseExceptionHandler("/Home/Error");
-    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
+    //app.UseExceptionHandler("/Home/Error");
+    app.UseExceptionHandler("Customer/Error/500");
     app.UseHsts();
 }
+
+// Handle 404 errors
+app.UseStatusCodePagesWithReExecute("/Customer/Error/{0}");
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();

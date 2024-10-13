@@ -2,12 +2,14 @@
 using Blog.Models.Models;
 using Blog.Utility.Service;
 using Blog.Utility.Service.IService;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 
 namespace Blog.Areas.Admin.Controllers
 {
     [Area("Admin")]
+    [Authorize(Roles = "Admin")]
     public class FacultyController : Controller
     {
         private readonly IUniteOfWork _unitOfWork;
@@ -116,6 +118,15 @@ namespace Blog.Areas.Admin.Controllers
         [HttpPost]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
+
+            var product = await _unitOfWork.Product.GetAsync(c => c.FacultyId == id);
+
+            if (product != null)
+            {
+                TempData["error"] = "Faculty Assosiated With Product";
+                return RedirectToAction(nameof(Index));
+            }
+
             var faculty = await _unitOfWork.Faculty.GetAsync(u => u.Id == id);
             if (faculty != null)
             {

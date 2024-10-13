@@ -100,13 +100,13 @@
                                         </div>
                                     </td>
                                     <td class="product-thumbnail">
-                                        <span class="currency-symbol">₹</span>@item.Price
+                                            <span style="text-decoration: line-through !important;">₹</span>@item.Price
                                     </td>
                                     <td class="product-thumbnail">
-                                        <span class="currency-symbol">₹</span>@item.DiscountPrice
+                                            <span class="currency-symbol">₹</span>  @(item.Price - item.DiscountPrice)
                                     </td>
                                     <td class="product-thumbnail">
-                                        <span class="currency-symbol">₹</span>@(item.Price - item.DiscountPrice)
+                                            <span class="currency-symbol">₹</span>@item.DiscountPrice
                                     </td>
                                     <td class="product-remove product-thumbnail">
                                         <a href="#" class="remove-wishlist remove-cart-item" data-cart-item-id="@item.Id" >
@@ -137,13 +137,13 @@
                             </tr>
 
                             <tr class="order-subtotal">
-                                <td>Discount</td>
-                                <td>- ₹@Model.CartItems.Sum(ci => ci.DiscountPrice)</td>
+                                <td>Discount</td>   
+                                    <td>- ₹@Model.CartItems.Sum(ci => (ci.Price - ci.DiscountPrice))</td>
                             </tr>
 
                             <tr class="order-total">
                                 <td>Payable Amount</td>
-                                <td>₹@(Model.CartItems.Sum(ci => ci.Price) - Model.CartItems.Sum(ci => ci.DiscountPrice))</td>
+                                <td>₹@Model.CartItems.Sum(ci => ci.DiscountPrice))</td>
                             </tr>
                         </tbody>
                     </table>

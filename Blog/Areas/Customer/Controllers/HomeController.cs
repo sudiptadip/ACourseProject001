@@ -23,7 +23,7 @@ namespace Blog.Areas.Customer.Controllers
         {
             var products = await _uniteOfWork.Product.GetAllAsync(includeProperties: "Category,Faculty");
             var blogs = await _uniteOfWork.Blog.GetAllAsync();
-           // var sosalMedia = await _uniteOfWork.SosalMedia.GetAllAsync();
+            var sosalMedia = await _uniteOfWork.SosalMedia.GetAllAsync();
 
             var homePageVM = new HomePageVM
             {
@@ -36,6 +36,12 @@ namespace Blog.Areas.Customer.Controllers
                             .ToList(),
                 Products = products.OrderBy(b => b.CreatedOn).Take(10)
             };
+
+            if(homePageVM.SosalMedia == null)
+            {
+                homePageVM.SosalMedia = new SosalMedia();
+            }
+
 
             return View(homePageVM);
         }  
@@ -52,6 +58,8 @@ namespace Blog.Areas.Customer.Controllers
             {
                 return View(contact);
             }
+
+            contact.CratedOn = DateTime.Now;
 
             await _uniteOfWork.Contact.AddAsync(contact);
             _uniteOfWork.Save();

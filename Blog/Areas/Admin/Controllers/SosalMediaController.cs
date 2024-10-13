@@ -1,11 +1,13 @@
 ﻿using Blog.DataAccess.Data;
 using Blog.DataAccess.Repository.IRepository;
 using Blog.Models.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Blog.Areas.Admin.Controllers
 {
     [Area("Admin")]
+    [Authorize(Roles = "Admin")]
     public class SosalMediaController : Controller
     {
         private readonly IUniteOfWork _uniteOfWork;

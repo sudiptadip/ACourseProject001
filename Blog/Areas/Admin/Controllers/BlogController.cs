@@ -2,6 +2,7 @@
 using Blog.Models.Models;
 using Blog.Utility.Service;
 using Blog.Utility.Service.IService;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using System.Reflection.Metadata;
@@ -9,6 +10,7 @@ using System.Reflection.Metadata;
 namespace Blog.Areas.Admin.Controllers
 {
     [Area("Admin")]
+    [Authorize(Roles = "Admin")]
     public class BlogController : Controller
     {
         private readonly IUniteOfWork _unitOfWork;

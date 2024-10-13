@@ -1,11 +1,13 @@
 ﻿using Blog.DataAccess.Repository.IRepository;
 using Blog.Models.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 
 namespace Blog.Areas.Admin.Controllers
 {
     [Area("Admin")]
+    [Authorize(Roles = "Admin")]
     public class SubjectController : Controller
     {
         private readonly IUniteOfWork _unitOfWork;
@@ -83,10 +85,18 @@ namespace Blog.Areas.Admin.Controllers
         [HttpPost]
        public async Task<IActionResult> DeleteConfirmed(int id)
         {
+            var product = await _unitOfWork.Product.GetAsync(c => c.SubjectId == id);
+
+            if (product != null)
+            {
+                TempData["error"] = "Subject Assosiated With Product";
+                return RedirectToAction(nameof(Index));
+            }
+
             var subject = await _unitOfWork.Subject.GetAsync(u => u.Id == id);
             if (subject != null)
             {
-                _unitOfWork.Subject.DeleteAsync(subject);
+                await  _unitOfWork.Subject.DeleteAsync(subject);
                 _unitOfWork.Save();
                 return Json(new { success = true, message = "Subject deleted successfully!" });
             }

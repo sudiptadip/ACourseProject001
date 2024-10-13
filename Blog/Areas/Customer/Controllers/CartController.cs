@@ -1,6 +1,7 @@
 ﻿using Blog.DataAccess.Repository.IRepository;
 using Blog.Models.Dto;
 using Blog.Models.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
@@ -8,6 +9,7 @@ using System.Security.Claims;
 namespace Blog.Areas.Customer.Controllers
 {
     [Area("Customer")]
+    [Authorize]
     public class CartController : Controller
     {
         private readonly IUniteOfWork _unitOfWork;
@@ -26,7 +28,7 @@ namespace Blog.Areas.Customer.Controllers
 
             if (string.IsNullOrEmpty(userId))
             {
-                return Unauthorized();
+                RedirectToAction("Product", "Index");
             }
 
             var cart = await _unitOfWork.Cart.GetAsync(u => u.UserId == userId, includeProperties: "CartItems.Product");
