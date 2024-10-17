@@ -933,10 +933,10 @@ progress {
 
 @media (min-width: 576px) {
 
-  .container,
-  .container-sm {
-    max-width: 540px;
-  }
+    .container,
+    .container-sm {
+        max-width: 540px !important;
+    }
 }
 
 @media (min-width: 768px) {
@@ -944,7 +944,7 @@ progress {
   .container,
   .container-sm,
   .container-md {
-    max-width: 720px;
+    max-width: 720px !important;
   }
 }
 
@@ -954,7 +954,7 @@ progress {
   .container-sm,
   .container-md,
   .container-lg {
-    max-width: 960px;
+    max-width: 960px !important;
   }
 }
 

@@ -4,65 +4,6 @@
     ViewData["Title"] = "Register";
 }
 
-@* <h1>@ViewData["Title"]</h1>
-
-<div class="row">
-    <div class="col-md-4">
-        <form id="registerForm" asp-route-returnUrl="@Model.ReturnUrl" method="post">
-            <h2>Create a new account.</h2>
-            <hr />
-            <div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div>
-            <div class="form-floating mb-3">
-                <input asp-for="Input.Email" class="form-control" autocomplete="username" aria-required="true" placeholder="name@example.com" />
-                <label asp-for="Input.Email">Email</label>
-                <span asp-validation-for="Input.Email" class="text-danger"></span>
-            </div>
-            <div class="form-floating mb-3">
-                <input asp-for="Input.Password" class="form-control" autocomplete="new-password" aria-required="true" placeholder="password" />
-                <label asp-for="Input.Password">Password</label>
-                <span asp-validation-for="Input.Password" class="text-danger"></span>
-            </div>
-            <div class="form-floating mb-3">
-                <input asp-for="Input.ConfirmPassword" class="form-control" autocomplete="new-password" aria-required="true" placeholder="password" />
-                <label asp-for="Input.ConfirmPassword">Confirm Password</label>
-                <span asp-validation-for="Input.ConfirmPassword" class="text-danger"></span>
-            </div>
-            <button id="registerSubmit" type="submit" class="w-100 btn btn-lg btn-primary">Register</button>
-        </form>
-    </div>
-    <div class="col-md-6 col-md-offset-2">
-        <section>
-            <h3>Use another service to register.</h3>
-            <hr />
-            @{
-                if ((Model.ExternalLogins?.Count ?? 0) == 0)
-                {
-                    <div>
-                        <p>
-                            There are no external authentication services configured. See this <a href="https://go.microsoft.com/fwlink/?LinkID=532715">article
-                            about setting up this ASP.NET application to support logging in via external services</a>.
-                        </p>
-                    </div>
-                }
-                else
-                {
-                    <form id="external-account" asp-page="./ExternalLogin" asp-route-returnUrl="@Model.ReturnUrl" method="post" class="form-horizontal">
-                        <div>
-                            <p>
-                                @foreach (var provider in Model.ExternalLogins!)
-                                {
-                                    <button type="submit" class="btn btn-primary" name="provider" value="@provider.Name" title="Log in using your @provider.DisplayName account">@provider.DisplayName</button>
-                                }
-                            </p>
-                        </div>
-                    </form>
-                }
-            }
-        </section>
-    </div>
-</div> *@
-
-
 <div class="edu-breadcrumb-area breadcrumb-style-3">
     <div class="container">
         <div class="breadcrumb-inner">
@@ -142,7 +83,8 @@
                             <div class="col-lg-12 mb-4">
                                 <div class="form-group">
                                     <label asp-for="Input.Address">Address <span class="text-danger">*</span></label>
-                                    <textarea asp-for="Input.Address" id="address" rows="4"></textarea>
+                                    <textarea class="form-control" asp-for="Input.Address" id="address" rows="4"></textarea>
+                                    <span asp-validation-for="Input.Address" class="text-danger"></span>
                                 </div>
                             </div>
 
@@ -151,26 +93,46 @@
                                 <div class="form-group">
                                     <label asp-for="Input.Country" >Select Country</label>
                                     <select asp-for="Input.Country" id="country">
-                                        <option value="3">India</option>
-                                        <option value="4">England</option>
-                                        <option value="6">New Zealand</option>
-                                        <option value="5">Switzerland</option>
-                                        <option value="1">United Kindom (UK)</option>
-                                        <option value="2">United States (USA)</option>
+                                        <option value="India">India</option>
                                     </select>
+                                    <span asp-validation-for="Input.Country" class="text-danger"></span>
                                 </div>
                             </div>
                             <div class="col-lg-6 mb-4">
                                 <div class="form-group">
                                     <label asp-for="Input.State" for="reg-name">Select State</label>
                                     <select asp-for="Input.State" id="state">
-                                        <option value="3">Assam</option>
-                                        <option value="4">Bihar</option>
-                                        <option value="6">Delhi</option>
-                                        <option value="5">Hariyana</option>
-                                        <option value="1">Jharkhand</option>
-                                        <option value="2">West Bengal</option>
+                                        <option value="Andhra Pradesh">Andhra Pradesh</option>
+                                        <option value="Arunachal Pradesh">Arunachal Pradesh</option>
+                                        <option value="Assam">Assam</option>
+                                        <option value="Bihar">Bihar</option>
+                                        <option value="Chhattisgarh">Chhattisgarh</option>
+                                        <option value="Goa">Goa</option>
+                                        <option value="Gujarat">Gujarat</option>
+                                        <option value="Haryana">Haryana</option>
+                                        <option value="Himachal Pradesh">Himachal Pradesh</option>
+                                        <option value="Jharkhand">Jharkhand</option>
+                                        <option value="Karnataka">Karnataka</option>
+                                        <option value="Kerala">Kerala</option>
+                                        <option value="Madhya Pradesh">Madhya Pradesh</option>
+                                        <option value="Maharashtra">Maharashtra</option>
+                                        <option value="Manipur">Manipur</option>
+                                        <option value="Meghalaya">Meghalaya</option>
+                                        <option value="Mizoram">Mizoram</option>
+                                        <option value="Nagaland">Nagaland</option>
+                                        <option value="Odisha">Odisha</option>
+                                        <option value="Punjab">Punjab</option>
+                                        <option value="Rajasthan">Rajasthan</option>
+                                        <option value="Sikkim">Sikkim</option>
+                                        <option value="Tamil Nadu">Tamil Nadu</option>
+                                        <option value="Telangana">Telangana</option>
+                                        <option value="Tripura">Tripura</option>
+                                        <option value="Uttar Pradesh">Uttar Pradesh</option>
+                                        <option value="Uttarakhand">Uttarakhand</option>
+                                        <option value="West Bengal">West Bengal</option>
+
                                     </select>
+                                    <span asp-validation-for="Input.State" class="text-danger"></span>
                                 </div>
                             </div>
 
@@ -178,12 +140,14 @@
                                 <div class="form-group">
                                     <label asp-for="Input.City">Select City</label>
                                     <input asp-for="Input.City" id="city">
+                                    <span asp-validation-for="Input.City" class="text-danger"></span>
                                 </div>
                             </div>
                             <div class="col-lg-6 mb-4">
                                 <div class="form-group">
                                     <label asp-for="Input.Pin" >Pincode</label>
                                     <input asp-for="Input.Pin" id="pincode">
+                                    <span asp-validation-for="Input.Pin" class="text-danger"></span>
                                 </div>
                             </div>
 

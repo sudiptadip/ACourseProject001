@@ -94,6 +94,7 @@ namespace Blog.Areas.Identity.Pages.Account
             public string? AlternatePhoneNumber { get; set; }
 
             [Display(Name = "Street Address")]
+            [Required]
             public string? Address { get; set; }
 
             [Display(Name = "Country")]
@@ -150,7 +151,7 @@ namespace Blog.Areas.Identity.Pages.Account
                 {
                     _logger.LogInformation("User created a new account with password.");
 
-                    await _userManager.AddToRoleAsync(user, SD.Role_Customer);
+                    await _userManager.AddToRoleAsync(user, SD.Role_Admin);
 
                     var userId = await _userManager.GetUserIdAsync(user);
                     var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
