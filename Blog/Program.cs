@@ -35,12 +35,12 @@ var app = builder.Build();
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {
-   // app.UseExceptionHandler("/Home/Error");
-    app.UseExceptionHandler("Customer/Error/PageNotFound");
+     app.UseExceptionHandler("/Home/Error");
+   // app.UseExceptionHandler("Customer/Error/PageNotFound");
     app.UseHsts();
 }
 
-app.UseStatusCodePagesWithReExecute("/Customer/Error/PageNotFound");
+// app.UseStatusCodePagesWithReExecute("/Customer/Error/PageNotFound");
 
 // Handle 404 errors
 app.UseStatusCodePagesWithReExecute("/Customer/Error/{0}");
