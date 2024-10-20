@@ -1,9 +1,12 @@
-﻿using Blog.DataAccess.Repository;
+﻿using Blog.DataAccess.Data;
+using Blog.DataAccess.Repository;
 using Blog.DataAccess.Repository.IRepository;
 using Blog.Models.Dto;
+using Blog.Models.Models;
 using Blog.Models.VM;
 using Blog.Utility.Service;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using System.Text;
 
 namespace Blog.Areas.Customer.Controllers
@@ -13,17 +16,19 @@ namespace Blog.Areas.Customer.Controllers
     {
         private readonly IUniteOfWork _uniteOfWork;
         private readonly ViewRenderingService _viewRenderingService;
-        public ProductController(IUniteOfWork uniteOfWork, ViewRenderingService viewRenderingService)
+        private readonly ApplicationDbContext _context;
+        public ProductController(IUniteOfWork uniteOfWork, ViewRenderingService viewRenderingService, ApplicationDbContext context)
         {
             _uniteOfWork = uniteOfWork;
             _viewRenderingService = viewRenderingService;
+            _context = context;
         }
 
         public async Task<IActionResult> Index(int page = 1)
         {
             int pageSize = 2; 
 
-            var productList = await _uniteOfWork.Product.GetAllAsync(includeProperties: "Category,Faculty");
+            var productList = await _uniteOfWork.Product.GetAllAsync(p => p.IsActive == true, includeProperties: "Category,Faculty");
             var categoryList = await _uniteOfWork.Category.GetAllAsync();
             var facultyList = await _uniteOfWork.Faculty.GetAllAsync();
             var subjectList = await _uniteOfWork.Subject.GetAllAsync();
@@ -34,10 +39,10 @@ namespace Blog.Areas.Customer.Controllers
 
             var productVm = new ProductVM
             {
-                CategoryList = categoryList.ToList(),
-                FacultyList = facultyList.ToList(),
+                CategoryList = categoryList.OrderBy(c => c.SortedOrder).ToList(),
+                FacultyList = facultyList.OrderBy(c => c.SortedOrder).ToList(),
                 ProductList = pagedProducts,
-                SubjectList = subjectList.ToList(),
+                SubjectList = subjectList.OrderBy(c => c.SortedOrder).ToList(),
             };
 
             ViewBag.CurrentPage = page;
@@ -48,6 +53,7 @@ namespace Blog.Areas.Customer.Controllers
 
         public async Task<IActionResult> Details(int id)
         {
+             
             var product = await _uniteOfWork.Product.GetAsync(p => p.Id  == id, includeProperties: "ProductAttributes,Category,Faculty,Subject");
 
             if(product == null)
@@ -55,7 +61,23 @@ namespace Blog.Areas.Customer.Controllers
                 return NotFound();
             }
 
-            return View(product);
+            ProductOption price = await _context.ProductOptions.FirstOrDefaultAsync(u => u.ProductId == product.Id);
+
+            if(price == null)
+            {
+                return BadRequest();
+            }
+            
+            ProductDetailsVM productDetailsVM = new()
+            {
+                ModeOfLecture = price.ModeOfLecture.Split(',').ToList(),
+                Attempt = price.Attempt.Split(",").ToList(),
+                Validity = price.Validity.Split(",").ToList(),  
+                Views = price.Views.Split(",").ToList(),
+                Product = product
+            };          
+
+            return View(productDetailsVM);
         }
 
 
@@ -69,13 +91,12 @@ namespace Blog.Areas.Customer.Controllers
 
             string modeOfLectureNormalized = request.ModeOfLecture.Trim().ToLower();
 
-            var price = await _uniteOfWork.ProductPrice
-                .GetAsync(p =>
-                    p.ProductId == request.ProductId &&
-                    p.ModeOfLecture.Trim().ToLower() == modeOfLectureNormalized &&
-                    p.ValidityInMonths == request.ValidityInMonths &&
-                    p.Views == request.Views);
-
+            ProductCombination price = _context.ProductCombinations
+                .FirstOrDefault(p => p.ModeOfLecture.Trim().ToLower() == request.ModeOfLecture.Trim().ToLower()
+                && p.Attempt.Trim().ToLower() == request.Attempt.Trim().ToLower() 
+                && p.Validity.Trim().ToLower() == request.ValidityInMonths.Trim().ToLower() && 
+                p.Views.Trim().ToLower() == request.Views.Trim().ToLower()
+            );
 
             if (price != null)
             {
@@ -86,8 +107,15 @@ namespace Blog.Areas.Customer.Controllers
                 };
                 return Ok(result);
             }
-
-            return NotFound("Price not found for the specified parameters.");
+            else
+            {
+                var result = new
+                {
+                    Price = 0,
+                    DiscountPrice = 0
+                };
+                return Ok(result);
+            }
         }
 
         [HttpPost]

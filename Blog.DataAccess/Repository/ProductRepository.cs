@@ -20,7 +20,7 @@ namespace Blog.DataAccess.Repository
 
         public async Task<Product> GetProductWithPricesAsync(int productId)
         {
-            return await _db.Products.Include(p => p.ProductPrice).FirstOrDefaultAsync(p => p.Id == productId);
+            return await _db.Products.FirstOrDefaultAsync(p => p.Id == productId);
         }
 
         public void Update(Product product)

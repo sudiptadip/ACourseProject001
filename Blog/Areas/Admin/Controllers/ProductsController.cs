@@ -8,6 +8,7 @@ using Blog.Utility.Service.IService;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.CodeAnalysis;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Identity.Client;
 using NuGet.Protocol.Plugins;
@@ -182,133 +183,12 @@ namespace Blog.Areas.Admin.Controllers
 
             return BadRequest("Unable to process the request.");
         }
-
-        public async Task<IActionResult> SetPrices(int id)
-        {
-            var product = await _unitOfWork.Product.GetProductWithPricesAsync(id);
-            if (product == null)
-            {
-                return NotFound();
-            }
-
-            var model = new ProductPriceVM
-            {
-                ProductId = id,
-                ProductPrices = new List<ProductPriceItemVM>()
-            };
-
-            // Example: Populate all permutations
-            var modesOfLecture = new List<string>
-            {
-                "Google Drive With E-Book",
-                "Google Drive With Hard Copy",
-                "Pen Drive With Hard Copy",
-                "Live At Home with Hard Copy"
-            };
-            var validities = new List<int> { 6, 9, 12 };  
-            var views = new List<int> { 1, 2, 3 };
-
-            // Retrieve existing prices if they exist, or use default values
-            var existingPrices = await _unitOfWork.ProductPrice.GetProductPricesAsync(id);
-
-            // Handle duplicates by grouping and create a dictionary for easy lookup, ensure consistent trimming and case normalization
-            var existingPricesDict = existingPrices
-                .GroupBy(p => (p.ModeOfLecture.Trim().ToLower(), p.ValidityInMonths, p.Views)) // Normalize case and trim
-                .ToDictionary(g => g.Key, g => g.First());
-
-            foreach (var mode in modesOfLecture)
-            {
-                foreach (var validity in validities)
-                {
-                    foreach (var view in views)
-                    {
-                        // Normalize the key in the same way for comparison
-                        var key = (mode.Trim().ToLower(), validity, view);
-
-                        // Check if the key exists in the dictionary and populate accordingly
-                        if (existingPricesDict.TryGetValue(key, out var priceItem))
-                        {
-                            model.ProductPrices.Add(new ProductPriceItemVM
-                            {
-                                ModeOfLecture = mode,
-                                ValidityInMonths = validity,
-                                Views = view,
-                                Price = priceItem.Price, // Set the existing price
-                                DiscountPrice = priceItem.DiscountPrice // Set the existing discount price
-                            });
-                        }
-                        else
-                        {
-                            // Default values for new entries
-                            model.ProductPrices.Add(new ProductPriceItemVM
-                            {
-                                ModeOfLecture = mode,
-                                ValidityInMonths = validity,
-                                Views = view,
-                                Price = 0, // Default to 0 if no existing price
-                                DiscountPrice = 0 // Default to null if no discount
-                            });
-                        }
-                    }
-                }
-            }
-
-            return View(model);
-        }
-
-
-        [HttpPost]
-        public async Task<IActionResult> SetPrices(ProductPriceVM model)
-        {
-            if (ModelState.IsValid)
-            {
-                var product = await _unitOfWork.Product.GetProductWithPricesAsync(model.ProductId);
-                if (product == null)
-                {
-                    return NotFound();
-                }
-
-                // Remove existing prices (if necessary)
-                var existingPrices = await _unitOfWork.ProductPrice.GetProductPricesAsync(model.ProductId);
-                await  _unitOfWork.ProductPrice.DeleteRangeAsync(existingPrices);
-
-                // Add new prices
-                foreach (var priceItem in model.ProductPrices)
-                {
-                    var productPrice = new ProductPrice
-                    {
-                        ProductId = model.ProductId,
-                        ModeOfLecture = priceItem.ModeOfLecture,
-                        ValidityInMonths = priceItem.ValidityInMonths,
-                        Views = priceItem.Views,
-                        Price = priceItem.Price,
-                        DiscountPrice = priceItem.DiscountPrice
-                    };
-
-                  await  _unitOfWork.ProductPrice.AddAsync(productPrice);
-                }
-
-                _unitOfWork.Save();
-
-                return RedirectToAction("Index");
-            }
-
-            // Debug validation errors (Optional, can be removed in production)
-            var errors = ModelState.Values.SelectMany(v => v.Errors);
-            foreach (var error in errors)
-            {
-                Console.WriteLine(error.ErrorMessage); // Check the error messages in the output window
-            }
-
-            return View(model);
-        }
-
+        
 
         [HttpPost]
         public async Task<IActionResult> Delete(int id)
         {
-            var product = await _context.Products.Include(p => p.ProductAttributes).Include(p => p.ProductPrice)
-                                                 .FirstOrDefaultAsync(p => p.Id == id);
+           var product = await _context.Products.Include(p => p.ProductAttributes).FirstOrDefaultAsync(p => p.Id == id);
 
             if (product == null)
             {
@@ -317,7 +197,7 @@ namespace Blog.Areas.Admin.Controllers
 
             _context.ProductAttributes.RemoveRange(product.ProductAttributes);
 
-            _context.ProductPrices.RemoveRange(product.ProductPrice);
+           // _context.ProductPrices.RemoveRange(product.ProductPrice);
 
             _context.Products.Remove(product);
 
@@ -327,8 +207,139 @@ namespace Blog.Areas.Admin.Controllers
         }
 
 
+        [HttpGet]
+        public async Task<IActionResult> SetPrices(int id)
+        {
+            Product product = await _context.Products.FindAsync(id);
+            if (product == null)
+            {
+                return NotFound();
+            }
+
+            ProductOption productOptions = await _context.ProductOptions.FirstOrDefaultAsync(u => u.ProductId == id);
+            ProductPriceVM priceVM = new ProductPriceVM();
+            var options = new LectureOption();
+
+            if (productOptions == null)
+            {
+                productOptions = new ProductOption { ProductId = id, ModeOfLecture = "", Attempt = "", Validity = "", Views = "",  };
+            }
+
+            priceVM.ProductOption = productOptions;
 
 
+            var existingCombinations = await _context.ProductCombinations
+                .Where(c => c.ProductId == id)
+                .ToListAsync();
 
+
+            if (!existingCombinations.Any())
+            {
+                var combinations = options.GetAllCombinations(productOptions, id, 0, 0);
+                priceVM.Combinations = combinations;
+            }
+            else
+            {
+                priceVM.Combinations = existingCombinations;
+            }
+
+            return View(priceVM);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> SetPrices(ProductPriceVM priceVM)
+        {
+            if (ModelState.IsValid)
+            {
+                if (priceVM.ProductOption.Id == 0)
+                {
+                    await _context.ProductOptions.AddAsync(priceVM.ProductOption);
+                }
+                else
+                {
+                    _context.ProductOptions.Update(priceVM.ProductOption);
+                }
+
+                await _context.SaveChangesAsync();
+                TempData["success"] = "Successfully saved!";
+                return RedirectToAction(nameof(SetPrices), new { id = priceVM.ProductOption.ProductId });
+            }
+
+            return View(priceVM);
+        }
+
+        [HttpPost("saveCombinations")]
+        public async Task<IActionResult> SaveCombinations(List<ProductCombination> combinations)
+        {
+            if (combinations == null || !combinations.Any())
+            {
+                return BadRequest("No combinations provided.");
+            }
+
+            try
+            {
+                var existingCombination = _context.ProductCombinations.Where(c => c.ProductId == combinations[0].ProductId);
+
+                if (existingCombination != null)
+                {
+                    _context.RemoveRange(existingCombination);
+                    _context.SaveChanges();
+                }
+
+                _context.ProductCombinations.AddRange(combinations);
+
+                await _context.SaveChangesAsync();
+                TempData["success"] = "Combinations saved successfully!";
+                return RedirectToAction(nameof(SetPrices), new { id = combinations.FirstOrDefault()?.ProductId });
+            }
+            catch (Exception ex)
+            {
+                TempData["success"] = ex.Message.ToString();
+                return View(nameof(SetPrices), new { id = combinations.FirstOrDefault()?.ProductId });
+            }
+
+
+        }
+
+    }
+}
+
+
+public class LectureOption
+{
+
+    public List<ProductCombination> GetAllCombinations(ProductOption option, int productId, decimal price, decimal discountPrice)
+    {
+        var modes = option.ModeOfLecture.Split(',').ToList();
+        var validities = option.Validity.Split(',').ToList();
+        var views = option.Views.Split(',').ToList();
+        var attempts = option.Attempt.Split(',').ToList();
+
+        var combinations = new List<ProductCombination>();
+
+        foreach (var mode in modes)
+        {
+            foreach (var validity in validities)
+            {
+                foreach (var view in views)
+                {
+                    foreach (var attempt in attempts)
+                    {
+                        combinations.Add(new ProductCombination
+                        {
+                            ModeOfLecture = mode,
+                            Validity = validity,
+                            Views = view,
+                            Attempt = attempt,
+                            ProductId = productId,
+                            Price = price,
+                            DiscountPrice = discountPrice,
+                        });
+                    }
+                }
+            }
+        }
+
+        return combinations;
     }
 }

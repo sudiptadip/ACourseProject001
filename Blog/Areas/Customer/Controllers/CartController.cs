@@ -1,9 +1,12 @@
-﻿using Blog.DataAccess.Repository.IRepository;
+﻿using Azure.Core;
+using Blog.DataAccess.Data;
+using Blog.DataAccess.Repository.IRepository;
 using Blog.Models.Dto;
 using Blog.Models.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
 
 namespace Blog.Areas.Customer.Controllers
@@ -14,12 +17,13 @@ namespace Blog.Areas.Customer.Controllers
     {
         private readonly IUniteOfWork _unitOfWork;
         private readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly ApplicationDbContext _context;
 
-        public CartController(IUniteOfWork unitOfWork, IHttpContextAccessor httpContextAccessor)
+        public CartController(IUniteOfWork unitOfWork, IHttpContextAccessor httpContextAccessor, ApplicationDbContext context)
         {
             _unitOfWork = unitOfWork;
             _httpContextAccessor = httpContextAccessor;
-
+            _context = context;
         }
 
         public async Task<IActionResult> Index()
@@ -79,7 +83,7 @@ namespace Blog.Areas.Customer.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> AddToCart(int productId, string modeOfLecture, int validity, int views, string attempt)
+        public async Task<IActionResult> AddToCart(int productId, string modeOfLecture, string validity, string views, string attempt)
         {
             // Get the current user's ID
             var userId = _httpContextAccessor.HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
@@ -97,34 +101,32 @@ namespace Blog.Areas.Customer.Controllers
             }
 
             // Check for the matching product price
-            var productPrice = await _unitOfWork.ProductPrice.GetAsync(p =>
-                p.ProductId == productId &&
-                p.ModeOfLecture.Trim().ToLower() == modeOfLecture.Trim().ToLower() &&
-                p.ValidityInMonths == validity &&
-                p.Views == views
+            ProductCombination productPrice = _context.ProductCombinations
+                .FirstOrDefault(p => p.ModeOfLecture.Trim().ToLower() == modeOfLecture.Trim().ToLower()
+                && p.Attempt.Trim().ToLower() == attempt.Trim().ToLower()
+                && p.Validity.Trim().ToLower() == validity.Trim().ToLower() &&
+                p.Views.Trim().ToLower() == views.Trim().ToLower()
             );
 
-            if (productPrice == null || productPrice.Price == 0)
+            if (productPrice == null || productPrice.Price <= 0)
             {
                 TempData["error"] = "Unable to find a valid price for the selected options.";
                 return RedirectToAction("Details", "Product", new { id = productId });
             }
 
-            // Get or create the user's cart
+
             var cart = await _unitOfWork.Cart.GetCartByUserIdAsync(userId);
             if (cart == null)
             {
-                // If no cart exists, create a new one for the user
                 cart = new Cart
                 {
-                    UserId = userId, // Link to the current user
+                    UserId = userId,
                     CreatedAt = DateTime.Now,
                     CartItems = new List<CartItem>()
                 };
 
                 await _unitOfWork.Cart.AddAsync(cart);
 
-                // Save to ensure the CartId is generated
                  _unitOfWork.Save();
             }
 
@@ -143,7 +145,7 @@ namespace Blog.Areas.Customer.Controllers
             {
                 // If item exists, increment quantity and update price
                 existingCartItem.Quantity += 1;
-                existingCartItem.Price += productPrice.Price;
+               existingCartItem.Price += productPrice.Price;
                 existingCartItem.DiscountPrice += existingCartItem.DiscountPrice;
                 existingCartItem.CreatedAt = DateTime.Now;
                 _unitOfWork.CartItem.Update(existingCartItem);
@@ -161,7 +163,7 @@ namespace Blog.Areas.Customer.Controllers
                     Quantity = 1, 
                     Attempt = attempt,
                     Price = productPrice.Price,
-                    DiscountPrice = productPrice.DiscountPrice ?? 0,
+                    DiscountPrice = productPrice.DiscountPrice,
                     CreatedAt = DateTime.Now,
                 };
 

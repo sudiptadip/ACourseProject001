@@ -17,11 +17,12 @@ namespace Blog.Models.Models
         public int ProductId { get; set; }
         public Product Product { get; set; }
         public int Quantity { get; set; }
+        [Column(TypeName = "decimal(18,2)")]
         public decimal Price { get; set; }
 
         public string ModeOfLecture { get; set; }
         public string Attempt { get; set; }
-        public int ValidityInMonths { get; set; }
-        public int Views { get; set; }
+        public string ValidityInMonths { get; set; }
+        public string Views { get; set; }
     }
 }

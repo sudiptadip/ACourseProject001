@@ -14,7 +14,9 @@ namespace Blog.Models.Models
         public string ProductImageUrl { get; set; }
         public string ProductDescription { get; set; }
         public bool IsActive { get; set; }
+        [Column(TypeName = "decimal(18,2)")]
         public decimal DefaultPrice { get; set; }
+        [Column(TypeName = "decimal(18,2)")]
         public decimal DefaultDiscountPrice { get; set; }
         public DateTime CreatedOn { get; set; }
         public DateTime ModifiedOn { get; set; }
@@ -35,7 +37,8 @@ namespace Blog.Models.Models
 
 
         public ICollection<ProductAttribute> ProductAttributes { get; set; }
-        public ICollection<ProductPrice> ProductPrice { get; set; }
+        public ICollection<ProductOption> Options { get; set; }
+        public ICollection<ProductCombination> Combinations { get; set; }
 
     }
 }

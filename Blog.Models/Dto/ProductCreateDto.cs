@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -15,7 +16,9 @@ namespace Blog.Models.Dto
         public int SubjectId { get; set; }
         public string ProductDescription { get; set; }
         public bool IsActive { get; set; }
+        [Column(TypeName = "decimal(18,2)")]
         public decimal DefaultPrice { get; set; }
+        [Column(TypeName = "decimal(18,2)")]
         public decimal DefaultDiscountPrice { get; set; }
         public IFormFile ProductImage { get; set; }
         public string ProductImageUrl { get; set; }

@@ -10,7 +10,8 @@ namespace Blog.Models.Dto
     {
         public int ProductId { get; set; }
         public string ModeOfLecture { get; set; }
-        public int ValidityInMonths { get; set; }
-        public int Views { get; set; }
+        public string ValidityInMonths { get; set; }
+        public string Views { get; set; }
+        public string Attempt { get; set; }
     }
 }

@@ -21,7 +21,7 @@ namespace Blog.Areas.Customer.Controllers
 
         public async Task<IActionResult> Index()
         {
-            var products = await _uniteOfWork.Product.GetAllAsync(includeProperties: "Category,Faculty");
+            var products = await _uniteOfWork.Product.GetAllAsync(p => p.IsActive == true, includeProperties: "Category,Faculty");
             var blogs = await _uniteOfWork.Blog.GetAllAsync();
             var sosalMedia = await _uniteOfWork.SosalMedia.GetAllAsync();
 

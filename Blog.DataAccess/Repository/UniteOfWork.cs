@@ -19,8 +19,6 @@ namespace Blog.DataAccess.Repository
 
         public ISubjectRepository Subject { get; private set; }
 
-        public IProductPriceRepository ProductPrice { get; private set; }
-
         public ICartItemRepository CartItem { get; private set; }
 
         public ICartRepository Cart { get; private set; }
@@ -45,7 +43,6 @@ namespace Blog.DataAccess.Repository
             Faculty = new FacultyRepository(_db);
             Product = new ProductRepository(_db);
             Subject = new SubjectRepository(_db);
-            ProductPrice = new ProductPriceRepository(_db);
             Cart = new CartRepository(_db);
             CartItem = new CartItemRepository(_db);
             Blog = new BlogRepository(_db);
