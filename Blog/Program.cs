@@ -19,6 +19,7 @@ builder.Services.AddRazorPages();
 builder.Services.AddScoped<IEmailSender, EmailSender>();
 builder.Services.AddScoped<IUniteOfWork, UniteOfWork>();
 builder.Services.AddScoped<IImageService, ImageService>();
+// builder.Services.AddScoped<IEasebuzzPaymentService, EasebuzzPaymentService>();
 builder.Services.AddSingleton<ViewRenderingService>();
 
 
@@ -26,7 +27,16 @@ builder.Services.ConfigureApplicationCookie(options =>
 {
     options.LoginPath = $"/Identity/Account/Login";
     options.AccessDeniedPath = $"/Identity/Account/AccessDenied";
-    options.ExpireTimeSpan = TimeSpan.FromMinutes(30);
+    options.ExpireTimeSpan = TimeSpan.FromMinutes(1200);
+    options.SlidingExpiration = true;
+});
+
+// Add session services
+builder.Services.AddSession(options =>
+{
+    options.IdleTimeout = TimeSpan.FromMinutes(1200);
+    options.Cookie.HttpOnly = true;
+    options.Cookie.IsEssential = true;
 });
 
 
@@ -40,6 +50,7 @@ if (!app.Environment.IsDevelopment())
     app.UseHsts();
 }
 
+app.UseSession();
 // app.UseStatusCodePagesWithReExecute("/Customer/Error/PageNotFound");
 
 // Handle 404 errors
@@ -52,8 +63,23 @@ app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapRazorPages();
-app.MapControllerRoute(
-    name: "default",
-    pattern: "{area=Customer}/{controller=Home}/{action=Index}/{id?}");
+//app.MapControllerRoute(
+//    name: "default",
+//    pattern: "{area=Customer}/{controller=Home}/{action=Index}/{id?}");
+
+app.UseEndpoints(endpoints =>
+{
+    endpoints.MapControllerRoute(
+        name: "default",
+        pattern: "{area=Customer}/{controller=Home}/{action=Index}/{id?}");
+
+    endpoints.MapControllerRoute(
+        name: "paymentSuccess",
+        pattern: "Payment/PaymentSuccess");
+
+    endpoints.MapControllerRoute(
+        name: "paymentFailure",
+        pattern: "Payment/PaymentFailure");
+});
 
 app.Run();
