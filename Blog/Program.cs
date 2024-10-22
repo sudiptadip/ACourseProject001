@@ -63,23 +63,23 @@ app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapRazorPages();
-//app.MapControllerRoute(
-//    name: "default",
-//    pattern: "{area=Customer}/{controller=Home}/{action=Index}/{id?}");
+app.MapControllerRoute(
+    name: "default",
+    pattern: "{area=Customer}/{controller=Home}/{action=Index}/{id?}");
 
-app.UseEndpoints(endpoints =>
-{
-    endpoints.MapControllerRoute(
-        name: "default",
-        pattern: "{area=Customer}/{controller=Home}/{action=Index}/{id?}");
+//app.UseEndpoints(endpoints =>
+//{
+//    endpoints.MapControllerRoute(
+//        name: "default",
+//        pattern: "{area=Customer}/{controller=Home}/{action=Index}/{id?}");
 
-    endpoints.MapControllerRoute(
-        name: "paymentSuccess",
-        pattern: "Payment/PaymentSuccess");
+//    endpoints.MapControllerRoute(
+//        name: "paymentSuccess",
+//        pattern: "Payment/PaymentSuccess");
 
-    endpoints.MapControllerRoute(
-        name: "paymentFailure",
-        pattern: "Payment/PaymentFailure");
-});
+//    endpoints.MapControllerRoute(
+//        name: "paymentFailure",
+//        pattern: "Payment/PaymentFailure");
+//});
 
 app.Run();

@@ -17,6 +17,7 @@ namespace Blog.Models.Models
         [Column(TypeName = "decimal(18,2)")]
         public decimal DefaultPrice { get; set; }
         [Column(TypeName = "decimal(18,2)")]
+        public bool IsPayment { get; set; } = false;
         public decimal DefaultDiscountPrice { get; set; }
         public DateTime CreatedOn { get; set; }
         public DateTime ModifiedOn { get; set; }

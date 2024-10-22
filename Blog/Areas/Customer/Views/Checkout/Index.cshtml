@@ -25,7 +25,17 @@
 
 <section class="checkout-page-area section-gap-equal">
     <div class="container">
-        <form method="post" asp-area="Customer" asp-controller="Checkout" asp-action="PlaceOrder">
+        <form method="post" asp-area="Customer" asp-controller="Payment" asp-action="InitiatePayment">
+            <input type="hidden" name="key" value="@Model.PaymentModel.Key" />
+            <input type="hidden" name="txnid" value="@Model.PaymentModel.TxnId" />
+            <input type="hidden" name="amount" value="@Model.PaymentModel.Amount" />
+            <input type="hidden" name="productinfo" value="@Model.PaymentModel.ProductInfo" />
+            <input type="hidden" name="firstname" value="@Model.PaymentModel.FirstName" />
+            <input type="hidden" name="email" value="@Model.PaymentModel.Email" />
+            <input type="hidden" name="phone" value="@Model.PaymentModel.Phone" />
+            <input type="hidden" name="surl" value="@Model.PaymentModel.SuccessUrl" />
+            <input type="hidden" name="furl" value="@Model.PaymentModel.FailureUrl" />
+            <input type="hidden" name="hash" value="@Model.PaymentModel.Hash" />
             <div class="row row--25">
                 <div class="col-lg-6">
                     <div class="checkout-billing">

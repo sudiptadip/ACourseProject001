@@ -26,7 +26,7 @@ namespace Blog.Areas.Customer.Controllers
 
         public async Task<IActionResult> Index(int page = 1)
         {
-            int pageSize = 2; 
+            int pageSize = 16;
 
             var productList = await _uniteOfWork.Product.GetAllAsync(p => p.IsActive == true, includeProperties: "Category,Faculty");
             var categoryList = await _uniteOfWork.Category.GetAllAsync();
@@ -75,7 +75,7 @@ namespace Blog.Areas.Customer.Controllers
                 Validity = price.Validity.Split(",").ToList(),  
                 Views = price.Views.Split(",").ToList(),
                 Product = product
-            };          
+            };         
 
             return View(productDetailsVM);
         }
@@ -91,11 +91,11 @@ namespace Blog.Areas.Customer.Controllers
 
             string modeOfLectureNormalized = request.ModeOfLecture.Trim().ToLower();
 
-            ProductCombination price = _context.ProductCombinations
-                .FirstOrDefault(p => p.ModeOfLecture.Trim().ToLower() == request.ModeOfLecture.Trim().ToLower()
+            ProductCombination price = await _context.ProductCombinations
+                .FirstOrDefaultAsync(p => p.ModeOfLecture.Trim().ToLower() == request.ModeOfLecture.Trim().ToLower()
                 && p.Attempt.Trim().ToLower() == request.Attempt.Trim().ToLower() 
                 && p.Validity.Trim().ToLower() == request.ValidityInMonths.Trim().ToLower() && 
-                p.Views.Trim().ToLower() == request.Views.Trim().ToLower()
+                p.Views.Trim().ToLower() == request.Views.Trim().ToLower() && p.ProductId == request.ProductId
             );
 
             if (price != null)
@@ -121,7 +121,7 @@ namespace Blog.Areas.Customer.Controllers
         [HttpPost]
         public async Task<IActionResult> FilterProducts(List<int> categories, List<int> faculties, List<int> subjects, int page = 1)
         {
-            int pageSize = 2; 
+            int pageSize = 16;
 
             var filteredProducts = await _uniteOfWork.Product.GetAllAsync(
                 p => (categories.Count == 0 || categories.Contains(p.CategoryId)) &&

@@ -4,6 +4,12 @@
     Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
 }
 
+<style>
+    .dropdown-toggle, .bootstrap-select {
+        width: 100% !important;
+    }
+</style>
+
 <div class="container">
     <form method="post" enctype="multipart/form-data">
         <div class="modal-header">
@@ -22,6 +28,14 @@
                 <label asp-for="FacultyName" class="form-label"></label>
                 <input asp-for="FacultyName" class="form-control" placeholder="">
                 <span class="text-danger" asp-validation-for="FacultyName"></span>
+            </div>
+            <div class="mb-3" style="width: 100%;">
+                <label style="display: block" asp-for="IsShowMentorPage" class="form-label">Show Faculty On Mentor Page</label>
+                <select asp-for="IsShowMentorPage">
+                    <option value="true">Show</option>
+                    <option value="false">Not Show</option>
+                </select>
+                <span class="text-danger" asp-validation-for="IsShowMentorPage"></span>
             </div>
             <div class="mb-3">
                 <label asp-for="Description" class="form-label"></label>

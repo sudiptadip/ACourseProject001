@@ -31,5 +31,8 @@ namespace Blog.Models.VM
         public string Country { get; set; }
         [ValidateNever]
         public Cart Cart { get; set; }
+
+        [ValidateNever]
+        public PaymentModel PaymentModel { get; set; }
     }
 }

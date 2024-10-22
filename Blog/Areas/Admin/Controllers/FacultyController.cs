@@ -47,7 +47,7 @@ namespace Blog.Areas.Admin.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Upsert(Faculty faculty, IFormFile file)
+        public async Task<IActionResult> Upsert(Faculty faculty, IFormFile? file)
         {
             if (ModelState.IsValid)
             {
@@ -58,6 +58,7 @@ namespace Blog.Areas.Admin.Controllers
 
                 if (isDuplicate != null)
                 {
+                    ViewBag["error"] = "Faculty name or sorted order already exists.";
                     ModelState.AddModelError("", "Faculty name or sorted order already exists.");
                     return View(faculty);
                 }
@@ -82,6 +83,7 @@ namespace Blog.Areas.Admin.Controllers
                     }
                     else
                     {
+                        TempData["error"] = "Image upload failed";
                         ModelState.AddModelError("", "Image upload failed.");
                         return View(faculty);
                     }
@@ -91,6 +93,7 @@ namespace Blog.Areas.Admin.Controllers
                 {
                     faculty.CreatedOn = DateTime.Now;
                    await _unitOfWork.Faculty.AddAsync(faculty);
+                    TempData["success"] = "Successfuly Insert";
                 }
                 else
                 {
@@ -103,14 +106,17 @@ namespace Blog.Areas.Admin.Controllers
                     existingFaculty.FacultyName = faculty.FacultyName;
                     existingFaculty.Description = faculty.Description;
                     existingFaculty.SortedOrder = faculty.SortedOrder;
-                    existingFaculty.ImageUrl = faculty.ImageUrl;
+                    existingFaculty.ImageUrl = faculty.ImageUrl ?? existingFaculty.ImageUrl;
+                    existingFaculty.IsShowMentorPage = faculty.IsShowMentorPage;
                     existingFaculty.ModifiedOn = DateTime.Now;
                     _unitOfWork.Faculty.Update(existingFaculty);
+                    TempData["success"] = "Successfuly update faculty";
                 }
 
                 _unitOfWork.Save();
                 return RedirectToAction(nameof(Index));
             }
+            TempData["error"] = "Validation faild";
             return View(faculty);
         }
 

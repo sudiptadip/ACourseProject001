@@ -30,7 +30,7 @@
 
                         <div class="d-flex align-items-center justify-content-between md-flex-direction-column">
                             <div class="brand-name">
-                                <p>CA Praveen Sharma</p>
+                                <p>@Model.Product.Faculty.FacultyName</p>
                             </div>
 
                             <div class="share-area">
@@ -268,7 +268,9 @@
                                                             <th scope="row" class="w-t-30">
                                                                 @item.AttributeName
                                                             </th>
-                                                            <td>@item.Value</td>
+                                                            <td>
+                                                                <a href="@item.Value" target="_blank">Click Here</a>
+                                                            </td>
                                                         </tr>
                                                     }
                                                 }

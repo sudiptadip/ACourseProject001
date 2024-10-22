@@ -15,14 +15,18 @@ namespace Blog.Models.Models
         [Required]
         [Display (Name = "Faculty Name")]
         public string FacultyName { get; set; }
-        [Required]
         public string Description { get; set; }
         [Required]
         [Range(1, 10000, ErrorMessage = "Sorted Order must be grater than 0")]
         public int SortedOrder { get; set; }
         [ValidateNever]
         public string ImageUrl { get; set; }
+        [Required]
+        public bool IsShowMentorPage { get; set; }
+
+        [ValidateNever]
         public DateTime CreatedOn { get; set; }
+        [ValidateNever]
         public DateTime ModifiedOn { get; set; }
 
 

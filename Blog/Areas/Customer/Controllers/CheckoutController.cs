@@ -4,6 +4,8 @@ using Blog.Models.VM;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
+using System.Security.Cryptography;
+using System.Text;
 
 
 namespace Blog.Areas.Customer.Controllers
@@ -14,11 +16,13 @@ namespace Blog.Areas.Customer.Controllers
     {
         private readonly IUniteOfWork _unitOfWork;
         private readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly IConfiguration _configuration;
 
-        public CheckoutController(IUniteOfWork unitOfWork, IHttpContextAccessor httpContextAccessor)
+        public CheckoutController(IUniteOfWork unitOfWork, IHttpContextAccessor httpContextAccessor, IConfiguration configuration)
         {
             _unitOfWork = unitOfWork;
             _httpContextAccessor = httpContextAccessor;
+            _configuration = configuration;
         }
 
         [HttpGet]
@@ -39,6 +43,22 @@ namespace Blog.Areas.Customer.Controllers
                 return RedirectToAction("Index", "Cart");
             }
 
+            var model = new PaymentModel
+            {
+                Key = _configuration["Easebuzz:Key"],
+                TxnId = Guid.NewGuid().ToString(),
+                Amount = "500.00", // Example amount
+                ProductInfo = "Sample Product",
+                FirstName = "John",
+                Email = "john@example.com",
+                Phone = "9876543210",
+                SuccessUrl = Url.Action("PaymentSuccess", "Payment", null, Request.Scheme),
+                FailureUrl = Url.Action("PaymentFailure", "Payment", null, Request.Scheme)
+            };
+
+            var salt = _configuration["Easebuzz:Salt"];
+            model.Hash = GenerateHash(model.Key, model.TxnId, model.Amount, model.ProductInfo, model.FirstName, model.Email, salt);
+
             var order = await _unitOfWork.Order.GetAsync(o => o.UserId == userId);
 
             if(order != null)
@@ -55,6 +75,7 @@ namespace Blog.Areas.Customer.Controllers
                     PhoneNumber = order.PhoneNumber,
                     PostalCode = order.PostalCode,
                     State = order.State,
+                    PaymentModel = model
                 };
                 return View(checkoutViewModel);
             }
@@ -62,14 +83,24 @@ namespace Blog.Areas.Customer.Controllers
             {
                 var checkoutViewModel = new CheckoutVM
                 {
-                    Cart = cart
+                    Cart = cart,
+                    PaymentModel = model
                 };
 
                 return View(checkoutViewModel);
 
-
             }
 
+        }
+
+        public string GenerateHash(string key, string txnId, string amount, string productInfo, string firstName, string email, string salt)
+        {
+            var data = $"{key}|{txnId}|{amount}|{productInfo}|{firstName}|{email}|||||||||||{salt}";
+            using (SHA512 sha512 = SHA512.Create())
+            {
+                byte[] bytes = sha512.ComputeHash(Encoding.UTF8.GetBytes(data));
+                return BitConverter.ToString(bytes).Replace("-", "").ToLower();
+            }
         }
 
 
