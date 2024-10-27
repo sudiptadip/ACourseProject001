@@ -32,7 +32,7 @@ namespace Blog.Models.VM
         [ValidateNever]
         public Cart Cart { get; set; }
 
-        [ValidateNever]
-        public PaymentModel PaymentModel { get; set; }
+       // [ValidateNever]
+       // public PaymentModel PaymentModel { get; set; }
     }
 }
