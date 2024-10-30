@@ -64,98 +64,100 @@
         </div>
     </div>
 
-<section class="cart-page-area edu-section-gap">
-    <div class="container-fluid">
-        <div class="row carts">
-            <div class="col-lg-8">
-                <div class="table-responsive">
-                    <div class="d-flex align-items-center justify-content-between">
-                        <h4>Shopping Cart</h4>
+    <section class="cart-page-area edu-section-gap">
+        <div class="container-fluid">
+            <div class="row carts">
+                <div class="col-lg-8">
+                    <div class="table-responsive">
 
+                        <div class="d-flex align-items-center justify-content-between">
+                            <h4>Shopping Cart</h4>
                             <a asp-area="Customer" asp-controller="Product" asp-action="Index" class="btn btn-sm edu-btn">Continue Shopping</a>
-                    </div>
+                        </div>
 
-                    <table class="table table-bordered">
-                        <thead class="bg-lighten07">
-                            <tr>
-                                <th scope="col" class="product-title">Book Name</th>
-                                <th scope="col" class="product-title">Quantity</th>
-                                <th scope="col" class="product-title">Price</th>
-                                <th scope="col" class="product-title">Discount</th>
-                                <th scope="col" class="product-title">Payable Amount</th>
-                                <th scope="col" class="product-title">Remove</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-
-                            @foreach (var item in Model.CartItems)
-                            {
+                        <table class="table table-bordered">
+                            <thead class="bg-lighten07">
                                 <tr>
-                                    <td class="product-thumbnail">
-                                        <a href="#">@item.Product.ProductName</a>
-                                    </td>
-                                    <td class="product-thumbnail d-flex" data-title="Qty">
-                                        <div class="justify-content-center" style="width: 120px" >
-                                            <input type="number" class="quantity-input update-quantity" value="@item.Quantity" data-cart-item-id="@item.Id" />
-                                        </div>
-                                    </td>
-                                    <td class="product-thumbnail">
-                                            <span style="text-decoration: line-through !important;">₹</span>@item.Price
-                                    </td>
-                                    <td class="product-thumbnail">
-                                            <span class="currency-symbol">₹</span>  @(item.Price - item.DiscountPrice)
-                                    </td>
-                                    <td class="product-thumbnail">
-                                            <span class="currency-symbol">₹</span>@item.DiscountPrice
-                                    </td>
-                                    <td class="product-remove product-thumbnail">
-                                        <a href="#" class="remove-wishlist remove-cart-item" data-cart-item-id="@item.Id" >
-                                            <i class="fas fa-trash text-danger"></i>
-                                        </a>
-                                    </td>
+                                    <th scope="col" class="product-title">Book Name</th>
+                                    <th scope="col" class="product-title">Quantity</th>
+                                    <th scope="col" class="product-title">Price</th>
+                                    <th scope="col" class="product-title">Discount</th>
+                                    <th scope="col" class="product-title">Payable Amount</th>
+                                    <th scope="col" class="product-title">Remove</th>
                                 </tr>
-                            }
+                            </thead>
+                            <tbody>
 
-                        </tbody>
-                    </table>
+                                @foreach (var item in Model.CartItems)
+                                {
+                                    <tr>
+                                        <td class="product-thumbnail">
+                                            <a href="#">@item.Product.ProductName</a>
+                                        </td>
+                                        <td class="product-thumbnail d-flex" data-title="Qty">
+                                            <div class="d-flex justify-content-center align-items-center" style="width: 120px;">
+                                                <button type="button" class="btn btn-sm btn-dark decrement-btn" data-cart-item-id="@item.Id">-</button>
+                                                <input type="number" class="quantity-input update-quantity text-center" value="@item.Quantity" data-cart-item-id="@item.Id" readonly style="width: 80px;" />
+                                                <button type="button" class="btn btn-sm btn-dark increment-btn" data-cart-item-id="@item.Id">+</button>
+                                            </div>
+                                        </td>
+                                        <td class="product-thumbnail">
+                                            <span style="text-decoration: line-through !important;">₹</span>@item.Price
+                                        </td>
+                                        <td class="product-thumbnail">
+                                            <span class="currency-symbol">₹</span>  @(item.Price - item.DiscountPrice)
+                                        </td>
+                                        <td class="product-thumbnail">
+                                            <span class="currency-symbol">₹</span>@item.DiscountPrice
+                                        </td>
+                                        <td class="product-remove product-thumbnail">
+                                            <a href="#" class="remove-wishlist remove-cart-item" data-cart-item-id="@item.Id">
+                                                <i class="fas fa-trash text-danger"></i>
+                                            </a>
+                                        </td>
+                                    </tr>
+                                }
+
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
-            </div>
 
-            <div class="col-lg-1"></div>
+                <div class="col-lg-1"></div>
 
-            <div class="col-lg-3">
-                <div class="order-summery">
-                    <h4 class="title">Price Summary</h4>
-                    <table class="table summery-table">
-                        <tbody>
-
+                <div class="col-lg-3">
+                    <div class="order-summery">
+                        <h4 class="title">Price Summary</h4>
+                        <table class="table summery-table">
+                            <tbody>
 
 
-                            <tr class="order-subtotal">
-                                <td>Total Amount</td>
-                                <td>₹@Model.CartItems.Sum(ci => ci.Price)</td>
-                            </tr>
 
-                            <tr class="order-subtotal">
-                                <td>Discount</td>   
+                                <tr class="order-subtotal">
+                                    <td>Total Amount</td>
+                                    <td>₹@Model.CartItems.Sum(ci => ci.Price)</td>
+                                </tr>
+
+                                <tr class="order-subtotal">
+                                    <td>Discount</td>
                                     <td>- ₹@Model.CartItems.Sum(ci => (ci.Price - ci.DiscountPrice))</td>
-                            </tr>
+                                </tr>
 
-                            <tr class="order-total">
-                                <td>Payable Amount</td>
-                                <td>₹@Model.CartItems.Sum(ci => ci.DiscountPrice))</td>
-                            </tr>
-                        </tbody>
-                    </table>
+                                <tr class="order-total">
+                                    <td>Payable Amount</td>
+                                    <td>₹@Model.CartItems.Sum(ci => ci.DiscountPrice)</td>
+                                </tr>
+                            </tbody>
+                        </table>
 
-                    <a asp-area="Customer" asp-controller="Checkout" asp-action="Index" class="edu-btn btn-medium checkout-btn">
-                        Process to Checkout <i class="icon-4"></i>
-                    </a>
+                        <a asp-area="Customer" asp-controller="Checkout" asp-action="Index" class="edu-btn btn-medium checkout-btn">
+                            Process to Checkout <i class="icon-4"></i>
+                        </a>
 
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
     </section>
 }
 else
@@ -177,18 +179,31 @@ else
 @section Scripts {
     <script>
         $(document).ready(function () {
+            // Update quantity through increment and decrement buttons
+            $('.increment-btn').on('click', function () {
+                var input = $(this).siblings('.quantity-input');
+                var cartItemId = input.data('cart-item-id');
+                var quantity = parseInt(input.val()) + 1;
 
-            $('.update-quantity').on('change', function () {
-                
-                console.log("update-quantity");
+                updateQuantity(cartItemId, quantity);
+            });
 
-                var cartItemId = $(this).data('cart-item-id');
-                var quantity = $(this).val();
+            $('.decrement-btn').on('click', function () {
+                var input = $(this).siblings('.quantity-input');
+                var cartItemId = input.data('cart-item-id');
+                var quantity = parseInt(input.val()) - 1;
 
+                if (quantity > 0) {  // Prevent quantity from going below 1
+                    updateQuantity(cartItemId, quantity);
+                }
+            });
+
+            // Update quantity function
+            function updateQuantity(cartItemId, quantity) {
                 $.post('@Url.Action("UpdateQuantity", "Cart")', { cartItemId: cartItemId, quantity: quantity }, function (result) {
                     location.reload();
                 });
-            });
+            }
 
             // Remove cart item
             $('.remove-cart-item').on('click', function () {

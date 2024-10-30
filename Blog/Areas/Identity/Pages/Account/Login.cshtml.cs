@@ -80,6 +80,13 @@ namespace Blog.Areas.Identity.Pages.Account
                 if (result.Succeeded)
                 {
                     _logger.LogInformation("User logged in.");
+
+                    // Check if the returnUrl contains "AddToCart" and redirect to Home if it does
+                    if (returnUrl.Contains("AddToCart"))
+                    {
+                        returnUrl = Url.Content("~/");
+                    }
+
                     return LocalRedirect(returnUrl);
                 }
                 if (result.RequiresTwoFactor)
@@ -98,7 +105,9 @@ namespace Blog.Areas.Identity.Pages.Account
                 }
             }
 
+            // If we got this far, something failed, redisplay form
             return Page();
         }
+
     }
 }

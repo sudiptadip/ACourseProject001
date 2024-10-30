@@ -7,6 +7,7 @@ using Blog.DataAccess.Repository.IRepository;
 using Blog.DataAccess.Repository;
 using Blog.Utility.Service.IService;
 using Blog.Utility.Service;
+using Blog.Models.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -21,6 +22,8 @@ builder.Services.AddScoped<IUniteOfWork, UniteOfWork>();
 builder.Services.AddScoped<IImageService, ImageService>();
 builder.Services.AddSingleton<EasebuzzService>();
 builder.Services.AddSingleton<ViewRenderingService>();
+builder.Services.Configure<EmailSettings>(builder.Configuration.GetSection("EmailSettings"));
+builder.Services.AddScoped<IEmailService, EmailService>();
 
 
 builder.Services.ConfigureApplicationCookie(options =>
@@ -42,18 +45,15 @@ builder.Services.AddSession(options =>
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {
      app.UseExceptionHandler("/Home/Error");
-   // app.UseExceptionHandler("Customer/Error/PageNotFound");
     app.UseHsts();
 }
 
 app.UseSession();
-// app.UseStatusCodePagesWithReExecute("/Customer/Error/PageNotFound");
 
-// Handle 404 errors
+
 app.UseStatusCodePagesWithReExecute("/Customer/Error/{0}");
 
 app.UseHttpsRedirection();
@@ -66,20 +66,5 @@ app.MapRazorPages();
 app.MapControllerRoute(
     name: "default",
     pattern: "{area=Customer}/{controller=Home}/{action=Index}/{id?}");
-
-//app.UseEndpoints(endpoints =>
-//{
-//    endpoints.MapControllerRoute(
-//        name: "default",
-//        pattern: "{area=Customer}/{controller=Home}/{action=Index}/{id?}");
-
-//    endpoints.MapControllerRoute(
-//        name: "paymentSuccess",
-//        pattern: "Payment/PaymentSuccess");
-
-//    endpoints.MapControllerRoute(
-//        name: "paymentFailure",
-//        pattern: "Payment/PaymentFailure");
-//});
 
 app.Run();

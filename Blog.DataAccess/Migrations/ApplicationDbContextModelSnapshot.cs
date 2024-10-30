@@ -229,6 +229,31 @@ namespace Blog.DataAccess.Migrations
                     b.ToTable("Faculties");
                 });
 
+            modelBuilder.Entity("Blog.Models.Models.FailedToSendEmail", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Category")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("FailedToSendEmails");
+                });
+
             modelBuilder.Entity("Blog.Models.Models.Order", b =>
                 {
                     b.Property<int>("Id")

@@ -105,7 +105,7 @@ namespace Blog.Areas.Customer.Controllers
                 .FirstOrDefault(p => p.ModeOfLecture.Trim().ToLower() == modeOfLecture.Trim().ToLower()
                 && p.Attempt.Trim().ToLower() == attempt.Trim().ToLower()
                 && p.Validity.Trim().ToLower() == validity.Trim().ToLower() &&
-                p.Views.Trim().ToLower() == views.Trim().ToLower()
+                p.Views.Trim().ToLower() == views.Trim().ToLower() && p.ProductId == productId
             );
 
             if (productPrice == null || productPrice.Price <= 0)

@@ -18,7 +18,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Blog.Models\Blog.Models.csproj" />
-    <ProjectReference Include="..\Blog.Utility\Blog.Utility.csproj" />
+    <!--<ProjectReference Include="..\Blog.Utility\Blog.Utility.csproj" />-->
   </ItemGroup>
 
 </Project>

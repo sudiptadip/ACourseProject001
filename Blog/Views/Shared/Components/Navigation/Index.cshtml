@@ -94,7 +94,7 @@
             <div class="header-navbar">
                 <div class="header-brand d-block d-lg-none">
                     <div class="logo">
-                        <a href="index.html">
+                        <a asp-area="Customer" asp-controller="Home" asp-action="Index">
                             <img class="logo-light" src="~/images/logo/topclasses.png" alt="topclasses Logo" />
                             <p class="tagline">Study from the Best CA Gurus !</p>
                         </a>
@@ -329,27 +329,27 @@
                             </button>
                         </li>
 
-                        <li class="icon search-icon">
+                        @* <li class="icon search-icon">
                             <a href="javascript:void(0)" class="search-trigger">
                                 <i class="icon-2"></i>
                             </a>
                         </li>
-
+ *@
                         <li>
-                            <a href="login.html" class="bc" data-bs-toggle="tooltip" data-bs-placement="top" title="Login">
+                            <a asp-area="Identity" asp-page="/Account/Login" class="bc" data-bs-toggle="tooltip" data-bs-placement="top" title="Login">
                                 <i class="fas fa-sign-in-alt"></i>
                             </a>
                         </li>
                         <li>
-                            <a href="register.html" class="bc" data-bs-toggle="tooltip" data-bs-placement="top" title="Register">
+                            <a asp-area="Identity" asp-page="/Account/Register" class="bc" data-bs-toggle="tooltip" data-bs-placement="top" title="Register">
                                 <i class="fas fa-user-plus"></i>
                             </a>
                         </li>
 
                         <li class="icon cart-icon">
-                            <a href="cart.html">
+                            <a asp-area="Customer" asp-controller="Cart" asp-action="Index">
                                 <i class="icon-3"></i>
-                                <span class="count">0</span>
+                                <span class="count">@Model.TotalCart</span>
                             </a>
                         </li>
                     </ul>
@@ -568,14 +568,11 @@
                         </li>
                     </ul>
                 </li>
-
                 <li>
-                    <a href="our-achivements.html">OUR ACHIVEMENTS</a>
+                    <a asp-area="Customer" asp-controller="Home" asp-action="Achivements" >OUR ACHIVEMENTS</a>
                 </li>
-
                 <li><a href="#testimonial">TESTIMONIALS</a></li>
-
-                <li><a href="contact.html">CONTACT US</a></li>
+                <li><a asp-area="Customer" asp-controller="Home" asp-action="Contact">Contact Us</a></li>
             </ul>
         </div>
     </div>

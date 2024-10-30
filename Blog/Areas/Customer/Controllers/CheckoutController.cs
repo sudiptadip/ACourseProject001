@@ -25,13 +25,15 @@ namespace Blog.Areas.Customer.Controllers
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly IConfiguration _configuration;
         private readonly EasebuzzService _easebuzzService;
+        private readonly IEmailService _emailService;
 
-        public CheckoutController(IUniteOfWork unitOfWork, IHttpContextAccessor httpContextAccessor, IConfiguration configuration, EasebuzzService easebuzzService)
+        public CheckoutController(IUniteOfWork unitOfWork, IHttpContextAccessor httpContextAccessor, IConfiguration configuration, EasebuzzService easebuzzService, IEmailService emailService)
         {
             _unitOfWork = unitOfWork;
             _httpContextAccessor = httpContextAccessor;
             _configuration = configuration;
             _easebuzzService = easebuzzService;
+            _emailService = emailService;
         }
 
         [Authorize]
@@ -123,8 +125,8 @@ namespace Blog.Areas.Customer.Controllers
                 { "email", model.Email },
                 { "phone", model.PhoneNumber },
                 { "productinfo", "Topclasses Product" },
-                { "surl", $"https://localhost:44391/Customer/Checkout/PaymentSuccessfull?firstName={model.FirstName}&lastName={model.LastName}&email={model.Email}&address={model.Address}&phoneNumber={model.PhoneNumber}&city={model.City}&state={model.State}&postalCode={model.PostalCode}&country={model.Country}" },
-                { "furl", "https://localhost:44391/Customer/Checkout/Failde" }
+                { "surl", $"https://topclasses.in/Customer/Checkout/PaymentSuccessfull?firstName={model.FirstName}&lastName={model.LastName}&email={model.Email}&address={model.Address}&phoneNumber={model.PhoneNumber}&city={model.City}&state={model.State}&postalCode={model.PostalCode}&country={model.Country}&userId={userId}" },
+                { "furl", "https://topclasses.in/Customer/Checkout/Failde" }
             };
 
             parameters["hash"] = GenerateHash(parameters, _easebuzzService.Salt);
@@ -148,15 +150,8 @@ namespace Blog.Areas.Customer.Controllers
             return View();
         }
 
-        public async Task<IActionResult> PaymentSuccessfull(string firstName, string lastName, string email, string address, string phoneNumber, string city, string state, string postalCode, string country)
+        public async Task<IActionResult> PaymentSuccessfull(string firstName, string lastName, string email, string address, string phoneNumber, string city, string state, string postalCode, string country, string userId)
         {
-            var userId = _httpContextAccessor.HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
-
-            if(userId == null)
-            {
-                RedirectToAction("Index", "Home");
-            }
-
             var cart = await _unitOfWork.Cart.GetAsync(c => c.UserId == userId, includeProperties: "CartItems");
 
             if (cart == null || !cart.CartItems.Any())
@@ -196,6 +191,14 @@ namespace Blog.Areas.Customer.Controllers
 
             await _unitOfWork.Cart.DeleteAsync(cart);
             _unitOfWork.Save();
+
+
+            _emailService.SendEmail(new EmailDto
+            {
+                To = email,
+                Subject = "Order confirmation and payment details",
+                Body = $"<!DOCTYPE html>\r\n<html lang=\"en\">\r\n<head>\r\n<meta charset=\"UTF-8\">\r\n<meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\r\n<title>Order Confirmation</title>\r\n</head>\r\n<body style=\"font-family: Arial, sans-serif; background-color: #f9f9f9; padding: 20px;\">\r\n  <table width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" style=\"max-width: 600px; margin: auto; background-color: #ffffff; padding: 20px; border: 1px solid #dddddd; border-radius: 8px;\">\r\n    <tr>\r\n      <td style=\"padding: 10px 0; font-size: 16px; color: #333333;\">\r\n        Hi <span style=\"font-weight: bold;\">{firstName + " " + lastName}</span>,\r\n      </td>\r\n    </tr>\r\n    <tr>\r\n      <td style=\"padding: 10px 0; font-size: 16px; color: #333333;\">\r\n        Thank you for your order! Your order is currently <strong>on hold</strong> until we confirm that payment has been received.\r\n      </td>\r\n    </tr>\r\n    <tr>\r\n      <td style=\"padding: 10px 0; font-size: 16px; color: #333333;\">\r\n        After completing the payment, please share a screenshot of the payment proof with us via:\r\n      </td>\r\n    </tr>\r\n    <tr>\r\n      <td style=\"padding: 10px 0; font-size: 16px; color: #333333;\">\r\n        <ul style=\"padding-left: 20px; color: #333333;\">\r\n          <li>WhatsApp: <strong>9836832223</strong></li>\r\n          <li>Email: <strong><a href=\"mailto:topclasses10@gmail.com\" style=\"color: #1a73e8; text-decoration: none;\">topclasses10@gmail.com</a></strong></li>\r\n        </ul>\r\n      </td>\r\n    </tr>\r\n    <tr>\r\n      <td style=\"padding: 10px 0; font-size: 16px; color: #333333;\">\r\n        In your message, kindly include:\r\n        <ul style=\"padding-left: 20px; color: #333333;\">\r\n          <li>Your full name</li>\r\n          <li>The course you've opted for</li>\r\n          <li>Your contact number</li>\r\n        </ul>\r\n      </td>\r\n    </tr>\r\n    <tr>\r\n      <td style=\"padding: 10px 0; font-size: 16px; color: #333333;\">\r\n        We look forward to assisting you soon!\r\n      </td>\r\n    </tr>\r\n    <tr>\r\n      <td style=\"padding: 10px 0; font-size: 14px; color: #777777;\">\r\n        Regards,<br>\r\n        The Team Topclass\r\n      </td>\r\n    </tr>\r\n  </table>\r\n</body>\r\n</html>\r\n",
+            });
 
             TempData["success"] = "Order placed successfully!";
             return RedirectToAction("Success", "Checkout");

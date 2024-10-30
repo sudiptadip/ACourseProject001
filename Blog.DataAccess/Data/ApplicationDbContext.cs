@@ -29,5 +29,7 @@ namespace Blog.DataAccess.Data
         public DbSet<Order> Order { get; set; }
         public DbSet<SosalMedia> SosalMedia { get; set; }
         public DbSet<Contact> Contacts { get; set; }
+        public DbSet<FailedToSendEmail> FailedToSendEmails { get; set; }
+
     }
 }
