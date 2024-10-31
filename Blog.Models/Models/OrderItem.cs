@@ -15,6 +15,7 @@ namespace Blog.Models.Models
         public Order Order { get; set; }
         [ForeignKey("Product")]
         public int ProductId { get; set; }
+        public bool IsPaymentDone { get; set; }
         public Product Product { get; set; }
         public int Quantity { get; set; }
         [Column(TypeName = "decimal(18,2)")]

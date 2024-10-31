@@ -32,7 +32,15 @@ namespace Blog.Models.VM
         [ValidateNever]
         public Cart Cart { get; set; }
 
-       // [ValidateNever]
-       // public PaymentModel PaymentModel { get; set; }
+        public string PaymentType { get; set; }
+
+        // [ValidateNever]
+        // public PaymentModel PaymentModel { get; set; }
     }
+
+    public enum PaymentType
+    {
+        Bank_Transfer, Ezebuzz
+    }
+
 }

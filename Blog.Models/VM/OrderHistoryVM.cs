@@ -16,7 +16,7 @@ namespace Blog.Models.VM
         [Column(TypeName = "decimal(18,2)")]
         public decimal TotalPrice { get; set; }
         public string OrderStatus { get; set; }
-
+        public bool IsPaymentDone { get; set; }
         // Address Information
         public string FirstName { get; set; }
         public string LastName { get; set; }

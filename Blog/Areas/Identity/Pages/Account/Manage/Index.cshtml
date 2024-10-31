@@ -5,59 +5,48 @@
     ViewData["ActivePage"] = ManageNavPages.Index;
 }
 
-
-
 <div class="edu-breadcrumb-area breadcrumb-style-3">
     <div class="container">
         <div class="breadcrumb-inner">
             <ul class="edu-breadcrumb">
                 <li class="breadcrumb-item"><a href="index.html">Home</a></li>
                 <li class="separator"><i class="icon-angle-right"></i></li>
-                <li class="breadcrumb-item active" aria-current="page">
-                    Order History
-                </li>
+                <li class="breadcrumb-item active" aria-current="page">Order History</li>
             </ul>
         </div>
     </div>
 </div>
-<div class="edu-breadcrum-area mt-4">
-    <div class="section-title section-center" data-sal="slide-up" data-sal-duration="800">
-        <h3 class="title">Order History</h3>
-    </div>
+
+<div class="edu-breadcrum-area mt-4 text-center">
+    <h3 class="title">Order History</h3>
 </div>
 
-<!--=====================================-->
-<!--=           order history Area Start         =-->
-<!--=====================================-->
-<section class="cart-page-area edu-section-gap">
-    <div class="container">
-         @if (!Model.Input.OrderHistoryVM.Any())
-    {
-        <p>You have no orders yet.</p>
-    }
-    else
-    {
-        int i = 1; 
-
-        @foreach (var order in Model.Input.OrderHistoryVM)
+<section class="cart-page-area edu-section-gap" >
+    <div class="container" style="min-height: 50vh">
+        @if (!Model.Input.OrderHistoryVM.Any())
         {
-
-                <div class="table-responsive mt-5 shadow-sm">
-                    <h4 class="py-3">
-                        Order No: @(i++)
-                        <i class="fas fa-info-circle"
-                           data-toggle="tooltip"
-                           data-placement="right"
+            <p class="text-center">You have no orders yet.</p>
+        }
+        else
+        {
+            int i = 1;
+            @foreach (var order in Model.Input.OrderHistoryVM)
+            {
+                <div class="order-container mt-5 shadow-sm">
+                    <div class="order-header d-flex justify-content-between align-items-center">
+                        <h4>Order No: @(i++)</h4>
+                        <i class="fas fa-info-circle" data-toggle="tooltip" data-placement="right"
                            title="Address: @order.FirstName @order.LastName, @order.Address, @order.City, @order.State, @order.PostalCode, @order.Country"></i>
-                    </h4>
-                    <table class="table cart-table">
+                    </div>
+                    <table class="table cart-table table-hover">
                         <thead>
-                            <tr>
+                            <tr class="display-none display-md-block" >
                                 <th scope="col" class="product-thumbnail"></th>
-                                <th scope="col" class="product-title">Product Name</th>
-                                <th scope="col" class="product-quantity">Quantity</th>
+                                <th scope="col" class="product-title">Product</th>
+                                <th scope="col" class="product-quantity">Qty</th>
                                 <th scope="col" class="product-price">Price</th>
-                                <th scope="col" class="product-price">Details</th>
+                                <th scope="col" class="product-details">Details</th>
+                                <th scope="col" class="product-status">Status</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -65,36 +54,38 @@
                             {
                                 <tr>
                                     <td class="product-thumbnail">
-                                        <a asp-area="Customer" asp-action="Details" asp-controller="Product" asp-route-id="@item.ProductId" >
-                                            <img src="@item.ProductImage" alt="Course Meta">
+                                        <a asp-area="Customer" asp-action="Details" asp-controller="Product" asp-route-id="@item.ProductId">
+                                            <img src="@item.ProductImage" alt="Course Meta" class="img-fluid">
                                         </a>
                                     </td>
-                                    <td class="product-title text-center">
+                                    <td class="product-title">
                                         <a asp-area="Customer" asp-action="Details" asp-controller="Product" asp-route-id="@item.ProductId">@item.ProductName</a>
                                     </td>
-                                    <td class="product-quantity text-center" data-title="Qty">
-                                        @item.Quantity
-                                    </td>
-                                    <td class="product-price text-center" data-title="Price">
+                                    <td class="product-quantity" data-title="Qty">@item.Quantity</td>
+                                    <td class="product-price" data-title="Price">
                                         <span class="currency-symbol">₹</span> @item.Price
                                     </td>
-                                    <td>
-                                        <span>Mode Of Lecture : @item.ModeOfLecture</span> <br />
-                                        <span>Validity : @item.ValidityInMonths Month</span> <br />
-                                        <span>Views: @item.Views</span> <br />
-                                        <span>Attempt : @item.Attempt</span>
+                                    <td class="product-details">
+                                        <span>Mode: @item.ModeOfLecture</span><br>
+                                        <span>Validity: @item.ValidityInMonths M</span><br>
+                                        <span>Views: @item.Views</span><br>
+                                        <span>Attempt: @item.Attempt</span>
+                                    </td>
+                                    <td class="product-status">
+                                        @(item.IsPaymentDone
+                                            ? Html.Raw("<span class='badge bg-success'>Success</span>")
+                                            : Html.Raw("<span class='badge bg-warning text-dark'>Processing</span>"))
                                     </td>
                                 </tr>
                             }
                         </tbody>
                     </table>
                 </div>
+            }
         }
-    }
     </div>
 </section>
 
-<!-- Start CTA Area  -->
 <div class="home-one-cta-two cta-area-1">
     <div class="container-fluid">
         <div class="row justify-content-center">
@@ -103,8 +94,8 @@
                     <div class="inner">
                         <div class="content">
                             <span class="subtitle">Need to speak with us? Give us a ring at - </span>
-                            <span><a href="tel:+919836832223" target="_blank"> 9836832223 / </a></span>
-                            <span><a href="tel:+919051399390" target="_blank"> 9051399390</a></span>
+                            <span><a style="color: blue" href="tel:+919836832223" target="_blank"> 9836832223 / </a></span>
+                            <span><a style="color: blue" href="tel:+919051399390" target="_blank"> 9051399390</a></span>
                         </div>
                     </div>
                     <ul class="shape-group">
@@ -127,8 +118,79 @@
 @section Scripts {
     <script>
         $(function () {
-            $('[data-toggle="tooltip"]').tooltip()
-        })
+            $('[data-toggle="tooltip"]').tooltip();
+        });
     </script>
     <partial name="_ValidationScriptsPartial" />
 }
+
+<style>
+    .table-responsive { overflow-x: auto; }
+
+    /* Desktop styling enhancements */
+    .order-container {
+        padding: 25px;
+        margin-bottom: 25px;
+        border-radius: 10px;
+        border: 1px solid #dee2e6;
+        background-color: #ffffff;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        transition: box-shadow 0.3s ease;
+    }
+
+    .order-container:hover {
+        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+    }
+
+    .order-header {
+        font-size: 1.25rem;
+        color: #495057;
+        display: flex;
+        justify-content: space-between;
+        padding-bottom: 15px;
+        border-bottom: 1px solid #e9ecef;
+    }
+
+    .cart-table thead th {
+        background-color: #f8f9fa;
+        font-weight: 600;
+        text-align: center;
+    }
+
+    .cart-table tbody td {
+        vertical-align: middle;
+        text-align: center;
+    }
+
+    .badge {
+        padding: 0.5em 0.75em;
+        font-size: 0.9rem;
+        border-radius: 5px;
+    }
+
+    /* Responsive styles */
+    @@media (max-width: 576px) {
+        .product-thumbnail img { width: 50px; }
+        .order-header { flex-direction: column; align-items: flex-start; }
+        .product-details span { display: block; font-size: 0.9rem; }
+        .product-status .badge { font-size: 0.8rem; }
+        .product-title, .product-quantity, .product-price { font-size: 0.9rem; }
+    }
+
+    /* Minor typography improvements */
+    .product-title a, .product-price {
+        color: #007bff;
+        text-decoration: none;
+    }
+
+    .product-title a:hover {
+        text-decoration: underline;
+    }
+
+    .edu-cta-box {
+        padding: 20px;
+        margin-top: 30px;
+        background-color: #f9fbfd;
+        border-radius: 8px;
+    }
+</style>

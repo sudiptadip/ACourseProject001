@@ -13,6 +13,7 @@ namespace Blog.Models.VM
         public int Quantity { get; set; }
         [Column(TypeName = "decimal(18,2)")]
         public decimal Price { get; set; }
+        public bool IsPaymentDone { get; set; }
         public string ProductImage { get; set; }
         public string ModeOfLecture { get; set; }
         public string Attempt { get; set; }

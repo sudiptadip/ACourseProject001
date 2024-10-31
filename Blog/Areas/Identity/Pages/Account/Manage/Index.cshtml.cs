@@ -7,6 +7,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Security.Claims;
 using System.Text.Encodings.Web;
 using System.Threading.Tasks;
+using Blog.DataAccess.Migrations;
 using Blog.DataAccess.Repository;
 using Blog.DataAccess.Repository.IRepository;
 using Blog.Models.Models;
@@ -104,7 +105,8 @@ namespace Blog.Areas.Identity.Pages.Account.Manage
                     ValidityInMonths = item.ValidityInMonths,
                     Attempt = item.Attempt,
                     ModeOfLecture = item.ModeOfLecture,
-                    ProductId = item.ProductId
+                    ProductId = item.ProductId,
+                    IsPaymentDone = item.IsPaymentDone,
                 }).ToList()
             }).ToList();
 

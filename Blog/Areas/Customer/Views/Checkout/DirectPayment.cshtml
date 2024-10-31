@@ -1,0 +1,92 @@
+﻿@using Blog.Models.Dto
+@model IsConfirmPaymentDto
+
+<div class="container my-5">
+    <h3 class="text-center mb-4">Complete Your Payment</h3>
+    <p class="text-center fs-5">Total Course Price: ₹@TempData["totalPayment"]</p>
+
+    <form asp-action="ProcessPayment" method="post" class="mt-4">
+        <p class="mb-3 text-muted">
+            After completing the payment, please check the box below to confirm your payment. Once confirmed, click "Submit" to finalize your payment record.
+        </p>
+
+        <div class="form-check">
+            <input hidden value="@TempData["firstName"]" asp-for="FirstName">
+            <input hidden value="@TempData["lastName"]" asp-for="LastName">
+            <input hidden value="@TempData["email"]" asp-for="Email">
+            <input hidden value="@TempData["phoneNumber"]" asp-for="PhoneNumber">
+            <input hidden value="@TempData["address"]" asp-for="Address">
+            <input hidden value="@TempData["city"]" asp-for="City">
+            <input hidden value="@TempData["state"]" asp-for="State">
+            <input hidden value="@TempData["postalCode"]" asp-for="PostalCode">
+            <input hidden value="@TempData["country"]" asp-for="Country">
+
+
+            <input class="form-check-input" asp-for="isPaid" type="checkbox" >
+            <label class="form-check-label" asp-for="isPaid" >
+                I confirm that the payment has been made
+            </label>
+        </div>
+
+        <div class="mb-3">
+        <button type="submit" class="btn btn-dark mt-3 px-5">Submit</button>
+
+        </div>
+    </form>
+
+    <div class="row g-4">
+        <!-- Direct Bank Transfer Section -->
+        <div class="col-md-6">
+            <div class="card border-primary">
+                <div class="card-header text-center bg-primary text-white">
+                    <h4 class="mt-2" style="color: white">Direct Bank Transfer</h4>
+                </div>
+                <div class="card-body">
+                    <p><strong>Account Name:</strong> TUVIJAT PROJECTS PRIVATE LIMITED</p>
+                    <p><strong>Account Number:</strong> 50260851316</p>
+                    <p><strong>Bank Name:</strong> INDIAN BANK</p>
+                    <p><strong>Branch:</strong> KOLKATA HARISH MUKHERJEE RD</p>
+                    <p><strong>IFSC Code:</strong> IDIB000H547</p>
+                    <p><strong>Branch Code:</strong> 04300</p>
+                    <p><strong>Bank Address:</strong> 87A, HARISH MUKHERJEE ROAD, KOLKATA, WEST BENGAL</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- UPI Payment Section -->
+        <div class="col-md-6">
+            <div class="card border-success">
+                <div class="card-header text-center bg-success text-white">
+                    <h4 class="mt-2" style="color: white">UPI Payment</h4>
+                </div>
+                <div class="card-body text-center">
+                    <img src="https://i.postimg.cc/3xKqj0QH/image.png" alt="UPI QR Code" class="img-fluid mb-3" style="max-width: 200px;">
+                    <p><strong>UPI ID:</strong> tuvijatprojectpvtltd@indianbk</p>
+                    <p>Scan the QR code above with any UPI app to make the payment.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Payment Terms and Conditions -->
+    <div class="card mt-4">
+        <div class="card-body">
+            <h5>Payment Terms and Conditions</h5>
+            <ul class="mb-0">
+                <li>Please ensure the correct amount of ₹@TempData["totalPayment"] is transferred.</li>
+                <li>Once the payment is completed, send the transaction details to our support team for verification.</li>
+                <li>No refunds will be issued once the course access is granted.</li>
+                <li>
+                    For any payment issues,kindly Share a screenshot
+                    of Payment Proof to our support team:
+                    WhatsApp : 9836832223
+                    or
+                    mail : topclasses10@gmail.com
+                    Also, mention your full name, course opted for and contact
+                    number
+                </li>    
+            </ul>
+        </div>
+    </div>
+</div>
+

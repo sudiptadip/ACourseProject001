@@ -116,6 +116,22 @@ namespace Blog.Areas.Customer.Controllers
                 return View("Index", model);
             }
 
+            if(model.PaymentType == PaymentType.Bank_Transfer.ToString())
+            {
+                return RedirectToAction(nameof(DirectPayment), new
+                {
+                    firstName = model.FirstName,
+                    lastName = model.LastName,
+                    email = model.Email,
+                    address = model.Address,
+                    phoneNumber = model.PhoneNumber,
+                    city = model.City,
+                    state = model.State,
+                    postalCode = model.PostalCode,
+                    country = model.Country,
+                });
+            }
+
             Dictionary<string, string> parameters = new Dictionary<string, string>
             {
                 { "txnid", Guid.NewGuid().ToString() },
@@ -125,7 +141,7 @@ namespace Blog.Areas.Customer.Controllers
                 { "email", model.Email },
                 { "phone", model.PhoneNumber },
                 { "productinfo", "Topclasses Product" },
-                { "surl", $"https://topclasses.in/Customer/Checkout/PaymentSuccessfull?firstName={model.FirstName}&lastName={model.LastName}&email={model.Email}&address={model.Address}&phoneNumber={model.PhoneNumber}&city={model.City}&state={model.State}&postalCode={model.PostalCode}&country={model.Country}&userId={userId}" },
+                { "surl", $"https://topclasses.in/Customer/Checkout/PaymentSuccessfull?firstName={model.FirstName}&lastName={model.LastName}&email={model.Email}&address={model.Address}&phoneNumber={model.PhoneNumber}&city={model.City}&state={model.State}&postalCode={model.PostalCode}&country={model.Country}&userId={userId}&type={PaymentType.Ezebuzz.ToString()}" },
                 { "furl", "https://topclasses.in/Customer/Checkout/Failde" }
             };
 
@@ -139,18 +155,86 @@ namespace Blog.Areas.Customer.Controllers
 
         }
 
+        [Authorize]
+        public async Task<IActionResult> DirectPayment(string firstName, string lastName, string email, string address, string phoneNumber, string city, string state, string postalCode, string country)
+        {
+            var userId = _httpContextAccessor.HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var carts = await _unitOfWork.Cart.GetAsync(c => c.UserId == userId, includeProperties: "CartItems.Product");
+
+            TempData["firstName"] = firstName;
+            TempData["lastName"] = lastName;
+            TempData["email"] = email;
+            TempData["phoneNumber"] = phoneNumber;
+            TempData["address"] = address;
+            TempData["city"] = city;
+            TempData["state"] = state;
+            TempData["postalCode"] = postalCode;
+            TempData["country"] = country;
+            TempData["totalPayment"] = carts.CartItems.Sum(x => x.DiscountPrice).ToString();
+
+            return View();
+        }
+
+
+        [Authorize]
+        public async Task<IActionResult> ProcessPayment(IsConfirmPaymentDto model)
+        {
+
+            if(!ModelState.IsValid)
+            {
+                return RedirectToAction("Index", "Home");
+            }
+
+            if (!model.isPaid)
+            {
+                return RedirectToAction(nameof(DirectPayment), new
+                {
+                    firstName = model.FirstName,
+                    lastName = model.LastName,
+                    email = model.Email,
+                    address = model.Address,
+                    phoneNumber = model.PhoneNumber,
+                    city = model.City,
+                    state = model.State,
+                    postalCode = model.PostalCode,
+                    country = model.Country,
+                });
+
+            }
+            else
+            {
+                var userId = _httpContextAccessor.HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+                return RedirectToAction(nameof(PaymentSuccessfull), new
+                {
+                    firstName = model.FirstName,
+                    lastName = model.LastName,
+                    email = model.Email,
+                    address = model.Address,
+                    phoneNumber = model.PhoneNumber,
+                    city = model.City,
+                    state = model.State,
+                    postalCode = model.PostalCode,
+                    country = model.Country,
+                    userId = userId,
+                    type = PaymentType.Bank_Transfer.ToString(),
+                });
+            }
+        }
+
+
         public async Task<IActionResult> Failde()
         {
             return View();
         }
 
-
+        [Authorize]
         public async Task<IActionResult> Success()
         {
             return View();
         }
 
-        public async Task<IActionResult> PaymentSuccessfull(string firstName, string lastName, string email, string address, string phoneNumber, string city, string state, string postalCode, string country, string userId)
+        public async Task<IActionResult> PaymentSuccessfull(string firstName, string lastName, string email, string address, string phoneNumber, string city, string state, string postalCode, string country, string userId, string type)
         {
             var cart = await _unitOfWork.Cart.GetAsync(c => c.UserId == userId, includeProperties: "CartItems");
 
@@ -172,13 +256,13 @@ namespace Blog.Areas.Customer.Controllers
                 State = state,
                 PostalCode = postalCode,
                 Country = country,
-                IsPaymentDone = true,
                 CreatedAt = DateTime.Now,
                 OrderItems = cart.CartItems.Select(ci => new OrderItem
                 {
                     ProductId = ci.ProductId,
                     Quantity = ci.Quantity,
                     Price = ci.DiscountPrice,
+                    IsPaymentDone = false,
                     ModeOfLecture = ci.ModeOfLecture,
                     Attempt = ci.Attempt,
                     ValidityInMonths = ci.ValidityInMonths,
@@ -201,7 +285,14 @@ namespace Blog.Areas.Customer.Controllers
             });
 
             TempData["success"] = "Order placed successfully!";
+
+            if(type == PaymentType.Bank_Transfer.ToString())
+            {
+                return RedirectToAction("Manage", "Account", new { area = "Identity" });
+            }
+
             return RedirectToAction("Success", "Checkout");
+
         }
 
         private string GenerateHash(Dictionary<string, string> parameters, string salt)

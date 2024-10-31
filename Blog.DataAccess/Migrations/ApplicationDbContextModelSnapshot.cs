@@ -285,9 +285,6 @@ namespace Blog.DataAccess.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<bool>("IsPaymentDone")
-                        .HasColumnType("bit");
-
                     b.Property<string>("LastName")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -326,6 +323,9 @@ namespace Blog.DataAccess.Migrations
                     b.Property<string>("Attempt")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsPaymentDone")
+                        .HasColumnType("bit");
 
                     b.Property<string>("ModeOfLecture")
                         .IsRequired()

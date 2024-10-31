@@ -169,8 +169,12 @@
                         <div class="payment-method">
                             <div class="form-group">
                                 <div class="edu-form-check">
-                                    <input checked type="radio" id="pay-bank" name="payment">
-                                    <label for="pay-bank">Online Payment</label>
+                                    <input asp-for="PaymentType" checked type="radio" id="pay-bank" value="@PaymentType.Bank_Transfer">
+                                    <label for="pay-bank" >Bank Transfer</label>
+                                </div>
+                                <div class="edu-form-check">
+                                    <input asp-for="PaymentType" type="radio" id="ezebuzz" value="@PaymentType.Ezebuzz">
+                                    <label for="ezebuzz">Easebuzz</label>
                                 </div>
                             </div>
                         </div>
