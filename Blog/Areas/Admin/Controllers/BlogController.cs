@@ -59,6 +59,7 @@ namespace Blog.Areas.Admin.Controllers
 
                 if (isDuplicate != null)
                 {
+                    TempData["error"] = "Faculty name or sorted order already exists.";
                     ModelState.AddModelError("", "Faculty name or sorted order already exists.");
                     return View(blogs);
                 }
@@ -82,6 +83,7 @@ namespace Blog.Areas.Admin.Controllers
                     else
                     {
                         ModelState.AddModelError("", "Image upload failed.");
+                        TempData["error"] = "Image upload failed.";
                         return View(blogs);
                     }
                 }
@@ -90,6 +92,7 @@ namespace Blog.Areas.Admin.Controllers
                 {
                     blogs.CreatedOn = DateTime.Now;
                    await _unitOfWork.Blog.AddAsync(blogs);
+                   TempData["success"] = "Successfully Blog Created";
                 }
                 else
                 {
@@ -109,8 +112,8 @@ namespace Blog.Areas.Admin.Controllers
                         existingBlog.ImageUrl = blogs.ImageUrl;
                     }
 
-
                     _unitOfWork.Blog.Update(existingBlog);
+                    TempData["success"] = "Successfully Blog update";
                 }
 
                 _unitOfWork.Save();

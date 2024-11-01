@@ -1,5 +1,17 @@
 ﻿@model List<Blogs>
 
+@section Styles {
+    <style>
+        .clamp-text {
+            display: -webkit-box;
+            -webkit-line-clamp: 8; /* Limit to 8 lines */
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+    </style>
+}
+
 <div class="edu-breadcrumb-area breadcrumb-style-3">
     <div class="container">
         <div class="breadcrumb-inner">
@@ -28,37 +40,36 @@
 <div class="edu-event-area event-area-1 section-gap-equal">
     <div class="container">
         <div class="row g-5">
-            
+
 
             @foreach (var blog in Model)
             {
-            <div class="col-lg-3 col-md-6 isotope-item">
-                <div class="edu-event event-style-1">
-                    <div class="inner bx-shadow">
-                        <div class="thumbnail">
+                <div class="col-lg-3 col-md-6 isotope-item">
+                    <div class="edu-event event-style-1">
+                        <div class="inner bx-shadow">
+                            <div class="thumbnail">
                                 <a asp-area="Customer" asp-controller="Home" asp-action="BlogDetails" asp-route-id="@blog.Id">
-                                <img src="@blog.ImageUrl" alt="Blog Images" />
-                            </a>
-                        </div>
-                        <div class="content">
-                            <div class="event-date">
-                                <span class="day">@blog.CreatedOn.ToString("dd")</span>
-                                <span class="month">@blog.CreatedOn.ToString("MM")</span>
+                                    <img src="@blog.ImageUrl" alt="Blog Images" />
+                                </a>
                             </div>
-                            <h5 class="title">
+                            <div class="content">
+                                <div class="event-date">
+                                    <span class="day">@blog.CreatedOn.ToString("dd")</span>
+                                    <span class="month">@blog.CreatedOn.ToString("MM")</span>
+                                </div>
+                                <h5 class="title">
                                     <a asp-area="Customer" asp-controller="Home" asp-action="BlogDetails" asp-route-id="@blog.Id">@blog.Title</a>
-                            </h5>
-                            <p>
-                                @blog.Description
-                            </p>
-
-                            <div class="read-more-btn">
-                                    <a class="edu-btn btn-small" asp-area="Customer" asp-controller="Home" asp-action="BlogDetails" asp-route-id="@blog.Id" > <i class="icon-4"></i></a>
+                                </h5>
+                                <div class="clamp-text">
+                                    @Html.Raw(blog.Description)
+                                </div>
+                                <div class="read-more-btn">
+                                    <a class="edu-btn btn-small" asp-area="Customer" asp-controller="Home" asp-action="BlogDetails" asp-route-id="@blog.Id"> <i class="icon-4"></i></a>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
             }
         </div>
     </div>

@@ -49,7 +49,7 @@ namespace Blog.Utility.Service
                 try
                 {
                     client.Connect(_emailSettings.EmailHost, _emailSettings.EmailPort, SecureSocketOptions.StartTls);
-                    client.Authenticate(_emailSettings.EmailUsername, "vilf remn zwyp dsql");
+                    client.Authenticate(_emailSettings.EmailUsername, "vlzp twlj jmeu sqco");
                     client.Send(mailMessage);
                 }
                 catch

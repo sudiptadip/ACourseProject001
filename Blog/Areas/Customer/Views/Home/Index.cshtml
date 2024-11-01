@@ -5,6 +5,18 @@
     ViewData["Keywords"] = "";
 }
 
+@section Styles {
+    <style>
+
+        .clamp-text {
+            display: -webkit-box;
+            -webkit-line-clamp: 8; /* Limit to 8 lines */
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+    </style>
+}
 
 <div class="test-series pt-10rem">
     <div class="alert-box">
@@ -125,14 +137,14 @@
             </div>
         </div>
         <div class="slider slider-nav">
-           
+
 
             @foreach (var item in Model.Products)
             {
                 <div class="edu-course course-style-1 hover-button-bg-white">
                     <div class="inner">
                         <div class="thumbnail">
-                            <a asp-area="Customer" asp-controller="Product" asp-action="Details" asp-route-id="@item.Id" >
+                            <a asp-area="Customer" asp-controller="Product" asp-action="Details" asp-route-id="@item.Id">
                                 <img src="@item.ProductImageUrl" alt="Course Meta" />
                             </a>
                             <div class="time-top">
@@ -169,7 +181,7 @@
                         <div class="content">
                             <span class="course-level">Regular Batch</span>
                             <h6 class="title">
-                                <a asp-area="Customer" asp-controller="Product" asp-action="Details" asp-route-id="@item.Id" > @Html.Raw(item.ProductDescription) </a>
+                                <a asp-area="Customer" asp-controller="Product" asp-action="Details" asp-route-id="@item.Id"> @Html.Raw(item.ProductDescription) </a>
                             </h6>
                             <a asp-area="Customer" asp-controller="Product" asp-action="Details" asp-route-id="@item.Id" class="edu-btn btn-small mt-4">View <i class="icon-4"></i></a>
                         </div>
@@ -306,7 +318,7 @@
         </div>
         <div class="isotope-wrapper mt-4">
             <div class="isotop-button isotop-filter">
-                
+
                 @{
                     int j = 1;
                 }
@@ -314,8 +326,8 @@
                 {
                     <button data-filter=".@item.CategoryName" class='@(j == 1 ? "is-checked" : "")'>
                         <span class="filter-text"> @item.CategoryName </span>
-                    </button>                    
-                   { j++; }
+                    </button>
+                    { j++; }
                 }
             </div>
             <div class="row g-5 isotope-list">
@@ -328,7 +340,7 @@
                             <div class="edu-event event-style-1">
                                 <div class="inner bx-shadow">
                                     <div class="thumbnail">
-                                        <a asp-area="Customer" asp-controller="Home" asp-action="BlogDetails" asp-route-id="@blog.Id" >
+                                        <a asp-area="Customer" asp-controller="Home" asp-action="BlogDetails" asp-route-id="@blog.Id">
                                             <img src="@blog.ImageUrl" alt="Blog Images" />
                                         </a>
                                     </div>
@@ -340,9 +352,9 @@
                                         <h5 class="title">
                                             <a asp-area="Customer" asp-controller="Home" asp-action="BlogDetails" asp-route-id="@blog.Id">@blog.Title</a>
                                         </h5>
-                                        <p>
+                                        <div class="clamp-text" >
                                             @Html.Raw(blog.Description)
-                                        </p>
+                                        </div>
 
                                         <div class="read-more-btn">
                                             <a class="edu-btn btn-small" asp-area="Customer" asp-controller="Home" asp-action="BlogDetails" asp-route-id="@blog.Id">Learn More <i class="icon-4"></i></a>
@@ -359,7 +371,7 @@
         <div class="event-view-all-btn" data-sal-delay="150" data-sal="slide-up" data-sal-duration="1200">
             <h6 class="view-text">
                 For All Blogs
-                <a href="#" class="btn-transparent">View All <i class="icon-4"></i></a>
+                <a asp-area="Customer" asp-controller="Home" asp-action="Blogs" class="btn-transparent">View All <i class="icon-4"></i></a>
             </h6>
         </div>
     </div>
