@@ -27,6 +27,11 @@ namespace Blog.DataAccess.Repository
                 .ThenInclude(ci => ci.Product)
                 .FirstOrDefaultAsync(c => c.UserId == userId);
         }
+
+        public void Update(Cart cart)
+        {
+            _context.Carts.Update(cart);
+        }
     }
 
 }

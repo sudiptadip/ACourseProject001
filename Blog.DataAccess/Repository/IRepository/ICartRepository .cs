@@ -10,5 +10,6 @@ namespace Blog.DataAccess.Repository.IRepository
     public interface ICartRepository : IRepository<Cart>
     {
         Task<Cart> GetCartByUserIdAsync(string userId);
+        void Update(Cart cart);
     }
 }

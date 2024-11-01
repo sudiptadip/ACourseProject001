@@ -10,6 +10,7 @@ using System.Text;
 using System.Text.Encodings.Web;
 using System.Threading;
 using System.Threading.Tasks;
+using Blog.DataAccess.Repository.IRepository;
 using Blog.Models.Models;
 using Blog.Utility;
 using Microsoft.AspNetCore.Authentication;
@@ -20,6 +21,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 
 namespace Blog.Areas.Identity.Pages.Account
 {
@@ -32,6 +34,8 @@ namespace Blog.Areas.Identity.Pages.Account
         private readonly IUserEmailStore<IdentityUser> _emailStore;
         private readonly ILogger<RegisterModel> _logger;
         private readonly IEmailSender _emailSender;
+        private readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly IUniteOfWork _unitOfWork;
 
         public RegisterModel(
             RoleManager<IdentityRole> roleManager,
@@ -39,7 +43,9 @@ namespace Blog.Areas.Identity.Pages.Account
             IUserStore<IdentityUser> userStore,
             SignInManager<IdentityUser> signInManager,
             ILogger<RegisterModel> logger,
-            IEmailSender emailSender)
+            IEmailSender emailSender,
+            IHttpContextAccessor httpContextAccessor,
+            IUniteOfWork unitOfWork)
         {
             _roleManager = roleManager;
             _userManager = userManager;
@@ -48,7 +54,10 @@ namespace Blog.Areas.Identity.Pages.Account
             _signInManager = signInManager;
             _logger = logger;
             _emailSender = emailSender;
+            _httpContextAccessor = httpContextAccessor;
+            _unitOfWork = unitOfWork;
         }
+
 
 
         [BindProperty]
@@ -127,6 +136,7 @@ namespace Blog.Areas.Identity.Pages.Account
         {
             returnUrl ??= Url.Content("~/");
             ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
+
             if (ModelState.IsValid)
             {
                 var user = CreateUser();
@@ -134,11 +144,12 @@ namespace Blog.Areas.Identity.Pages.Account
                 await _userStore.SetUserNameAsync(user, Input.Email, CancellationToken.None);
                 await _emailStore.SetEmailAsync(user, Input.Email, CancellationToken.None);
 
+                // Set additional user details
                 user.FirstName = Input.FirstName;
                 user.LastName = Input.LastName;
                 user.PhoneNumber = Input.PhoneNumber;
                 user.AlternatePhoneNumber = Input.AlternatePhoneNumber;
-                user.Address = Input.Address;   
+                user.Address = Input.Address;
                 user.Country = Input.Country;
                 user.City = Input.City;
                 user.State = Input.State;
@@ -153,6 +164,7 @@ namespace Blog.Areas.Identity.Pages.Account
 
                     await _userManager.AddToRoleAsync(user, SD.Role_Customer);
 
+                    // Confirm email logic
                     var userId = await _userManager.GetUserIdAsync(user);
                     var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
                     code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
@@ -172,9 +184,77 @@ namespace Blog.Areas.Identity.Pages.Account
                     else
                     {
                         await _signInManager.SignInAsync(user, isPersistent: false);
+
+                        // Check for a session-based cart and transfer it to the database
+                        var sessionCartData = _httpContextAccessor.HttpContext.Session.GetString("CartSession");
+                        if (!string.IsNullOrEmpty(sessionCartData))
+                        {
+                            // Deserialize session cart data
+                            var sessionCart = JsonConvert.DeserializeObject<Cart>(sessionCartData);
+
+                            // Retrieve or create the user’s database cart
+                            var userCart = await _unitOfWork.Cart.GetAsync(c => c.UserId == userId, includeProperties: "CartItems") ?? new Cart
+                            {
+                                UserId = userId,
+                                CreatedAt = DateTime.Now,
+                                CartItems = new List<CartItem>()
+                            };
+
+                            foreach (var sessionCartItem in sessionCart.CartItems)
+                            {
+                                // Check if the item already exists in the user’s database cart
+                                var existingCartItem = userCart.CartItems.FirstOrDefault(ci =>
+                                    ci.ProductId == sessionCartItem.ProductId &&
+                                    ci.ModeOfLecture == sessionCartItem.ModeOfLecture &&
+                                    ci.ValidityInMonths == sessionCartItem.ValidityInMonths &&
+                                    ci.Views == sessionCartItem.Views &&
+                                    ci.Attempt == sessionCartItem.Attempt);
+
+                                if (existingCartItem != null)
+                                {
+                                    // Update existing item’s quantity and prices
+                                    existingCartItem.Quantity += sessionCartItem.Quantity;
+                                    existingCartItem.Price += sessionCartItem.Price;
+                                    existingCartItem.DiscountPrice += sessionCartItem.DiscountPrice;
+                                }
+                                else
+                                {
+                                    // Add new item to the user’s database cart
+                                    userCart.CartItems.Add(new CartItem
+                                    {
+                                        ProductId = sessionCartItem.ProductId,
+                                        ModeOfLecture = sessionCartItem.ModeOfLecture,
+                                        ValidityInMonths = sessionCartItem.ValidityInMonths,
+                                        Views = sessionCartItem.Views,
+                                        Quantity = sessionCartItem.Quantity,
+                                        Attempt = sessionCartItem.Attempt,
+                                        Price = sessionCartItem.Price,
+                                        DiscountPrice = sessionCartItem.DiscountPrice,
+                                        CreatedAt = DateTime.Now
+                                    });
+                                }
+                            }
+
+                            // Save the cart to the database
+                            if (userCart.Id == 0)
+                            {
+                                await _unitOfWork.Cart.AddAsync(userCart);
+                            }
+                            else
+                            {
+                                _unitOfWork.Cart.Update(userCart);
+                            }
+
+                             _unitOfWork.Save();
+
+                            // Clear the session cart after transferring
+                            _httpContextAccessor.HttpContext.Session.Remove("CartSession");
+                        }
+
                         return LocalRedirect(returnUrl);
                     }
                 }
+
                 foreach (var error in result.Errors)
                 {
                     ModelState.AddModelError(string.Empty, error.Description);

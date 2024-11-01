@@ -14,6 +14,9 @@ using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Logging;
+using Blog.Models.Models;
+using Newtonsoft.Json;
+using Blog.DataAccess.Repository.IRepository;
 
 namespace Blog.Areas.Identity.Pages.Account
 {
@@ -21,12 +24,17 @@ namespace Blog.Areas.Identity.Pages.Account
     {
         private readonly SignInManager<IdentityUser> _signInManager;
         private readonly ILogger<LoginModel> _logger;
+        private readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly IUniteOfWork _unitOfWork;
 
-        public LoginModel(SignInManager<IdentityUser> signInManager, ILogger<LoginModel> logger)
+        public LoginModel(SignInManager<IdentityUser> signInManager, ILogger<LoginModel> logger, IHttpContextAccessor httpContextAccessor, IUniteOfWork unitOfWork)
         {
             _signInManager = signInManager;
             _logger = logger;
+            _httpContextAccessor = httpContextAccessor;
+            _unitOfWork = unitOfWork;
         }
+
 
         [BindProperty]
         public InputModel Input { get; set; }
@@ -70,7 +78,7 @@ namespace Blog.Areas.Identity.Pages.Account
 
         public async Task<IActionResult> OnPostAsync(string returnUrl = null)
         {
-            returnUrl ??= Url.Content("~/");
+            returnUrl??= Url.Content("~/");
 
             ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
 
@@ -81,7 +89,76 @@ namespace Blog.Areas.Identity.Pages.Account
                 {
                     _logger.LogInformation("User logged in.");
 
-                    // Check if the returnUrl contains "AddToCart" and redirect to Home if it does
+                    // Retrieve the user’s ID after login
+                    var userId = _signInManager.UserManager.Users.FirstOrDefault(u => u.Email == Input.Email)?.Id;
+
+                    // Check if there’s a cart in the session
+                    var sessionCartData = _httpContextAccessor.HttpContext.Session.GetString("CartSession");
+                    if (!string.IsNullOrEmpty(sessionCartData))
+                    {
+                        // Deserialize session cart data
+                        var sessionCart = JsonConvert.DeserializeObject<Cart>(sessionCartData);
+
+                        // Retrieve or create the user’s database cart
+                        var userCart = await _unitOfWork.Cart.GetAsync(c => c.UserId == userId, includeProperties: "CartItems") ?? new Cart
+                        {
+                            UserId = userId,
+                            CreatedAt = DateTime.Now,
+                            CartItems = new List<CartItem>()
+                        };
+
+                        foreach (var sessionCartItem in sessionCart.CartItems)
+                        {
+                            // Check if the item already exists in the user’s database cart
+                            var existingCartItem = userCart.CartItems.FirstOrDefault(ci =>
+                                ci.ProductId == sessionCartItem.ProductId &&
+                                ci.ModeOfLecture == sessionCartItem.ModeOfLecture &&
+                                ci.ValidityInMonths == sessionCartItem.ValidityInMonths &&
+                                ci.Views == sessionCartItem.Views &&
+                                ci.Attempt == sessionCartItem.Attempt);
+
+                            if (existingCartItem != null)
+                            {
+                                // Update existing item’s quantity and prices
+                                existingCartItem.Quantity += sessionCartItem.Quantity;
+                                existingCartItem.Price += sessionCartItem.Price;
+                                existingCartItem.DiscountPrice += sessionCartItem.DiscountPrice;
+                            }
+                            else
+                            {
+                                // Add new item to the user’s database cart
+                                userCart.CartItems.Add(new CartItem
+                                {
+                                    ProductId = sessionCartItem.ProductId,
+                                    ModeOfLecture = sessionCartItem.ModeOfLecture,
+                                    ValidityInMonths = sessionCartItem.ValidityInMonths,
+                                    Views = sessionCartItem.Views,
+                                    Quantity = sessionCartItem.Quantity,
+                                    Attempt = sessionCartItem.Attempt,
+                                    Price = sessionCartItem.Price,
+                                    DiscountPrice = sessionCartItem.DiscountPrice,
+                                    CreatedAt = DateTime.Now
+                                });
+                            }
+                        }
+
+                        // Save changes to the database
+                        if (userCart.Id == 0)
+                        {
+                            await _unitOfWork.Cart.AddAsync(userCart); // Add new cart if it doesn’t exist
+                        }
+                        else
+                        {
+                            _unitOfWork.Cart.Update(userCart); // Update the existing cart
+                        }
+                         
+                        _unitOfWork.Save();
+
+                        // Clear the session cart after transferring
+                        _httpContextAccessor.HttpContext.Session.Remove("CartSession");
+                    }
+
+                    // Redirect to home if returnUrl contains "AddToCart"
                     if (returnUrl.Contains("AddToCart"))
                     {
                         returnUrl = Url.Content("~/");

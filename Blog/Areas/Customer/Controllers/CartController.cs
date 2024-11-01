@@ -7,17 +7,18 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
 using System.Security.Claims;
 
 namespace Blog.Areas.Customer.Controllers
 {
     [Area("Customer")]
-    [Authorize]
     public class CartController : Controller
     {
         private readonly IUniteOfWork _unitOfWork;
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly ApplicationDbContext _context;
+        private const string CartSessionKey = "CartSession";
 
         public CartController(IUniteOfWork unitOfWork, IHttpContextAccessor httpContextAccessor, ApplicationDbContext context)
         {
@@ -29,55 +30,85 @@ namespace Blog.Areas.Customer.Controllers
         public async Task<IActionResult> Index()
         {
             var userId = _httpContextAccessor.HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
+            Cart cart;
 
-            if (string.IsNullOrEmpty(userId))
+            if (!string.IsNullOrEmpty(userId))
             {
-                RedirectToAction("Product", "Index");
-            }
-
-            var cart = await _unitOfWork.Cart.GetAsync(u => u.UserId == userId, includeProperties: "CartItems.Product");
-
-            if (cart == null || cart.CartItems == null || !cart.CartItems.Any())
-            {
-                TempData["error"] = "Your cart is empty.";
-                cart = new Cart
+                cart = await _unitOfWork.Cart.GetAsync(u => u.UserId == userId, includeProperties: "CartItems.Product");
+                if (cart == null || cart.CartItems == null || !cart.CartItems.Any())
                 {
-                    CartItems = new List<CartItem>()
-                };
+                    TempData["error"] = "Your cart is empty.";
+                    cart = new Cart { CartItems = new List<CartItem>() };
+                }
+            }
+            else
+            {
+                cart = GetCartFromSession();
             }
 
-            return View(cart); 
+            Cart newCart = new Cart
+            {
+                CartItems = new List<CartItem>()
+            };
+
+            foreach (var cartItem in cart.CartItems)
+            {
+                cartItem.Product = await _unitOfWork.Product.GetAsync(u => u.Id == cartItem.ProductId);
+                newCart.CartItems.Add(cartItem);
+            }
+
+            return View(newCart);
         }
+
 
         [HttpPost]
         public async Task<IActionResult> RemoveFromCart(int cartItemId)
         {
-            var cartItem = await _unitOfWork.CartItem.GetAsync(ci => ci.Id == cartItemId);
-            if (cartItem == null) return NotFound();
+            var userId = _httpContextAccessor.HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (!string.IsNullOrEmpty(userId))
+            {
+                var cartItem = await _unitOfWork.CartItem.GetAsync(ci => ci.Id == cartItemId);
+                if (cartItem == null) return NotFound();
 
-           await _unitOfWork.CartItem.DeleteAsync(cartItem);
-            _unitOfWork.Save();
+                await _unitOfWork.CartItem.DeleteAsync(cartItem);
+                _unitOfWork.Save();
+            }
+            else
+            {
+                RemoveItemFromSessionCart(cartItemId);
+            }
+
             return RedirectToAction("Index");
         }
 
         [HttpPost]
         public async Task<IActionResult> UpdateQuantity(int cartItemId, int quantity)
         {
-            var cartItem = await _unitOfWork.CartItem.GetAsync(ci => ci.Id == cartItemId);
-            if (cartItem == null) return BadRequest();
-
-            if(quantity <= 0)
+            var userId = _httpContextAccessor.HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (!string.IsNullOrEmpty(userId))
             {
-                await _unitOfWork.CartItem.DeleteAsync(cartItem);
-                _unitOfWork.Save();
-                return RedirectToAction("Index");
-            }
+                var cartItem = await _unitOfWork.CartItem.GetAsync(ci => ci.Id == cartItemId);
+                if (cartItem == null) return BadRequest();
 
-            cartItem.Price = (cartItem.Price / cartItem.Quantity) * quantity;
-            cartItem.DiscountPrice = (cartItem.DiscountPrice / cartItem.Quantity) * quantity;
-            cartItem.Quantity = quantity;           
-            _unitOfWork.CartItem.Update(cartItem);
-            _unitOfWork.Save();
+                if (quantity <= 0)
+                {
+                    await _unitOfWork.CartItem.DeleteAsync(cartItem);
+                }
+                else
+                {
+                    var product = await _unitOfWork.Product.GetAsync(ci => ci.Id == cartItem.ProductId);
+
+                    cartItem.Price = (cartItem.Price / cartItem.Quantity) * quantity;
+                    cartItem.DiscountPrice = (cartItem.DiscountPrice / cartItem.Quantity) * quantity;
+                    cartItem.Quantity = quantity;
+                    _unitOfWork.CartItem.Update(cartItem);
+                }
+                _unitOfWork.Save();
+            }
+            else
+            {
+                UpdateSessionCartItemQuantity(cartItemId, quantity);
+            }
 
             return RedirectToAction("Index");
         }
@@ -85,13 +116,7 @@ namespace Blog.Areas.Customer.Controllers
         [HttpPost]
         public async Task<IActionResult> AddToCart(int productId, string modeOfLecture, string validity, string views, string attempt)
         {
-            // Get the current user's ID
             var userId = _httpContextAccessor.HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
-
-            if (string.IsNullOrEmpty(userId))
-            {
-                return Unauthorized();
-            }
 
             // Check if the product exists
             var product = await _unitOfWork.Product.GetAsync(p => p.Id == productId);
@@ -100,13 +125,11 @@ namespace Blog.Areas.Customer.Controllers
                 return NotFound();
             }
 
-            // Check for the matching product price
-            ProductCombination productPrice = _context.ProductCombinations
+            var productPrice = _context.ProductCombinations
                 .FirstOrDefault(p => p.ModeOfLecture.Trim().ToLower() == modeOfLecture.Trim().ToLower()
                 && p.Attempt.Trim().ToLower() == attempt.Trim().ToLower()
                 && p.Validity.Trim().ToLower() == validity.Trim().ToLower() &&
-                p.Views.Trim().ToLower() == views.Trim().ToLower() && p.ProductId == productId
-            );
+                p.Views.Trim().ToLower() == views.Trim().ToLower() && p.ProductId == productId);
 
             if (productPrice == null || productPrice.Price <= 0)
             {
@@ -114,8 +137,92 @@ namespace Blog.Areas.Customer.Controllers
                 return RedirectToAction("Details", "Product", new { id = productId });
             }
 
+            if (!string.IsNullOrEmpty(userId))
+            {
+                var cart = await GetOrCreateUserCart(userId);
+                var existingCartItem = await _unitOfWork.CartItem.GetAsync(ci =>
+                    ci.CartId == cart.Id && ci.ProductId == productId &&
+                    ci.ModeOfLecture.Trim().ToLower() == modeOfLecture.Trim().ToLower() &&
+                    ci.ValidityInMonths == validity && ci.Views == views &&
+                    ci.Attempt.Trim().ToLower() == attempt.Trim().ToLower());
 
-            var cart = await _unitOfWork.Cart.GetCartByUserIdAsync(userId);
+                if (existingCartItem != null)
+                {
+                    existingCartItem.Quantity += 1;
+                    existingCartItem.Price += productPrice.Price;
+                    existingCartItem.DiscountPrice += existingCartItem.DiscountPrice;
+                    _unitOfWork.CartItem.Update(existingCartItem);
+                }
+                else
+                {
+                    await _unitOfWork.CartItem.AddAsync(new CartItem
+                    {
+                        CartId = cart.Id,
+                        ProductId = product.Id,
+                        ModeOfLecture = modeOfLecture,
+                        ValidityInMonths = validity,
+                        Views = views,
+                        Quantity = 1,
+                        Attempt = attempt,
+                        Price = productPrice.Price,
+                        DiscountPrice = productPrice.DiscountPrice
+                    });
+                }
+                _unitOfWork.Save();
+            }
+            else
+            {
+                AddToSessionCart(productId, productPrice, modeOfLecture, validity, views, attempt);
+            }
+
+            TempData["success"] = "Successfully added item to cart.";
+            return RedirectToAction("Index", "Cart");
+        }
+
+        private Cart GetCartFromSession()
+        {
+            var cartData = _httpContextAccessor.HttpContext.Session.GetString(CartSessionKey);
+            return string.IsNullOrEmpty(cartData)
+                ? new Cart { CartItems = new List<CartItem>() }
+                : JsonConvert.DeserializeObject<Cart>(cartData);
+        }
+
+        private void AddToSessionCart(int productId, ProductCombination productPrice, string modeOfLecture, string validity, string views, string attempt)
+        {
+            var cart = GetCartFromSession();
+
+            var existingItem = cart.CartItems.FirstOrDefault(ci =>
+                ci.ProductId == productId && ci.ModeOfLecture == modeOfLecture &&
+                ci.ValidityInMonths == validity && ci.Views == views && ci.Attempt == attempt);
+
+            if (existingItem != null)
+            {
+                existingItem.Quantity += 1;
+                existingItem.Price += productPrice.Price;
+                existingItem.DiscountPrice += productPrice.DiscountPrice;
+            }
+            else
+            {
+                cart.CartItems.Add(new CartItem
+                {
+                    Id = Guid.NewGuid().GetHashCode(), 
+                    ProductId = productId,
+                    ModeOfLecture = modeOfLecture,
+                    ValidityInMonths = validity,
+                    Views = views,
+                    Quantity = 1,
+                    Attempt = attempt,
+                    Price = productPrice.Price,
+                    DiscountPrice = productPrice.DiscountPrice
+                });
+            }
+
+            _httpContextAccessor.HttpContext.Session.SetString(CartSessionKey, JsonConvert.SerializeObject(cart));
+        }
+
+        private async Task<Cart> GetOrCreateUserCart(string userId)
+        {
+            var cart = await _unitOfWork.Cart.GetAsync(u => u.UserId == userId, includeProperties: "CartItems");
             if (cart == null)
             {
                 cart = new Cart
@@ -124,57 +231,37 @@ namespace Blog.Areas.Customer.Controllers
                     CreatedAt = DateTime.Now,
                     CartItems = new List<CartItem>()
                 };
-
                 await _unitOfWork.Cart.AddAsync(cart);
-
-                 _unitOfWork.Save();
+                _unitOfWork.Save();
             }
-
-            // Check if the same item already exists in the user's cart
-            var existingCartItem = await _unitOfWork.CartItem.GetAsync(ci =>
-                ci.Cart.UserId == userId && // Ensure the cart belongs to the same user
-                ci.CartId == cart.Id &&
-                ci.ProductId == productId &&
-                ci.ModeOfLecture.Trim().ToLower() == modeOfLecture.Trim().ToLower() &&
-                ci.ValidityInMonths == validity &&
-                ci.Views == views &&
-                ci.Attempt.Trim().ToLower() == attempt.Trim().ToLower()
-            );
-
-            if (existingCartItem != null)
-            {
-                // If item exists, increment quantity and update price
-                existingCartItem.Quantity += 1;
-               existingCartItem.Price += productPrice.Price;
-                existingCartItem.DiscountPrice += existingCartItem.DiscountPrice;
-                existingCartItem.CreatedAt = DateTime.Now;
-                _unitOfWork.CartItem.Update(existingCartItem);
-            }
-            else
-            {
-                // Otherwise, add a new item to the cart
-                var cartItem = new CartItem
-                {
-                    CartId = cart.Id,
-                    ProductId = product.Id,
-                    ModeOfLecture = modeOfLecture,
-                    ValidityInMonths = validity,
-                    Views = views,
-                    Quantity = 1, 
-                    Attempt = attempt,
-                    Price = productPrice.Price,
-                    DiscountPrice = productPrice.DiscountPrice,
-                    CreatedAt = DateTime.Now,
-                };
-
-                await _unitOfWork.CartItem.AddAsync(cartItem);
-            }
-
-             _unitOfWork.Save();
-
-            TempData["success"] = "Successfully added item to cart.";
-            return RedirectToAction("Index", "Cart");
+            return cart;
         }
 
+        private void RemoveItemFromSessionCart(int cartItemId)
+        {
+            var cart = GetCartFromSession();
+            cart.CartItems.RemoveAll(ci => ci.Id == cartItemId);
+            _httpContextAccessor.HttpContext.Session.SetString(CartSessionKey, JsonConvert.SerializeObject(cart));
+        }
+
+        private void UpdateSessionCartItemQuantity(int cartItemId, int quantity)
+        {
+            var cart = GetCartFromSession();
+            var cartItem = cart.CartItems.FirstOrDefault(ci => ci.Id == cartItemId);
+            if (cartItem == null) return;
+
+            if (quantity <= 0)
+            {
+                cart.CartItems.Remove(cartItem);
+            }
+            else
+            {               
+                cartItem.Price = (cartItem.Price / cartItem.Quantity) * quantity;
+                cartItem.DiscountPrice = (cartItem.DiscountPrice / cartItem.Quantity) * quantity;
+                cartItem.Quantity = quantity;
+            }
+
+            _httpContextAccessor.HttpContext.Session.SetString(CartSessionKey, JsonConvert.SerializeObject(cart));
+        }
     }
 }
