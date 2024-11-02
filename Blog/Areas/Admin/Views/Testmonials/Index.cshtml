@@ -1,0 +1,74 @@
+﻿@model List<Testmonials>
+
+
+
+@{
+    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+}
+
+@section Style {
+    <style>
+        .previous {
+            margin-right: 10px !important;
+            width: 80px !important;
+        }
+
+        .next {
+            margin-left: 10px !important;
+            width: 60px !important;
+        }
+
+        .dataTables_paginate {
+            margin-top: 50px;
+        }
+    </style>
+}
+
+<div class="content-body">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-xl-12">
+                <div class="page-title d-flex justify-content-end mb-4">
+                    <a type="button" class="btn btn-primary" id="addNewfaculty" asp-area="Admin" asp-controller="Testmonials" asp-action="Create">
+                        + Add New
+                    </a>
+                </div>
+
+                <div class="table-responsive">
+                    <table class="table table-responsive-md" id="facultyTable">
+                        <thead>
+                            <tr>
+                                <th><strong>Name</strong></th>
+                                <th><strong>Title</strong></th>
+                                <th><strong>Star</strong></th>
+                                <th><strong>Gender</strong></th>
+                                <th><strong>Action</strong></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var blog in Model)
+                            {
+                                <tr>
+                                    <td>@blog.Name</td>
+                                    <td>@blog.Title</td>
+                                    <td>@blog.Star</td>
+                                    <td>@blog.Gender</td>                                   
+                                    <td>
+                                        <div class="d-flex">
+                                            <a  asp-area="Admin" asp-controller="Testmonials" asp-action="Edit" asp-route-id="@blog.Id" class="btn btn-primary shadow btn-xs sharp me-1 editfaculty" data-id="@blog.Id">
+                                                <i class="fa fa-pencil"></i>
+                                            </a>
+                                            <a asp-area="Admin" asp-controller="Testmonials" asp-action="Delete" asp-route-id="@blog.Id" class="btn btn-danger shadow btn-xs sharp me-1 editfaculty" data-id="@blog.Id">
+                                                <i class="fa fa-trash"></i>
+                                            </a>
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

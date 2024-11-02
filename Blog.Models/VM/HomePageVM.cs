@@ -12,5 +12,6 @@ namespace Blog.Models.VM
         public SosalMedia SosalMedia { get; set; }
         public IEnumerable<Product> Products { get; set; }
         public IEnumerable<BlogCategoryViewModel> BlogCategoryViewModel { get; set; }
+        public IEnumerable<Testmonials> Testmonials { get; set; }
     }
 }

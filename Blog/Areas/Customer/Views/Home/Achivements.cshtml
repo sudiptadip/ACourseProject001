@@ -1,4 +1,4 @@
-﻿
+﻿@model List<Achevements>
 
 <div class="edu-breadcrumb-area breadcrumb-style-3">
     <div class="container">
@@ -30,136 +30,18 @@
                 <div id="animated-thumbnials">
 
 
-                    <a href="~/images/achivements/1.jpg"
-                       class="edu-popup-image edu-gallery-grid p-gallery-grid-wrap isotope-item education">
-                        <div class="thumbnail">
-                            <img src="~/images/achivements/1.jpg" alt="Gallery Image">
-                        </div>
-                        <div class="zoom-icon">
-                            <i class="icon-69"></i>
-                        </div>
-                    </a>
-
-
-                    <a href="~/images/achivements/2.jpg"
-                       class="edu-popup-image edu-gallery-grid p-gallery-grid-wrap isotope-item marketing">
-                        <div class="thumbnail">
-                            <img src="~/images/achivements/2.jpg" alt="Gallery Image">
-                        </div>
-                        <div class="zoom-icon">
-                            <i class="icon-69"></i>
-                        </div>
-                    </a>
-
-
-                    <a href="~/images/achivements/3.jpg"
-                       class="edu-popup-image edu-gallery-grid p-gallery-grid-wrap isotope-item education health">
-                        <div class="thumbnail">
-                            <img src="~/images/achivements/3.jpg" alt="Gallery Image">
-                        </div>
-                        <div class="zoom-icon">
-                            <i class="icon-69"></i>
-                        </div>
-                    </a>
-
-
-                    <a href="~/images/achivements/4.jpg"
-                       class="edu-popup-image edu-gallery-grid p-gallery-grid-wrap isotope-item marketing">
-                        <div class="thumbnail">
-                            <img src="~/images/achivements/4.jpg" alt="Gallery Image">
-                        </div>
-                        <div class="zoom-icon">
-                            <i class="icon-69"></i>
-                        </div>
-                    </a>
-
-
-                    <a href="~/images/achivements/5.jpg"
-                       class="edu-popup-image edu-gallery-grid p-gallery-grid-wrap isotope-item education">
-                        <div class="thumbnail">
-                            <img src="~/images/achivements/5.jpg" alt="Gallery Image">
-                        </div>
-                        <div class="zoom-icon">
-                            <i class="icon-69"></i>
-                        </div>
-                    </a>
-
-
-                    <a href="~/images/achivements/6.jpg"
-                       class="edu-popup-image edu-gallery-grid p-gallery-grid-wrap isotope-item health">
-                        <div class="thumbnail">
-                            <img src="~/images/achivements/6.jpg" alt="Gallery Image">
-                        </div>
-                        <div class="zoom-icon">
-                            <i class="icon-69"></i>
-                        </div>
-                    </a>
-
-
-                    <a href="~/images/achivements/7.jpg"
-                       class="edu-popup-image edu-gallery-grid p-gallery-grid-wrap isotope-item development">
-                        <div class="thumbnail">
-                            <img src="~/images/achivements/7.jpg" alt="Gallery Image">
-                        </div>
-                        <div class="zoom-icon">
-                            <i class="icon-69"></i>
-                        </div>
-                    </a>
-
-
-                    <a href="~/images/achivements/8.jpg"
-                       class="edu-popup-image edu-gallery-grid p-gallery-grid-wrap isotope-item marketing health">
-                        <div class="thumbnail">
-                            <img src="~/images/achivements/8.jpg" alt="Gallery Image">
-                        </div>
-                        <div class="zoom-icon">
-                            <i class="icon-69"></i>
-                        </div>
-                    </a>
-
-
-                    <a href="~/images/achivements/9.jpg"
-                       class="edu-popup-image edu-gallery-grid p-gallery-grid-wrap isotope-item development">
-                        <div class="thumbnail">
-                            <img src="~/images/achivements/9.jpg" alt="Gallery Image">
-                        </div>
-                        <div class="zoom-icon">
-                            <i class="icon-69"></i>
-                        </div>
-                    </a>
-
-
-                    <a href="~/images/achivements/10.jpg"
-                       class="edu-popup-image edu-gallery-grid p-gallery-grid-wrap isotope-item development">
-                        <div class="thumbnail">
-                            <img src="~/images/achivements/10.jpg" alt="Gallery Image">
-                        </div>
-                        <div class="zoom-icon">
-                            <i class="icon-69"></i>
-                        </div>
-                    </a>
-
-
-                    <a href="~/images/achivements/11.jpg"
-                       class="edu-popup-image edu-gallery-grid p-gallery-grid-wrap isotope-item marketing health">
-                        <div class="thumbnail">
-                            <img src="~/images/achivements/11.jpg" alt="Gallery Image">
-                        </div>
-                        <div class="zoom-icon">
-                            <i class="icon-69"></i>
-                        </div>
-                    </a>
-
-
-                    <a href="~/images/achivements/12.jpg"
-                       class="edu-popup-image edu-gallery-grid p-gallery-grid-wrap isotope-item development">
-                        <div class="thumbnail">
-                            <img src="~/images/achivements/12.jpg" alt="Gallery Image">
-                        </div>
-                        <div class="zoom-icon">
-                            <i class="icon-69"></i>
-                        </div>
-                    </a>
+                    @foreach (var item in Model)
+                    {
+                        <a href="@item.ImageUrl"
+                           class="edu-popup-image edu-gallery-grid p-gallery-grid-wrap isotope-item education">
+                            <div class="thumbnail">
+                                <img src="@item.ImageUrl" alt="Gallery Image">
+                            </div>
+                            <div class="zoom-icon">
+                                <i class="icon-69"></i>
+                            </div>
+                        </a>
+                    }
 
                 </div>
             </div>

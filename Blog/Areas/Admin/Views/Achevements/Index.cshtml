@@ -1,0 +1,64 @@
+﻿@model List<Achevements>
+
+@{
+    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+}
+
+@section Style {
+    <style>
+        .image-container {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hover-overlay {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            padding: 10px;
+            background: rgba(255, 255, 255, 0.6); /* Semi-transparent white */
+            backdrop-filter: blur(5px); /* Blur effect */
+            border-radius: 8px; /* Optional: Rounded corners for the overlay */
+        }
+
+        .image-container:hover .hover-overlay {
+            opacity: 1;
+            visibility: visible;
+        }
+    </style>
+}
+
+
+
+<div class="content-body">
+    <div class="container-fluid">
+        <a class="btn btn-primary" asp-action="Upsert" asp-controller="Achevements">
+            Create New
+        </a>
+        <div class="row mt-3">
+            @foreach (var item in Model)
+            {
+                <div class="col-md-4 position-relative mb-3">
+                    <div class="image-container">
+                        <img src="@item.ImageUrl" class="img-fluid" />
+                        <div class="hover-overlay flex justify-content-center gap-3">
+                            <a class="btn btn-outline-primary me-2" asp-action="Upsert" asp-controller="Achevements" asp-route-id="@item.Id">
+                                <i class="bi bi-pencil-square"></i> Update
+                            </a>
+                            <a class="btn btn-outline-danger" asp-action="Delete" asp-controller="Achevements" asp-route-id="@item.Id">
+                                <i class="bi bi-trash"></i> Delete
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</div>

@@ -1,9 +1,11 @@
+using Blog.DataAccess.Data;
 using Blog.DataAccess.Repository.IRepository;
 using Blog.Models.Dto;
 using Blog.Models.Models;
 using Blog.Models.VM;
 using Blog.Utility.Service.IService;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using NuGet.Packaging.Signing;
 using System.Diagnostics;
 
@@ -14,11 +16,13 @@ namespace Blog.Areas.Customer.Controllers
     {
         private readonly ILogger<HomeController> _logger;
         private readonly IUniteOfWork _uniteOfWork;
+        private readonly ApplicationDbContext _db;
 
-        public HomeController(ILogger<HomeController> logger, IUniteOfWork uniteOfWork)
+        public HomeController(ILogger<HomeController> logger, IUniteOfWork uniteOfWork, ApplicationDbContext db)
         {
             _logger = logger;
             _uniteOfWork = uniteOfWork;
+            _db = db;
         }
 
         public async Task<IActionResult> Index()
@@ -26,6 +30,8 @@ namespace Blog.Areas.Customer.Controllers
             var products = await _uniteOfWork.Product.GetAllAsync(p => p.IsActive == true, includeProperties: "Category,Faculty");
             var blogs = await _uniteOfWork.Blog.GetAllAsync();
             var sosalMedia = await _uniteOfWork.SosalMedia.GetAllAsync();
+            var testmonials = await _db.Testmonials.ToListAsync();
+
 
             var homePageVM = new HomePageVM
             {
@@ -36,7 +42,8 @@ namespace Blog.Areas.Customer.Controllers
                                 Blogs = group.ToList()
                             })
                             .ToList(),
-                Products = products.OrderBy(b => b.CreatedOn).Take(10)
+                Products = products.OrderBy(b => b.CreatedOn).Take(10),
+                Testmonials = testmonials
             };
 
             if(homePageVM.SosalMedia == null)
@@ -94,7 +101,8 @@ namespace Blog.Areas.Customer.Controllers
 
         public IActionResult Achivements()
         {
-            return View();
+            List<Achevements> list = _db.Achevements.ToList();
+            return View(list.OrderBy(u => u.SortedOrder).ToList());
         }
 
         public IActionResult Privacy()

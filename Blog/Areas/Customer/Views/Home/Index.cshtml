@@ -219,80 +219,66 @@
             <div class="col-lg-7">
                 <div class="testimonial-activation-3 swiper">
                     <div class="swiper-wrapper">
-                        <div class="swiper-slide">
-                            <div class="testimonial-grid testimonial-style-3">
-                                <div class="thumbnail">
-                                    <img class="w-50" src="~/images/testimonial/man.png" alt="Testimonial">
-                                </div>
-                                <div class="content">
-                                    <div class="scroll-div">
-                                        <p>
-                                            I really enjoyed the class and felt the challenge.  It built confidence.  I look forward to
-                                            taking another class in the future.  Thanks for this wonderful on-line opportunity. 
-                                        </p>
+                        
+                        @foreach (var item in Model.Testmonials)
+                        {
+                            if (item.Gender == "MAIL") // true = Mail
+                            {
+                                <div class="swiper-slide">
+                                    <div class="testimonial-grid testimonial-style-3">
+                                        <div class="thumbnail">
+                                            <img class="w-50" src="~/images/testimonial/man.png" alt="Testimonial">
+                                        </div>
+                                        <div class="content">
+                                            <div class="scroll-div">
+                                                <p>
+                                                    @item.Description 
+                                                </p>
+                                            </div>
+                                            <div class="rating-icon">
+                                                @{
+                                                    for (int i = 0; i < item.Star; i++)
+                                                    {
+                                                        <i class="icon-23"></i>
+                                                    }
+                                                }
+                                            </div>
+                                            <h5 class="title">@item.Name</h5>
+                                            <span class="subtitle">@item.Title</span>
+                                        </div>
                                     </div>
-                                    <div class="rating-icon">
-                                        <i class="icon-23"></i>
-                                        <i class="icon-23"></i>
-                                        <i class="icon-23"></i>
-                                        <i class="icon-23"></i>
-                                        <i class="icon-23"></i>
-                                    </div>
-                                    <h5 class="title">Jateen Arora</h5>
-                                    <span class="subtitle">CS Executive</span>
                                 </div>
-                            </div>
-                        </div>
-                        <div class="swiper-slide">
-                            <div class="testimonial-grid testimonial-style-3">
-                                <div class="thumbnail">
-                                    <img class="w-50" src="~/images/testimonial/man.png" alt="Testimonial">
-                                </div>
-                                <div class="content">
-                                    <div class="scroll-div">
-                                        <p>
-                                            I have loved this class!  The opportunity to see the teaching from professors of several of
-                                            our
-                                            seminaries and the experience of sharing the class with students from several states.
-                                        </p>
+                            }
+                            else
+
+                            {
+                                <div class="swiper-slide">
+                                    <div class="testimonial-grid testimonial-style-3">
+                                        <div class="thumbnail">
+                                            <img class="w-50" src="~/images/testimonial/woman.png" alt="Testimonial">
+                                        </div>
+                                        <div class="content">
+                                            <div class="scroll-div">
+                                                <p>
+                                                    @item.Description 
+                                                </p>
+                                            </div>
+                                            <div class="rating-icon">
+                                                @{
+                                                    for (int i = 0; i < item.Star; i++)
+                                                    {
+                                                        <i class="icon-23"></i>
+                                                    }
+                                                }
+                                            </div>
+                                            <h5 class="title">@item.Name</h5>
+                                            <span class="subtitle">@item.Title</span>
+                                        </div>
                                     </div>
-                                    <div class="rating-icon">
-                                        <i class="icon-23"></i>
-                                        <i class="icon-23"></i>
-                                        <i class="icon-23"></i>
-                                        <i class="icon-23"></i>
-                                        <i class="icon-23"></i>
-                                    </div>
-                                    <h5 class="title">Ranjeet Roy</h5>
-                                    <span class="subtitle">CFM</span>
                                 </div>
-                            </div>
-                        </div>
-                        <div class="swiper-slide">
-                            <div class="testimonial-grid testimonial-style-3">
-                                <div class="thumbnail">
-                                    <img class="w-50" src="~/images/testimonial/woman.png" alt="Testimonial">
-                                </div>
-                                <div class="content">
-                                    <div class="scroll-div">
-                                        <p>
-                                            Thanks for everything! This was my first on-line class and I felt it was a tremendous
-                                            learning
-                                            experience for me. I enjoyed every aspect of the class. I have grown so much from this class.
-                                        </p>
-                                    </div>
-                                    <div class="rating-icon">
-                                        <i class="icon-23"></i>
-                                        <i class="icon-23"></i>
-                                        <i class="icon-23"></i>
-                                        <i class="icon-23"></i>
-                                        <i class="icon-23"></i>
-                                    </div>
-                                    <h5 class="title">Sanjana Singh</h5>
-                                    <span class="subtitle">CA Final</span>
-                                </div>
-                            </div>
-                        </div>
+                            }
+
+                        }
                     </div>
                 </div>
             </div>
