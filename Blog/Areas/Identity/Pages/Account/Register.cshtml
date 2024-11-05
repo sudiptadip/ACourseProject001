@@ -24,7 +24,7 @@
         <div class="row g-5 justify-content-center">
             <div class="col-lg-8">
                 <div class="login-form-box">
-                    <h3 class="text-center mb-4">Create Account</h3>
+                    <h3 class="text-center mb-4">Register</h3>
                     <form asp-route-returnUrl="@Model.ReturnUrl" method="post">
                         <div class="row">
                             <div class="col-lg-6 mb-4">
@@ -51,18 +51,28 @@
                             </div>
 
                             <div class="col-lg-12 mb-4">
-                                <div class="form-group">
-                                    <label asp-for="Input.Password" >Password <span class="text-danger">*</span></label>
-                                    <input asp-for="Input.Password" id="log-password">
+                                <div class="form-group position-relative">
+                                    <label asp-for="Input.Password">Password <span class="text-danger">*</span></label>
+                                    <input asp-for="Input.Password" id="log-password" type="password" class="form-control">
                                     <span asp-validation-for="Input.Password" class="text-danger"></span>
+
+                                    <!-- Toggle icon for show/hide password -->
+                                    <span id="togglePassword" style="position: absolute; right: 10px; top: 36px; cursor: pointer;">
+                                        <i class="bi bi-eye" id="toggleIconPassword"></i>
+                                    </span>
                                 </div>
                             </div>
 
                             <div class="col-lg-12 mb-4">
-                                <div class="form-group">
+                                <div class="form-group position-relative">
                                     <label asp-for="Input.ConfirmPassword">Confirm Password <span class="text-danger">*</span></label>
-                                    <input asp-for="Input.ConfirmPassword" id="conf-password">
+                                    <input asp-for="Input.ConfirmPassword" id="conf-password" type="password" class="form-control">
                                     <span asp-validation-for="Input.ConfirmPassword" class="text-danger"></span>
+
+                                    <!-- Toggle icon for show/hide confirm password -->
+                                    <span id="toggleConfirmPassword" style="position: absolute; right: 10px; top: 36px; cursor: pointer;">
+                                        <i class="bi bi-eye" id="toggleIconConfirmPassword"></i>
+                                    </span>
                                 </div>
                             </div>
 
@@ -168,4 +178,37 @@
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
+
+    <!-- Script to toggle password visibility -->
+    <script>
+        document.getElementById("togglePassword").addEventListener("click", function () {
+            const passwordInput = document.getElementById("log-password");
+            const toggleIcon = document.getElementById("toggleIconPassword");
+
+            if (passwordInput.type === "password") {
+                passwordInput.type = "text";
+                toggleIcon.classList.remove("bi-eye");
+                toggleIcon.classList.add("bi-eye-slash");
+            } else {
+                passwordInput.type = "password";
+                toggleIcon.classList.remove("bi-eye-slash");
+                toggleIcon.classList.add("bi-eye");
+            }
+        });
+
+        document.getElementById("toggleConfirmPassword").addEventListener("click", function () {
+            const confirmPasswordInput = document.getElementById("conf-password");
+            const toggleIconConfirm = document.getElementById("toggleIconConfirmPassword");
+
+            if (confirmPasswordInput.type === "password") {
+                confirmPasswordInput.type = "text";
+                toggleIconConfirm.classList.remove("bi-eye");
+                toggleIconConfirm.classList.add("bi-eye-slash");
+            } else {
+                confirmPasswordInput.type = "password";
+                toggleIconConfirm.classList.remove("bi-eye-slash");
+                toggleIconConfirm.classList.add("bi-eye");
+            }
+        });
+    </script>
 }

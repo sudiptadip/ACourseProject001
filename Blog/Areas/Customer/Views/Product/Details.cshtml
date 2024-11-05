@@ -414,8 +414,11 @@
                     success: function (data) {
                         if (data.price <= 0 || data.discountPrice <= 0) 
                         {
-                            $('#calculatedPrice').text(data.price);
-                            $('#calculatedDiscountPrice').text("Not available");
+                            $('#calculatedPrice').text("");
+                            $('#calculatedDiscountPrice').text("Not available for this mode. Please select another mode below: ");
+                            $('#calculatedDiscountPrice').css("color", "#b3b327");
+                            $('#discountPercentage').text("");
+
                             $('#btnSubmit').prop('disabled', true);
                         }
                         else
@@ -423,6 +426,7 @@
                             $('#calculatedPrice').text(data.price);
                             $('#calculatedDiscountPrice').text(data.discountPrice);
                             var discountPercentage = ((data.price - data.discountPrice) / data.price) * 100;
+                            $('#calculatedDiscountPrice').css("color", "black");
                             $('#discountPercentage').text(Math.round(discountPercentage) + '%');
                             $('#btnSubmit').prop('disabled', false);
                         }

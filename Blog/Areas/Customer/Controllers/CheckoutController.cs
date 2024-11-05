@@ -56,21 +56,22 @@ namespace Blog.Areas.Customer.Controllers
             }
 
             var order = await _unitOfWork.Order.GetAsync(o => o.UserId == userId);
+            ApplicationUser user = await _unitOfWork.ApplicationUser.GetAsync(u => u.Id == userId);
 
-            if(order != null)
+            if (order != null)
             {
                 var checkoutViewModel = new CheckoutVM
                 {
                     Cart = cart,
-                    Address = order.Address,
-                    City = order.City,
-                    Country = order.Country,
-                    Email = order.Email,
-                    FirstName = order.FirstName,
-                    LastName = order.LastName, 
-                    PhoneNumber = order.PhoneNumber,
-                    PostalCode = order.PostalCode,
-                    State = order.State,
+                    Address = user.Address!,
+                    City = user.City!,
+                    Country = user.Country!,
+                    Email = user.Email!,
+                    FirstName = user.FirstName,
+                    LastName = user.LastName,
+                    PhoneNumber = user.PhoneNumber!,
+                    PostalCode = user.Pin!,
+                    State = user.State!,
                 };
                 return View(checkoutViewModel);
             }
@@ -78,11 +79,19 @@ namespace Blog.Areas.Customer.Controllers
             {
                 var checkoutViewModel = new CheckoutVM
                 {
+                    Address = user.Address,
+                    City = user.City,
+                    Country = user.Country,
+                    Email = user.Email,
+                    FirstName = user.FirstName,
+                    LastName = user.LastName,
+                    PhoneNumber = user.PhoneNumber,
+                    PostalCode = user.Pin,
+                    State = user.State,
                     Cart = cart,
                 };
 
                 return View(checkoutViewModel);
-
             }
 
         }
@@ -93,7 +102,7 @@ namespace Blog.Areas.Customer.Controllers
         public async Task<IActionResult> PlaceOrder(CheckoutVM model)
         {
             var userId = _httpContextAccessor.HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
-            
+
             if (string.IsNullOrEmpty(userId))
             {
                 return Unauthorized();
@@ -116,7 +125,7 @@ namespace Blog.Areas.Customer.Controllers
                 return View("Index", model);
             }
 
-            if(model.PaymentType == PaymentType.Bank_Transfer.ToString())
+            if (model.PaymentType == PaymentType.Bank_Transfer.ToString())
             {
                 return RedirectToAction(nameof(DirectPayment), new
                 {
@@ -160,6 +169,8 @@ namespace Blog.Areas.Customer.Controllers
         {
             var userId = _httpContextAccessor.HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
             var carts = await _unitOfWork.Cart.GetAsync(c => c.UserId == userId, includeProperties: "CartItems.Product");
+            var totalPayment = carts.CartItems.Sum(x => x.DiscountPrice).ToString();
+            var productName = string.Join(", ", carts.CartItems.Select(x => x.Product.ProductName));
 
             TempData["firstName"] = firstName;
             TempData["lastName"] = lastName;
@@ -170,7 +181,74 @@ namespace Blog.Areas.Customer.Controllers
             TempData["state"] = state;
             TempData["postalCode"] = postalCode;
             TempData["country"] = country;
-            TempData["totalPayment"] = carts.CartItems.Sum(x => x.DiscountPrice).ToString();
+            TempData["totalPayment"] = totalPayment;
+
+
+            var order = new Order
+            {
+                UserId = userId,
+                FirstName = firstName,
+                LastName = lastName,
+                Email = email,
+                Address = address,
+                PhoneNumber = phoneNumber,
+                City = city,
+                State = state,
+                PostalCode = postalCode,
+                Country = country,
+                CreatedAt = DateTime.Now,
+                OrderItems = carts.CartItems.Select(ci => new OrderItem
+                {
+                    ProductId = ci.ProductId,
+                    Quantity = ci.Quantity,
+                    Price = ci.DiscountPrice,
+                    IsPaymentDone = false,
+                    ModeOfLecture = ci.ModeOfLecture,
+                    Attempt = ci.Attempt,
+                    ValidityInMonths = ci.ValidityInMonths,
+                    Views = ci.Views
+                }).ToList()
+            };
+
+            await _unitOfWork.Order.AddAsync(order);
+            _unitOfWork.Save();
+
+            await _unitOfWork.Cart.DeleteAsync(carts);
+            _unitOfWork.Save();
+
+
+            var productRows = string.Join("", carts.CartItems.Select(x =>
+$"<tr><td style=\"padding: 8px; border: 1px solid #ddd;\">{x.Product.ProductName}</td>" +
+$"<td style=\"padding: 8px; border: 1px solid #ddd; text-align: right;\">₹{x.DiscountPrice}</td></tr>"));
+
+
+            _emailService.SendEmail(new EmailDto
+            {
+                To = email,
+                Subject = "Course Inquiry Details",
+                Body = $"<!DOCTYPE html>\r\n<html>\r\n<head>\r\n  <title>Course Inquiry Details</title>\r\n</head>\r\n<body style=\"font-family: Arial, sans-serif; color: #333333; line-height: 1.6; margin: 0; padding: 0;\">\r\n  <table style=\"max-width: 600px; margin: 20px auto; border: 1px solid #dddddd; border-collapse: collapse;\">\r\n    <tr>\r\n      <td style=\"background-color: #004080; padding: 15px; color: #ffffff; text-align: center;\">\r\n        <h2 style=\"margin: 0;\">Thank You for Your Inquiry</h2>\r\n      </td>\r\n    </tr>\r\n    <tr>\r\n      <td style=\"padding: 20px;\">\r\n        <p>Dear {firstName} {lastName},</p>\r\n        <p>Thank you for reaching out to us. Below are the details of the course you inquired about:</p>\r\n\r\n        <h3 style=\"border-bottom: 1px solid #dddddd; padding-bottom: 5px;\">Customer Information</h3>\r\n        <p><strong>Name:</strong> {firstName} {lastName}<br>\r\n           <strong>Email:</strong> <a href=\"mailto:{email}\" style=\"color: #004080;\">{email}</a><br>\r\n           <strong>Phone:</strong> {phoneNumber}</p>\r\n\r\n        <h3 style=\"border-bottom: 1px solid #dddddd; padding-bottom: 5px;\">Address</h3>\r\n        <p>{address}<br>\r\n           {city}, {state} {postalCode}<br>\r\n           India</p>\r\n\r\n        <h3 style=\"border-bottom: 1px solid #dddddd; padding-bottom: 5px;\">Product Information</h3>\r\n        <table style=\"width: 100%; border-collapse: collapse;\">\r\n          <thead>\r\n            <tr>\r\n              <th style=\"padding: 8px; border: 1px solid #ddd; background-color: #f2f2f2;\">Product Name</th>\r\n              <th style=\"padding: 8px; border: 1px solid #ddd; background-color: #f2f2f2;\">Price</th>\r\n            </tr>\r\n          </thead>\r\n          <tbody>{productRows}</tbody>\r\n        </table>\r\n\r\n        <p style=\"margin: 15px 0 0; font-weight: bold;\">Total Fees : ₹{totalPayment}</p>\r\n\r\n        <h3 style=\"border-bottom: 1px solid #dddddd; padding-bottom: 5px;\">Payment Instructions</h3>\r\n        <p>If you encounter any payment issues, please share a screenshot of the payment proof with our support team. You can contact us through:</p>\r\n        <p><strong>WhatsApp:</strong> 9836832223<br>\r\n        Or<br>\r\n           <strong>Email:</strong> <a href=\"mailto:topclasses10@gmail.com\" style=\"color: #004080;\">topclasses10@gmail.com</a></p>\r\n\r\n        <p>Please ensure to include your full name, the course you've opted for, and your contact number for faster assistance.</p>\r\n\r\n        <p style=\"margin-top: 20px;\">Best Regards,<br>\r\n        The Support Team</p>\r\n      </td>\r\n    </tr>\r\n    <tr>\r\n      <td style=\"background-color: #f2f2f2; padding: 10px; text-align: center; font-size: 12px; color: #777777;\">\r\n        &copy; 2023 Top Classes | All Rights Reserved\r\n      </td>\r\n    </tr>\r\n  </table>\r\n</body>\r\n</html>"
+            });
+
+            _emailService.SendEmail(new EmailDto
+            {
+                To = "topclasses10@gmail.com",
+                Subject = $"New Checkout Notification - Order Summary for {firstName} {lastName}",
+                Body = $"<!DOCTYPE html>\r\n<html>\r\n<head>\r\n    <title>New Checkout Notification</title>\r\n</head>" +
+                $"\r\n<body style=\"font-family: Arial, sans-serif; color: #333333; line-height: 1.6; padding: 20px;\">\r\n    " +
+                $"<div style=\"max-width: 600px; margin: 0 auto; border: 1px solid #e0e0e0; padding: 20px; border-radius: 8px; " +
+                $"background-color: #f9f9f9;\">\r\n        <h2 style=\"text-align: center; color: #4CAF50;\">New Checkout Notification</h2>\r\n        " +
+                $"\r\n        <p style=\"margin: 0 0 15px;\">Dear Admin,</p>\r\n        \r\n        <p style=\"margin: 0 0 15px;\">A customer has completed " +
+                $"the checkout process. Here are the details of the transaction:</p>\r\n        \r\n        <h3 style=\"margin: 20px 0 10px; color: #4CAF50;\">" +
+                $"Customer Information</h3>\r\n        <p style=\"margin: 5px 0;\">\r\n            <strong>Name:</strong> {firstName}  {lastName}<br>\r\n            " +
+                $"<strong>Email:</strong> <a href=\"mailto:{email}\" style=\"color: #4CAF50; text-decoration: none;\">{email}</a><br>\r\n            <strong>Phone:</strong> " +
+                $"{phoneNumber}<br>\r\n        </p>\r\n        \r\n        <h3 style=\"margin: 20px 0 10px; color: #4CAF50;\">Address</h3>\r\n        <p style=\"margin: 5px 0;" +
+                $"\">\r\n            {address}<br>\r\n            {city}, {state} {postalCode}<br>\r\n            {country}\r\n        </p>\r\n\r\n        <h3 style=\"ma" +
+                $"rgin: 20px 0 10px; color: #4CAF50;\">Product Information</h3>\r\n        <table style=\"width: 100%; border-collapse: collapse;\">\r\n            " +
+                $"<thead>\r\n             <tr>\r\n                    <th style=\"padding: 8px; border: 1px solid #ddd; background-color: #f2f2f2;\">Product Name</th>\r\n                    " +
+                $"<th style=\"padding: 8px; border: 1px solid #ddd; background-color: #f2f2f2;\">Price</th>\r\n                </tr>\r\n            </thead>\r\n            " +
+                $"<tbody>{productRows}</tbody>\r\n        </table>\r\n        <p style=\"margin: 15px 0 0; font-weight: bold;\">Total Fees : ₹{totalPayment}</p>\r\n    </div>\r\n</body>\r\n</html>"
+            });
+
 
             return View();
         }
@@ -180,7 +258,7 @@ namespace Blog.Areas.Customer.Controllers
         public async Task<IActionResult> ProcessPayment(IsConfirmPaymentDto model)
         {
 
-            if(!ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
                 return RedirectToAction("Index", "Home");
             }
@@ -199,7 +277,6 @@ namespace Blog.Areas.Customer.Controllers
                     postalCode = model.PostalCode,
                     country = model.Country,
                 });
-
             }
             else
             {
@@ -286,7 +363,7 @@ namespace Blog.Areas.Customer.Controllers
 
             TempData["success"] = "Order placed successfully!";
 
-            if(type == PaymentType.Bank_Transfer.ToString())
+            if (type == PaymentType.Bank_Transfer.ToString())
             {
                 return RedirectToAction("Manage", "Account", new { area = "Identity" });
             }
@@ -311,6 +388,5 @@ namespace Blog.Areas.Customer.Controllers
                 return BitConverter.ToString(hash).Replace("-", "").ToLower();
             }
         }
-
     }
 }

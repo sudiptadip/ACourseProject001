@@ -74,13 +74,6 @@
                                 </span>
                             </a>
                         </li>
-
-                        @* <li class="social-icon">
-                        <a href="@Model.SosalMedia.Facebook" target="_blank"><i class="icon-facebook"></i></a>
-                        <a href="@Model.SosalMedia.Instagram" target="_blank"><i class="icon-instagram"></i></a>
-                        <a href="@Model.SosalMedia.Twitter" target="_blank"><i class="icon-twitter"></i></a>
-                        <a href="@Model.SosalMedia.LinkedIn" target="_blank"><i class="icon-linkedin2"></i></a>
-                        </li> *@
                     </ul>
                 </div>
             </div>
@@ -307,7 +300,7 @@
                             </li>
 
                             <li>
-                                <a asp-area="Customer" asp-controller="Home" asp-action="Achivements">OUR ACHIVEMENTS</a>
+                                <a asp-area="Customer" asp-controller="Home" asp-action="Achivements">OUR ACHIEVEMENTS</a>
                             </li>
 
                             <li><a href="#testimonial">TESTIMONIALS</a></li>
@@ -329,22 +322,32 @@
                             </button>
                         </li>
 
-                        @* <li class="icon search-icon">
-                            <a href="javascript:void(0)" class="search-trigger">
-                                <i class="icon-2"></i>
-                            </a>
-                        </li>
- *@
-                        <li>
-                            <a asp-area="Identity" asp-page="/Account/Login" class="bc" data-bs-toggle="tooltip" data-bs-placement="top" title="Login">
-                                <i class="fas fa-sign-in-alt"></i>
-                            </a>
-                        </li>
-                        <li>
-                            <a asp-area="Identity" asp-page="/Account/Register" class="bc" data-bs-toggle="tooltip" data-bs-placement="top" title="Register">
-                                <i class="fas fa-user-plus"></i>
-                            </a>
-                        </li>
+                        @if (SignInManager.IsSignedIn(User))
+                        {
+                            <li class="nav-item">
+                                <a id="manage" class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Manage/Index" title="Manage">Hello @Model.UserName</a>
+                            </li>
+                            <li class="nav-item">
+                                <form id="logoutForm" class="form-inline" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })">
+                                    <button id="logout" type="submit" class="btn btn-dark">Logout</button>
+                                </form>
+                            </li>
+                        }
+                        else
+                        {
+                            <li>
+                                <a asp-area="Identity" asp-page="/Account/Login" class="bc" data-bs-toggle="tooltip" data-bs-placement="top" title="Login">
+                                    <i class="fas fa-sign-in-alt"></i>
+                                </a>
+                            </li>
+                            <li>
+                                <a asp-area="Identity" asp-page="/Account/Register" class="bc" data-bs-toggle="tooltip" data-bs-placement="top" title="Register">
+                                    <i class="fas fa-user-plus"></i>
+                                </a>
+                            </li>
+                        }
+
+                        
 
                         <li class="icon cart-icon">
                             <a asp-area="Customer" asp-controller="Cart" asp-action="Index">
@@ -569,7 +572,7 @@
                     </ul>
                 </li>
                 <li>
-                    <a asp-area="Customer" asp-controller="Home" asp-action="Achivements" >OUR ACHIVEMENTS</a>
+                    <a asp-area="Customer" asp-controller="Home" asp-action="Achivements">OUR ACHIEVEMENTS</a>
                 </li>
                 <li><a href="#testimonial">TESTIMONIALS</a></li>
                 <li><a asp-area="Customer" asp-controller="Home" asp-action="Contact">Contact Us</a></li>

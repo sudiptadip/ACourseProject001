@@ -5,35 +5,6 @@
     <h3 class="text-center mb-4">Complete Your Payment</h3>
     <p class="text-center fs-5">Total Course Price: ₹@TempData["totalPayment"]</p>
 
-    <form asp-action="ProcessPayment" method="post" class="mt-4">
-        <p class="mb-3 text-muted">
-            After completing the payment, please check the box below to confirm your payment. Once confirmed, click "Submit" to finalize your payment record.
-        </p>
-
-        <div class="form-check">
-            <input hidden value="@TempData["firstName"]" asp-for="FirstName">
-            <input hidden value="@TempData["lastName"]" asp-for="LastName">
-            <input hidden value="@TempData["email"]" asp-for="Email">
-            <input hidden value="@TempData["phoneNumber"]" asp-for="PhoneNumber">
-            <input hidden value="@TempData["address"]" asp-for="Address">
-            <input hidden value="@TempData["city"]" asp-for="City">
-            <input hidden value="@TempData["state"]" asp-for="State">
-            <input hidden value="@TempData["postalCode"]" asp-for="PostalCode">
-            <input hidden value="@TempData["country"]" asp-for="Country">
-
-
-            <input class="form-check-input" asp-for="isPaid" type="checkbox" >
-            <label class="form-check-label" asp-for="isPaid" >
-                I confirm that the payment has been made
-            </label>
-        </div>
-
-        <div class="mb-3">
-        <button type="submit" class="btn btn-dark mt-3 px-5">Submit</button>
-
-        </div>
-    </form>
-
     <div class="row g-4">
         <!-- Direct Bank Transfer Section -->
         <div class="col-md-6">

@@ -5,6 +5,13 @@
     ViewData["Title"] = "Log in";
 }
 
+@{
+    var returnUrl = HttpContext.Request.Query["ReturnUrl"].ToString();
+    var targetUrl = returnUrl.Contains("/Customer/Checkout")
+        ? Url.Action("Register", "Account", new { area = "Identity", ReturnUrl = "/Customer/Checkout" })
+        : Url.Action("Register", "Account", new { area = "Identity", ReturnUrl = returnUrl });
+}
+
 <div class="edu-breadcrumb-area breadcrumb-style-3">
     <div class="container">
         <div class="breadcrumb-inner">
@@ -28,14 +35,14 @@
             <div class="col-lg-5">
                 <div class="login-form-box">
                     <h3 class="text-center mb-4">Login</h3>
-                    <form method="post" >
+                    <form method="post">
                         <div class="form-group">
                             <label asp-for="Input.Email">Email or Mobile number <span class="text-danger">*</span></label>
                             <input asp-for="Input.Email" id="current-log-email">
                             <span asp-validation-for="Input.Email" class="text-danger"></span>
                         </div>
                         <div class="form-group">
-                            <label asp-for="Input.Password">Password <span class="text-danger">*</span> </label>
+                            <label asp-for="Input.Password">Password <span class="text-danger">*</span></label>
                             <input asp-for="Input.Password" id="current-log-password">
                             <span asp-validation-for="Input.Password" class="text-danger"></span>
                         </div>
@@ -50,7 +57,7 @@
                             <button type="submit" class="edu-btn btn-medium">Sign in <i class="icon-4"></i></button>
                         </div>
 
-                        <p>Not Registered yet? <a asp-area="Identity" asp-page="/Account/Register">Register Now</a></p>
+                        <p>Not Registered yet? <a href="@targetUrl">Register Now</a></p>
 
                     </form>
                 </div>

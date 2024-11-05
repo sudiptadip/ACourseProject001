@@ -26,9 +26,11 @@
         @if (!Model.Input.OrderHistoryVM.Any())
         {
             <p class="text-center">You have no orders yet.</p>
+            <a href="/" class="btn btn-dark">Back To Home</a>
         }
         else
         {
+            <a href="/" class="btn btn-dark" >Back To Home</a>
             int i = 1;
             @foreach (var order in Model.Input.OrderHistoryVM)
             {
