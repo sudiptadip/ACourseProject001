@@ -80,6 +80,25 @@ namespace Blog.Areas.Customer.Controllers
             return View(productDetailsVM);
         }
 
+        [HttpPost]
+        public async Task<IActionResult> GetSubjectsByCategories(List<int> categoryIds)
+        {
+            if (categoryIds == null || categoryIds.Count == 0)
+            {
+                return Json(new List<Subject>());
+            }
+
+            var subjects = await _uniteOfWork.Subject.GetAllAsync(s => categoryIds.Contains(s.CategoryId));
+            var subjectList = subjects.Select(s => new
+            {
+                s.Id,
+                s.SubjectName
+            }).ToList();
+
+            return Json(subjectList);
+        }
+
+
 
         [HttpPost]
         public async Task<IActionResult> CalculatePrice([FromBody] PriceCalculationRequestDto request)

@@ -18,6 +18,10 @@
         .dataTables_paginate {
             margin-top: 50px;
         }
+
+        .bootstrap-select {
+            width: 100% !important;
+        }
     </style>
 }
 
@@ -42,7 +46,8 @@
                     <table class="table table-responsive-md" id="categoryTable">
                         <thead>
                             <tr>
-                                <th><strong>Category Name</strong></th>
+                                <th><strong>Subject Name</strong></th>
+                                <th><strong>Category Dependent</strong></th>
                                 <th><strong>Sorted Order</strong></th>
                                 <th><strong>Date</strong></th>
                                 <th><strong>Action</strong></th>
@@ -53,6 +58,7 @@
                             {
                                 <tr>
                                     <td>@category.SubjectName</td>
+                                    <td>@category.CategoryName</td>
                                     <td><strong>@category.SortedOrder</strong></td>
                                     <td>@category.CreatedOn.ToString("dd MMM yyyy")</td>
                                     <td>
@@ -91,6 +97,14 @@
                         <input type="text" class="form-control" id="subjectName" name="SubjectName" placeholder="Enter Subject Name" required>
                     </div>
                     <div class="mb-3">
+                        <label for="catId" class="form-label">Select Category</label>
+                        <div style="width: 100%">
+                            <select class="selectpicker" data-live-search="true" style="width: 100%" id="catId" asp-items="@ViewBag.categorySelectList" name="CategoryId">
+                                <option selected disabled>Select Category</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="mb-3">
                         <label for="sortedOrder" class="form-label">Sorted Order</label>
                         <input type="number" class="form-control" id="sortedOrder" name="SortedOrder" placeholder="Enter Sorted Order" required>
                     </div>
@@ -126,6 +140,7 @@
     </div>
 </div>
 
+
 @section Scripts {
     <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script>
     <script>
@@ -141,7 +156,6 @@
                 $('#categoryModal').modal('show');
             });
 
-            // Use event delegation for dynamically added elements (edit button)
             $(document).on('click', '.editCategory', function () {
                 var id = $(this).data('id');
                 $.ajax({
@@ -152,16 +166,23 @@
                         if (data.success === false) {
                             toastr.error(data.message);
                         } else {
+                            // Populate the form fields with the retrieved data
                             $('#subjectId').val(data.id);
                             $('#subjectName').val(data.subjectName);
                             $('#sortedOrder').val(data.sortedOrder);
 
+                            // Update and refresh the selectpicker for category ID
+                            $('#catId').val(data.categoryId.toString());
+                            $('#catId').selectpicker('refresh');
+
+                            // Update modal title and show it
                             $('#categoryModalLabel').text('Edit Category');
                             $('#categoryModal').modal('show');
                         }
                     }
                 });
             });
+
 
             // Save Category (Add or Edit)
             $('#categoryForm').on('submit', function (e) {
@@ -170,8 +191,11 @@
                 var subject = {
                     Id: $('#subjectId').val(),
                     SubjectName: $('#subjectName').val(),
+                    CategoryId: $('#catId').val(),
                     SortedOrder: parseInt($('#sortedOrder').val()),
                 };
+
+                console.log(subject);
 
                 $.ajax({
                     url: '/Admin/Subject/Upsert',
@@ -182,29 +206,31 @@
 
                         if (response.success) {
                             toastr.success(response.message);
-                            console.log(response);
 
+                            window.location.reload();
                             if (subject.Id == 0) {
                                 // Add new category row
                                 var newRow = `<tr>
-                                            <td>${response.subject.subjectName}</td>
-                                            <td><strong>${response.subject.sortedOrder}</strong></td>
-                                            <td>${new Date().toLocaleDateString('en-GB')}</td>
-                                            <td><div class="d-flex">
-                                                <button class="btn btn-primary shadow btn-xs sharp me-1 editCategory" data-id="${response.subject.id}">
-                                                    <i class="fa fa-pencil"></i>
-                                                </button>
-                                                <button class="btn btn-danger shadow btn-xs sharp deleteCategory" data-id="${response.subject.id}">
-                                                    <i class="fa fa-trash"></i>
-                                                </button>
-                                            </div></td>
-                                        </tr>`;
+                                                            <td>${response.subject.subjectName}</td>
+                                                            <td>${response.subject.categoryName}</td>
+                                                            <td><strong>${response.subject.sortedOrder}</strong></td>
+                                                            <td>${new Date().toLocaleDateString('en-GB')}</td>
+                                                            <td><div class="d-flex">
+                                                                <button class="btn btn-primary shadow btn-xs sharp me-1 editCategory" data-id="${response.subject.id}">
+                                                                    <i class="fa fa-pencil"></i>
+                                                                </button>
+                                                                <button class="btn btn-danger shadow btn-xs sharp deleteCategory" data-id="${response.subject.id}">
+                                                                    <i class="fa fa-trash"></i>
+                                                                </button>
+                                                            </div></td>
+                                                        </tr>`;
                                 $('#categoryTable tbody').append(newRow);
                             } else {
                                 // Update existing category row
                                 var row = $('button.editCategory[data-id="' + response.subject.id + '"]').closest('tr');
                                 row.find('td').eq(0).text(response.subject.subjectName);
-                                row.find('td').eq(1).text(response.subject.sortedOrder);
+                                row.find('td').eq(1).text(response.subject.categoryName);
+                                row.find('td').eq(2).text(response.subject.sortedOrder);
                             }
                         } else {
                             toastr.error(response.message);

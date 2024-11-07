@@ -25,8 +25,11 @@ namespace Blog.DataAccess.Repository
             if (objFromDb != null)
             {
                 objFromDb.SubjectName = obj.SubjectName;
+                objFromDb.CategoryId = obj.CategoryId;
                 objFromDb.SortedOrder = obj.SortedOrder;
                 objFromDb.ModifiedOn = obj.ModifiedOn;
+
+                _db.Subjects.Update(objFromDb);
             }
         }
     }

@@ -1,7 +1,9 @@
-﻿using Blog.DataAccess.Repository.IRepository;
+﻿using Blog.DataAccess.Data;
+using Blog.DataAccess.Repository.IRepository;
 using Blog.Models.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using System.Collections.Generic;
 
 namespace Blog.Areas.Admin.Controllers
@@ -11,16 +13,40 @@ namespace Blog.Areas.Admin.Controllers
     public class SubjectController : Controller
     {
         private readonly IUniteOfWork _unitOfWork;
+        private readonly ApplicationDbContext _db;
 
-        public SubjectController(IUniteOfWork unitOfWork)
+        public SubjectController(IUniteOfWork unitOfWork, ApplicationDbContext db)
         {
             _unitOfWork = unitOfWork;
+            _db = db;
         }
 
         public async Task<IActionResult> Index()
         {
             IEnumerable<Subject> subjectList = await _unitOfWork.Subject.GetAllAsync();
-            return View(subjectList);
+
+            List<Subject> subjectListWithCategoryName = new List<Subject>();
+
+
+            foreach (var item in subjectList)
+            {
+                var category = _db.Categories.FirstOrDefault(u => u.Id == item.CategoryId);
+                var categoryName = category != null ? category.CategoryName : "";
+                item.CategoryName = categoryName;
+                subjectListWithCategoryName.Add(item);
+            }
+
+
+
+            var categoryList = await _unitOfWork.Category.GetAllAsync();
+            List<SelectListItem> categorySelect = categoryList.Select(c => new SelectListItem
+            {
+                Text = c.CategoryName,
+                Value = c.Id.ToString()
+            }).ToList();
+            ViewBag.categorySelectList = categorySelect;
+
+            return View(subjectListWithCategoryName);
         }
 
         public async Task<IActionResult> Upsert(int? id)
@@ -73,8 +99,11 @@ namespace Blog.Areas.Admin.Controllers
                     // Update existing category
                     existingSubject.SubjectName = subject.SubjectName;
                     existingSubject.SortedOrder = subject.SortedOrder;
-                    _unitOfWork.Subject.Update(existingSubject);
-                    _unitOfWork.Save();
+                    existingSubject.CategoryId = subject.CategoryId;
+
+                    _db.Subjects.Update(existingSubject);
+                    _db.SaveChanges();
+
                     return Json(new { success = true, message = "Subject updated successfully!", subject = existingSubject });
                 }
             }

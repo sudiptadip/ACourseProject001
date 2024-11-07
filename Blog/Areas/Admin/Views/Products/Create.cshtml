@@ -19,11 +19,26 @@
                     <div class="col-md-6 mt-3">
                         <label for="category" class="form-label">Category <span class="text-danger">*</span></label>
                         <select class="form-control" id="category" name="category" required>
-                            <option value="" disabled selected >Select Category</option>
+                            <option value="" disabled selected>Select Category</option>
                             @foreach (var category in ViewData["CategoryList"] as IEnumerable<SelectListItem>)
                             {
                                 var isSelected = category.Value == Model?.CategoryId.ToString() ? "selected" : "";
                                 <!option @isSelected value="@category.Value">@category.Text</!option>
+                            }
+                        </select>
+                    </div>
+
+                    <div class="col-md-6 mt-3">
+                        <label for="subject" class="form-label">Subject <span class="text-danger">*</span></label>
+                        <select class="form-control" id="subject" name="subject" required>
+                            <option value="" disabled selected>Select Subject</option>
+                            @if (Model != null && Model.SubjectId != 0)
+                            {
+                                @foreach (var subject in ViewData["SubjectList"] as IEnumerable<SelectListItem>)
+                                {
+                                    var isSelected = subject.Value == Model.SubjectId.ToString() ? "selected" : "";
+                                    <!option @isSelected value="@subject.Value">@subject.Text</!option>
+                                }
                             }
                         </select>
                     </div>
@@ -40,17 +55,7 @@
                         </select>
                     </div>
 
-                    <div class="col-md-6 mt-3">
-                        <label for="subject" class="form-label">Subject <span class="text-danger">*</span></label>
-                        <select class="form-control" id="subject" name="subject" required>
-                            <option value="" disabled selected>Select Subject</option>
-                            @foreach (var subject in ViewData["SubjectList"] as IEnumerable<SelectListItem>)
-                            {
-                                var isSelected = subject.Value == Model?.SubjectId.ToString() ? "selected" : "";
-                                <!option @isSelected value="@subject.Value">@subject.Text</!option>
-                            }
-                        </select>
-                    </div>
+
 
                     <!-- New fields for Product Description, IsActive, DefaultPrice, and DefaultDiscountPrice -->
 
@@ -139,6 +144,48 @@
 @section Scripts {
     <script src="https://cdn.ckeditor.com/ckeditor5/35.0.1/classic/ckeditor.js"></script>
     <script>
+
+        $(document).ready(function () {
+            // Handle category change to fetch related subjects
+            $('#category').on('change', function () {
+                const selectedCategoryId = $(this).val();
+
+                // Clear existing subjects and reset the dropdown
+                $('#subject').empty().append('<option value="" disabled selected>Select Subject</option>');
+
+                if (selectedCategoryId) {
+                    $.ajax({
+                        url: '@Url.Action("GetSubjectsByCategory", "Products")',
+                        type: 'POST',
+                        data: { categoryId: selectedCategoryId },
+                        success: function (response) {
+                            response.forEach(subject => {
+                                console.log(subject);
+                                $('#subject').append(`
+                                    <option value="${subject.id}">${subject.subjectName}</option>
+                                `);
+                            });
+
+                            // Refresh the Bootstrap Select dropdown
+                            $('#subject').selectpicker('refresh');
+                        },
+                        error: function (error) {
+                            console.error("Error fetching subjects:", error);
+                            alert("There was an error fetching subjects.");
+                        }
+                    });
+                } else {
+                    // Refresh the Bootstrap Select dropdown if nothing is selected
+                    $('#subject').selectpicker('refresh');
+                }
+            });
+
+            // Initialize the selectpicker if it hasn't been initialized
+            $('#subject').selectpicker();
+        });
+
+
+
         $(document).ready(function () {
             let attributeCount = $("#attributeRows tr").length || 0;
 
@@ -153,26 +200,26 @@
             $('#addAttributeBtn').click(function () {
                 attributeCount++;
                 let newRow = `
-                        <tr id="row${attributeCount}">
-                            <td><input type="text" class="form-control" name="attributes[${attributeCount}][name]" placeholder="Enter attribute name" required></td>
-                            <td><input type="text" class="form-control" name="attributes[${attributeCount}][value]" placeholder="Enter attribute value" required></td>
-                            <td>
-                                <select class="form-control attributeType" name="attributes[${attributeCount}][attributeType]" required>
-                                    <option value="" disabled selected>Select Attribute Type</option>
-                                    <option value="ProductInfo">Product Info</option>
-                                    <option value="Faq">Faq</option>
-                                    <option value="System">System</option>
-                                    <option value="Demo">Demo</option>
-                                </select>
-                            </td>
-                            <td><button type="button" class="btn btn-danger" onclick="removeRow(${attributeCount})">Remove</button></td>
-                        </tr>`;
+                                        <tr id="row${attributeCount}">
+                                            <td><input type="text" class="form-control" name="attributes[${attributeCount}][name]" placeholder="Enter attribute name" required></td>
+                                            <td><input type="text" class="form-control" name="attributes[${attributeCount}][value]" placeholder="Enter attribute value" required></td>
+                                            <td>
+                                                <select class="form-control attributeType" name="attributes[${attributeCount}][attributeType]" required>
+                                                    <option value="" disabled selected>Select Attribute Type</option>
+                                                    <option value="ProductInfo">Product Info</option>
+                                                    <option value="Faq">Faq</option>
+                                                    <option value="System">System</option>
+                                                    <option value="Demo">Demo</option>
+                                                </select>
+                                            </td>
+                                            <td><button type="button" class="btn btn-danger" onclick="removeRow(${attributeCount})">Remove</button></td>
+                                        </tr>`;
                 $('#attributeRows').append(newRow);
             });
 
             // Remove row function
             window.removeRow = function (rowId) {
-                $(`#row${rowId}`).remove(); 
+                $(`#row${rowId}`).remove();
                 attributeCount--; // Decrease attribute count when row is removed
             };
 

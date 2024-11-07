@@ -48,11 +48,7 @@ namespace Blog.Areas.Admin.Controllers
                 Value = u.Id.ToString()
             }).ToList();
 
-            IEnumerable<SelectListItem> subjectList = _context.Subjects.Select(u => new SelectListItem
-            {
-                Text = u.SubjectName,
-                Value = u.Id.ToString()
-            }).ToList();
+            
 
             IEnumerable<SelectListItem> facultyList = _context.Faculties.Select(u => new SelectListItem
             {
@@ -62,7 +58,7 @@ namespace Blog.Areas.Admin.Controllers
 
             ViewData["CategoryList"] = categoryList;
             ViewData["FacultyList"] = facultyList;
-            ViewData["SubjectList"] = subjectList;
+            
 
             if (id.HasValue)
             {
@@ -73,6 +69,14 @@ namespace Blog.Areas.Admin.Controllers
                 {
                     return NotFound();
                 }
+
+                IEnumerable<SelectListItem> subjectList = _context.Subjects.Where(s => s.CategoryId == product.CategoryId).Select(u => new SelectListItem
+                {
+                    Text = u.SubjectName,
+                    Value = u.Id.ToString()
+                }).ToList();
+                ViewData["SubjectList"] = subjectList;
+
 
                 var productDto = new ProductCreateDto
                 {
@@ -205,6 +209,23 @@ namespace Blog.Areas.Admin.Controllers
 
             return Json(new { success = true, message = "Product deleted successfully" });
         }
+
+        [HttpPost]
+        public async Task<IActionResult> GetSubjectsByCategory(int categoryId)
+        {
+            if (categoryId == 0)
+            {
+                return Json(new List<Subject>());
+            }
+
+            var subjects = await _context.Subjects
+                .Where(s => s.CategoryId == categoryId)
+                .Select(s => new { s.Id, s.SubjectName })
+                .ToListAsync();
+
+            return Json(subjects);
+        }
+
 
 
         [HttpGet]

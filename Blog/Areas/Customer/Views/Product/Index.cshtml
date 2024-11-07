@@ -42,6 +42,23 @@
                         </div>
                     </div>
 
+
+                    <div class="edu-course-widget widget-instructor">
+                        <div class="inner">
+                            <h5 class="widget-title widget-toggle">Subject</h5>
+                            <div class="content subjectContent">
+                                @* @foreach (var item in Model.SubjectList)
+                                {
+                                    <div class="edu-form-check">
+                                        <input type="checkbox" id="subject-check-@item.Id" class="subject-filter" value="@item.Id" />
+                                        <label for="subject-check-@item.Id">@item.SubjectName</label>
+                                    </div>
+                                } *@
+                            </div>
+                        </div>
+                    </div>
+
+
                     <div class="edu-course-widget widget-instructor">
                         <div class="inner">
                             <h5 class="widget-title widget-toggle">Faculty</h5>
@@ -57,20 +74,7 @@
                         </div>
                     </div>
 
-                    <div class="edu-course-widget widget-instructor">
-                        <div class="inner">
-                            <h5 class="widget-title widget-toggle">Subject</h5>
-                            <div class="content">
-                                @foreach (var item in Model.SubjectList)
-                                {
-                                    <div class="edu-form-check">
-                                        <input type="checkbox" id="subject-check-@item.Id" class="subject-filter" value="@item.Id" />
-                                        <label for="subject-check-@item.Id">@item.SubjectName</label>
-                                    </div>
-                                }
-                            </div>
-                        </div>
-                    </div>
+                    
                 </div>
             </div>
 
@@ -148,16 +152,63 @@
 @section Scripts {
     <script>
         $(document).ready(function () {
-            // Detect changes in any checkbox (for categories, faculties, subjects)
+            // Store currently selected subjects
+            let selectedSubjects = [];
+
+            // Add event listener for category selection
+            $('.category-filter').on('change', function () {
+                // Save current selections
+                selectedSubjects = [];
+                $('.subject-filter:checked').each(function () {
+                    selectedSubjects.push($(this).val());
+                });
+
+                updateSubjectFilter();
+                applyFilters(1);
+            });
+
+            function updateSubjectFilter() {
+                let selectedCategories = [];
+
+                // Collect selected category filters
+                $('.category-filter:checked').each(function () {
+                    selectedCategories.push($(this).val());
+                });
+
+                // Send AJAX request to get the relevant subjects
+                $.ajax({
+                    url: '@Url.Action("GetSubjectsByCategories", "Product")',
+                    type: 'POST',
+                    data: {
+                        categoryIds: selectedCategories
+                    },
+                    success: function (response) {
+                        $('.subjectContent').empty();
+                        response.forEach(subject => {
+                            let isChecked = selectedSubjects.includes(subject.id.toString()) ? 'checked' : '';
+                            $('.subjectContent').append(`
+                                <div class="edu-form-check">
+                                    <input type="checkbox" id="subject-check-${subject.id}" class="subject-filter" value="${subject.id}" ${isChecked} />
+                                    <label for="subject-check-${subject.id}">${subject.subjectName}</label>
+                                </div>
+                            `);
+                        });
+                    },
+                    error: function (error) {
+                        console.error("Error fetching subjects:", error);
+                    }
+                });
+            }
+
             $('.category-filter, .faculty-filter, .subject-filter').on('change', function () {
-                applyFilters(1);  // Reset to page 1 when filter changes
+                applyFilters(1);
             });
 
             // Handle pagination link clicks
             $(document).on('click', '.edu-pagination a', function (e) {
                 e.preventDefault(); // Prevent default link behavior
-                const page = $(this).attr('data-page');  // Get the page number from the link
-                applyFilters(page);  // Fetch the selected page
+                const page = $(this).attr('data-page'); // Get the page number from the link
+                applyFilters(page); // Fetch the selected page
             });
 
             function applyFilters(page) {
@@ -188,12 +239,12 @@
                         categories: categories,
                         faculties: faculties,
                         subjects: subjects,
-                        page: page  // Pass the current page number
+                        page: page // Pass the current page number
                     },
                     success: function (response) {
-                        $('#productList').html(response.productsHtml);  // Update the product list
-                        $('.edu-pagination').html(response.paginationHtml);  // Update the pagination
-                        sal();  // Reinitialize animations (if needed)
+                        $('#productList').html(response.productsHtml); // Update the product list
+                        $('.edu-pagination').html(response.paginationHtml); // Update the pagination
+                        sal(); // Reinitialize animations (if needed)
                     },
                     error: function (error) {
                         console.error("Error filtering products:", error);

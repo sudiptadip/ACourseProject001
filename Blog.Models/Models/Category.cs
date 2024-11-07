@@ -10,7 +10,7 @@ namespace Blog.Models.Models
 {
     public class Category
     {
-        [Key]
+        [Key] 
         public int Id { get; set; }
         [Required]
         public string CategoryName { get; set; }
