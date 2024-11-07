@@ -41,6 +41,7 @@
                         <thead>
                             <tr>
                                 <th><strong>Category Name</strong></th>
+                                <th><strong>Category Type</strong></th>
                                 <th><strong>Sorted Order</strong></th>
                                 <th><strong>Date</strong></th>
                                 <th><strong>Status</strong></th>
@@ -52,6 +53,7 @@
                             {
                                 <tr>
                                     <td>@category.CategoryName</td>
+                                    <td>@category.CategoryType</td>
                                     <td><strong>@category.SortedOrder</strong></td>
                                     <td>@category.CreatedOn.ToString("dd MMM yyyy")</td>
                                     <td>
@@ -94,6 +96,14 @@
                     <div class="mb-3">
                         <label for="categoryName" class="form-label">Category Name</label>
                         <input type="text" class="form-control" id="categoryName" name="CategoryName" placeholder="Enter Category Name" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="categoryName" class="form-label">Category Name</label>
+                        <select class="selectpicker form-control" data-live-search="true" class="form-control" id="categoryType" name="CategoryType">
+                            <option value="CA" >CA</option>
+                            <option value="CMA" >CMA</option>
+                            <option value="CS" >CS</option>
+                        </select>
                     </div>
                     <div class="mb-3">
                         <label for="sortedOrder" class="form-label">Sorted Order</label>
@@ -168,6 +178,9 @@
                             $('#categoryId').val(data.id);
                             $('#categoryName').val(data.categoryName);
                             $('#sortedOrder').val(data.sortedOrder);
+                            $('#categoryType').val(data.categoryType);
+                            $('#categoryType').selectpicker('refresh');
+
                             $('#isActive').val(data.isActive ? 'true' : 'false');
 
                             $('#categoryModalLabel').text('Edit Category');
@@ -184,6 +197,7 @@
                 var formData = {
                     Id: $('#categoryId').val(),
                     CategoryName: $('#categoryName').val(),
+                    CategoryType: $('#categoryType').val(),
                     SortedOrder: parseInt($('#sortedOrder').val()),
                     IsActive: $('#isActive').val() === 'true'
                 };
@@ -202,6 +216,7 @@
                                 // Add new category row
                                 var newRow = `<tr>
                                                             <td>${response.category.categoryName}</td>
+                                                            <td>${response.category.categoryType}</td>
                                                             <td><strong>${response.category.sortedOrder}</strong></td>
                                                             <td>${new Date().toLocaleDateString('en-GB')}</td>
                                                             <td><div class="d-flex align-items-center">
@@ -222,8 +237,9 @@
                                 // Update existing category row
                                 var row = $('button.editCategory[data-id="' + response.category.id + '"]').closest('tr');
                                 row.find('td').eq(0).text(response.category.categoryName);
-                                row.find('td').eq(1).text(response.category.sortedOrder);
-                                row.find('td').eq(3).html(`<div class="d-flex align-items-center">
+                                row.find('td').eq(1).text(response.category.categoryType);
+                                row.find('td').eq(2).text(response.category.sortedOrder);
+                                row.find('td').eq(4).html(`<div class="d-flex align-items-center">
                                                                     <i class="fa fa-circle ${response.category.isActive ? 'text-success' : 'text-danger'} me-1"></i>
                                                                     ${response.category.isActive ? 'Active' : 'Inactive'}
                                                                 </div>`);

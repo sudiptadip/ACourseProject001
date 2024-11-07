@@ -74,6 +74,7 @@ namespace Blog.Areas.Admin.Controllers
                     existingCategory.CategoryName = category.CategoryName;
                     existingCategory.SortedOrder = category.SortedOrder;
                     existingCategory.IsActive = category.IsActive;
+                    existingCategory.CategoryType = category.CategoryType;
                     _unitOfWork.Category.Update(existingCategory);
                     _unitOfWork.Save();
                     return Json(new { success = true, message = "Category updated successfully!", category = existingCategory });

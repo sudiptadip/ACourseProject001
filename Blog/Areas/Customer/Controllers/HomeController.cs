@@ -102,7 +102,7 @@ namespace Blog.Areas.Customer.Controllers
         public IActionResult Achivements()
         {
             List<Achevements> list = _db.Achevements.ToList();
-            return View(list.OrderBy(u => u.SortedOrder).ToList());
+            return View(list.OrderByDescending(u => u.SortedOrder).ToList());
         }
 
         public IActionResult Privacy()
@@ -123,7 +123,7 @@ namespace Blog.Areas.Customer.Controllers
         public async Task<IActionResult> YourMentor()
         {
             IEnumerable<Faculty> allMentor = await _uniteOfWork.Faculty.GetAllAsync(f => f.IsShowMentorPage == true);
-            allMentor = allMentor.OrderBy(x => x.SortedOrder).ToList();  
+            allMentor = allMentor.OrderByDescending(x => x.SortedOrder).ToList();  
             return View(allMentor);
         }
 

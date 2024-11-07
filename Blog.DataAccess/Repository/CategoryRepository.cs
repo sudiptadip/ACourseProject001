@@ -26,10 +26,12 @@ namespace Blog.DataAccess.Repository
             {
                 objFromDb.CategoryName = obj.CategoryName;
                 objFromDb.CategoryName = obj.CategoryName;
+                objFromDb.CategoryType = obj.CategoryType;
                 objFromDb.SortedOrder = obj.SortedOrder;
                 objFromDb.IsActive = obj.IsActive;
                 objFromDb.ModifiedOn = obj.ModifiedOn;
             }
+            _db.Categories.Update(objFromDb);
         }
     }
 }

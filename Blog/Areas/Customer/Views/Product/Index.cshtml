@@ -200,14 +200,19 @@
                 });
             }
 
-            $('.category-filter, .faculty-filter, .subject-filter').on('change', function () {
+            $(document).on('change', '.category-filter, .faculty-filter, .subject-filter', function () {
+                console.log("Hello World");
                 applyFilters(1);
             });
+
 
             // Handle pagination link clicks
             $(document).on('click', '.edu-pagination a', function (e) {
                 e.preventDefault(); // Prevent default link behavior
-                const page = $(this).attr('data-page'); // Get the page number from the link
+                const page = $(this).attr('data-page');
+
+                console.log("page", page);
+
                 applyFilters(page); // Fetch the selected page
             });
 
@@ -231,7 +236,13 @@
                     subjects.push($(this).val());
                 });
 
-                // Send AJAX request to filter products and handle pagination
+                function getProductCategoryFromUrl() {
+                    const urlParams = new URLSearchParams(window.location.search);
+                    return urlParams.get('productCategory');
+                }
+
+                const productCategory = getProductCategoryFromUrl();
+
                 $.ajax({
                     url: '@Url.Action("FilterProducts", "Product")',
                     type: 'POST',
@@ -239,7 +250,8 @@
                         categories: categories,
                         faculties: faculties,
                         subjects: subjects,
-                        page: page // Pass the current page number
+                        page: page,
+                        productCategory: productCategory ?? ""
                     },
                     success: function (response) {
                         $('#productList').html(response.productsHtml); // Update the product list

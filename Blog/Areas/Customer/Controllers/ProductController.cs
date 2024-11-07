@@ -24,12 +24,41 @@ namespace Blog.Areas.Customer.Controllers
             _context = context;
         }
 
-        public async Task<IActionResult> Index(int page = 1)
+        public async Task<IActionResult> Index(int page = 1, string? productCategory = null)
         {
             int pageSize = 16;
 
-            var productList = await _uniteOfWork.Product.GetAllAsync(p => p.IsActive == true, includeProperties: "Category,Faculty");
-            var categoryList = await _uniteOfWork.Category.GetAllAsync();
+            IEnumerable<Product> productList;
+            IEnumerable<Category> categoryList;
+
+            if (productCategory != null && productCategory.ToUpper() == "CA")
+            {
+                 productList = await _uniteOfWork.Product.GetAllAsync(p => p.IsActive == true, includeProperties: "Category,Faculty");
+                 productList = productList.Where(p => p.Category.CategoryType == "CA");
+                 categoryList = await _uniteOfWork.Category.GetAllAsync();
+                categoryList = categoryList.Where(c => c.CategoryType == "CA");
+            }
+            else if (productCategory != null &&  productCategory.ToUpper() == "CMA")
+            {
+                productList = await _uniteOfWork.Product.GetAllAsync(p => p.IsActive == true, includeProperties: "Category,Faculty");
+                productList = productList.Where(p => p.Category.CategoryType == "CMA");
+                categoryList = await _uniteOfWork.Category.GetAllAsync();
+                categoryList = categoryList.Where(c => c.CategoryType == "CMA");
+            }
+            else if (productCategory != null && productCategory.ToUpper() == "CMA")
+            {
+                productList = await _uniteOfWork.Product.GetAllAsync(p => p.IsActive == true, includeProperties: "Category,Faculty");
+                productList = productList.Where(p => p.Category.CategoryType == "CS");
+                categoryList = await _uniteOfWork.Category.GetAllAsync();
+                categoryList = categoryList.Where(c => c.CategoryType == "CS");
+            }
+            else
+            {
+                productList = await _uniteOfWork.Product.GetAllAsync(p => p.IsActive == true, includeProperties: "Category,Faculty");
+                categoryList = await _uniteOfWork.Category.GetAllAsync();
+            }
+
+             
             var facultyList = await _uniteOfWork.Faculty.GetAllAsync();
             var subjectList = await _uniteOfWork.Subject.GetAllAsync();
 
@@ -99,7 +128,6 @@ namespace Blog.Areas.Customer.Controllers
         }
 
 
-
         [HttpPost]
         public async Task<IActionResult> CalculatePrice([FromBody] PriceCalculationRequestDto request)
         {
@@ -138,9 +166,15 @@ namespace Blog.Areas.Customer.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> FilterProducts(List<int> categories, List<int> faculties, List<int> subjects, int page = 1)
+        public async Task<IActionResult> FilterProducts(List<int> categories, List<int> faculties, List<int> subjects, int page = 1, string? productCategory = null)
         {
             int pageSize = 16;
+
+            if (categories.Count == 0 && faculties.Count == 0 && subjects.Count == 0 && page <= 1)
+            {
+                return RedirectToAction("Index", new { page, productCategory });
+            }
+
 
             var filteredProducts = await _uniteOfWork.Product.GetAllAsync(
                 p => (categories.Count == 0 || categories.Contains(p.CategoryId)) &&

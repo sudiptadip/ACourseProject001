@@ -15,6 +15,8 @@ namespace Blog.Models.Models
         [Required]
         public string CategoryName { get; set; }
         [Required]
+        public string CategoryType { get; set; }
+        [Required]
         public int SortedOrder { get; set; }
         [Required]
         public bool IsActive { get; set; }
