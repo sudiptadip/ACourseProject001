@@ -32,5 +32,6 @@ namespace Blog.DataAccess.Data
         public DbSet<FailedToSendEmail> FailedToSendEmails { get; set; }
         public DbSet<Achevements> Achevements { get; set; }
         public DbSet<Testmonials> Testmonials { get; set; }
+        public DbSet<Upcoming> Upcomings { get; set; }
     }
 }

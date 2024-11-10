@@ -101,9 +101,23 @@ namespace Blog.Areas.Customer.Controllers
 
         public IActionResult Achivements()
         {
-            List<Achevements> list = _db.Achevements.ToList();
+            List<Achevements> list = _db.Achevements
+                                 .FromSqlInterpolated($"SELECT * FROM Achevements ORDER BY CAST(SortedOrder AS INT) DESC")
+                                 .ToList();
+
+            return View(list);
+
+        }
+
+
+        public IActionResult Upcoming()
+        {
+            List<Upcoming> list = _db.Upcomings
+                                 .FromSqlInterpolated($"SELECT * FROM Upcomings ORDER BY CAST(SortedOrder AS INT) DESC")
+                                 .ToList();
             return View(list.OrderByDescending(u => u.SortedOrder).ToList());
         }
+
 
         public IActionResult Privacy()
         {

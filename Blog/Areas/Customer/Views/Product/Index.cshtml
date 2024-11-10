@@ -243,6 +243,10 @@
 
                 const productCategory = getProductCategoryFromUrl();
 
+                // if (categories.length === 0 && faculties.length === 0 && subjects.length === 0 && page == 1) {
+                //     window.location.reload();
+                // }
+
                 $.ajax({
                     url: '@Url.Action("FilterProducts", "Product")',
                     type: 'POST',

@@ -1,4 +1,4 @@
-﻿@model Achevements
+﻿@model Upcoming
 
 @{
     Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
@@ -7,7 +7,7 @@
 <div class="container">
     <form method="post" enctype="multipart/form-data">
         <div class="modal-header">
-            <h5 class="modal-title" id="categoryModalLabel">@(Model.Id != 0 ? "Edit Achivement" : "Add Achivement")</h5>
+            <h5 class="modal-title" id="categoryModalLabel">@(Model.Id != 0 ? "Edit Upcoming" : "Add Upcoming")</h5>
         </div>
         <div class="modal-body">
             @if (Model.Id != 0 && !string.IsNullOrEmpty(Model.ImageUrl))

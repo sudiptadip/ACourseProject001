@@ -33,12 +33,12 @@ namespace Blog.Areas.Customer.Controllers
 
             if (productCategory != null && productCategory.ToUpper() == "CA")
             {
-                 productList = await _uniteOfWork.Product.GetAllAsync(p => p.IsActive == true, includeProperties: "Category,Faculty");
-                 productList = productList.Where(p => p.Category.CategoryType == "CA");
-                 categoryList = await _uniteOfWork.Category.GetAllAsync();
+                productList = await _uniteOfWork.Product.GetAllAsync(p => p.IsActive == true, includeProperties: "Category,Faculty");
+                productList = productList.Where(p => p.Category.CategoryType == "CA");
+                categoryList = await _uniteOfWork.Category.GetAllAsync();
                 categoryList = categoryList.Where(c => c.CategoryType == "CA");
             }
-            else if (productCategory != null &&  productCategory.ToUpper() == "CMA")
+            else if (productCategory != null && productCategory.ToUpper() == "CMA")
             {
                 productList = await _uniteOfWork.Product.GetAllAsync(p => p.IsActive == true, includeProperties: "Category,Faculty");
                 productList = productList.Where(p => p.Category.CategoryType == "CMA");
@@ -58,8 +58,9 @@ namespace Blog.Areas.Customer.Controllers
                 categoryList = await _uniteOfWork.Category.GetAllAsync();
             }
 
-             
+
             var facultyList = await _uniteOfWork.Faculty.GetAllAsync();
+            facultyList = facultyList.Where(x => x.IsShowMentorPage == true).OrderBy(y => y.SortedOrder);
             var subjectList = await _uniteOfWork.Subject.GetAllAsync();
 
             int totalItems = productList.Count();
@@ -82,29 +83,29 @@ namespace Blog.Areas.Customer.Controllers
 
         public async Task<IActionResult> Details(int id)
         {
-             
-            var product = await _uniteOfWork.Product.GetAsync(p => p.Id  == id, includeProperties: "ProductAttributes,Category,Faculty,Subject");
 
-            if(product == null)
+            var product = await _uniteOfWork.Product.GetAsync(p => p.Id == id, includeProperties: "ProductAttributes,Category,Faculty,Subject");
+
+            if (product == null)
             {
                 return NotFound();
             }
 
             ProductOption price = await _context.ProductOptions.FirstOrDefaultAsync(u => u.ProductId == product.Id);
 
-            if(price == null)
+            if (price == null)
             {
                 return BadRequest();
             }
-            
+
             ProductDetailsVM productDetailsVM = new()
             {
                 ModeOfLecture = price.ModeOfLecture.Split(',').ToList(),
                 Attempt = price.Attempt.Split(",").ToList(),
-                Validity = price.Validity.Split(",").ToList(),  
+                Validity = price.Validity.Split(",").ToList(),
                 Views = price.Views.Split(",").ToList(),
                 Product = product
-            };         
+            };
 
             return View(productDetailsVM);
         }
@@ -140,8 +141,8 @@ namespace Blog.Areas.Customer.Controllers
 
             ProductCombination price = await _context.ProductCombinations
                 .FirstOrDefaultAsync(p => p.ModeOfLecture.Trim().ToLower() == request.ModeOfLecture.Trim().ToLower()
-                && p.Attempt.Trim().ToLower() == request.Attempt.Trim().ToLower() 
-                && p.Validity.Trim().ToLower() == request.ValidityInMonths.Trim().ToLower() && 
+                && p.Attempt.Trim().ToLower() == request.Attempt.Trim().ToLower()
+                && p.Validity.Trim().ToLower() == request.ValidityInMonths.Trim().ToLower() &&
                 p.Views.Trim().ToLower() == request.Views.Trim().ToLower() && p.ProductId == request.ProductId
             );
 
@@ -170,17 +171,21 @@ namespace Blog.Areas.Customer.Controllers
         {
             int pageSize = 16;
 
-            if (categories.Count == 0 && faculties.Count == 0 && subjects.Count == 0 && page <= 1)
-            {
-                return RedirectToAction("Index", new { page, productCategory });
-            }
+            //if (categories.Count == 0 && faculties.Count == 0 && subjects.Count == 0 && page <= 1)
+            //{
+            //    return RedirectToAction("Index", new { page, productCategory });
+            //}
 
-
-            var filteredProducts = await _uniteOfWork.Product.GetAllAsync(
+            IEnumerable<Product> filteredProducts = await _uniteOfWork.Product.GetAllAsync(
                 p => (categories.Count == 0 || categories.Contains(p.CategoryId)) &&
                      (faculties.Count == 0 || faculties.Contains(p.FacultyId)) &&
                      (subjects.Count == 0 || subjects.Contains(p.SubjectId)),
                 includeProperties: "Category,Faculty,Subject");
+
+            if (productCategory != null)
+            {
+                filteredProducts = filteredProducts.Where(p => p.Category.CategoryType == productCategory);
+            }
 
             int totalItems = filteredProducts.Count();
             var pagedProducts = filteredProducts.Skip((page - 1) * pageSize).Take(pageSize).ToList();
