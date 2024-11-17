@@ -279,6 +279,12 @@ namespace Blog.Areas.Admin.Controllers
                 else
                 {
                     _context.ProductOptions.Update(priceVM.ProductOption);
+                    var existingCombination = _context.ProductCombinations.Where(c => c.ProductId == priceVM.ProductOption.ProductId);
+                    if (existingCombination != null)
+                    {
+                        _context.RemoveRange(existingCombination);
+                        _context.SaveChanges();
+                    }
                 }
 
                 await _context.SaveChangesAsync();

@@ -37,6 +37,14 @@
                 </select>
                 <span class="text-danger" asp-validation-for="IsShowMentorPage"></span>
             </div>
+            <div class="mb-3" style="width: 100%;">
+                <label style="display: block" asp-for="IsShowMenuPage" class="form-label">Show On Product Page</label>
+                <select asp-for="IsShowMenuPage">
+                    <option value="true">Show</option>
+                    <option value="false">Not Show</option>
+                </select>
+                <span class="text-danger" asp-validation-for="IsShowMenuPage"></span>
+            </div>
             <div class="mb-3">
                 <label asp-for="Description" class="form-label"></label>
                 <textarea asp-for="Description" class="form-control" id="description-editor"></textarea>

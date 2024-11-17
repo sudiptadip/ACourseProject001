@@ -137,7 +137,7 @@ namespace Blog.Areas.Customer.Controllers
         public async Task<IActionResult> YourMentor()
         {
             IEnumerable<Faculty> allMentor = await _uniteOfWork.Faculty.GetAllAsync(f => f.IsShowMentorPage == true);
-            allMentor = allMentor.OrderByDescending(x => x.SortedOrder).ToList();  
+            allMentor = allMentor.OrderBy(x => x.SortedOrder).ToList();  
             return View(allMentor);
         }
 

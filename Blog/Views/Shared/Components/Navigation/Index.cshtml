@@ -106,33 +106,39 @@
                                         <h6 class="menu-title">CA FINAL GROUP 1</h6>
 
                                         <ul class="submenu mega-sub-menu-01 mb-4">
-                                            <li><a asp-area="Customer" asp-controller="Product" asp-action="Details" asp-route-id="26">Financial Reporting</a></li>
-                                            <li><a asp-area="Customer" asp-controller="Product" asp-action="Details" asp-route-id="25">AFM</a></li>
-                                            <li><a asp-area="Customer" asp-controller="Product" asp-action="Details" asp-route-id="22">Auditing & Professional Ethics</a></li>
+                                            @foreach (var item in Model.Subjects)
+                                            {
+                                                if (item.CategoryId == 4)
+                                                {
+                                                    <li><a href="/Customer/Product?productCategory=CA&Course=@item.CategoryId&Subject=@item.Id">@item.SubjectName</a></li>
+                                                }
+                                            }
                                         </ul>
                                     </li>
-
 
                                     <li>
                                         <h6 class="menu-title">CA FINAL GROUP 2</h6>
                                         <ul class="submenu mega-sub-menu-01 mb-4">
-                                            <li><a asp-area="Customer" asp-controller="Product" asp-action="Details" asp-route-id="28">Direct Tax Laws & International Taxation</a></li>
-                                            <li><a asp-area="Customer" asp-controller="Product" asp-action="Details" asp-route-id="27">Indirect Tax Laws</a></li>
-                                            <li>
-                                                <a asp-area="Customer" asp-controller="Product" asp-action="Index">Integrated Business Solution</a>
-                                            </li>
+                                            @foreach (var item in Model.Subjects)
+                                            {
+                                                if (item.CategoryId == 5)
+                                                {
+                                                    <li><a href="/Customer/Product?productCategory=CA&Course=@item.CategoryId&Subject=@item.Id">@item.SubjectName</a></li>
+                                                }
+                                            }
                                         </ul>
                                     </li>
 
                                     <li>
                                         <h6 class="menu-title">CA FINAL FAST TRACK</h6>
                                         <ul class="submenu mega-sub-menu-01">
-                                            <li><a asp-area="Customer" asp-controller="Product" asp-action="Index">FRM</a></li>
-                                            <li><a asp-area="Customer" asp-controller="Product" asp-action="Details" asp-route-id="24">AFM</a></li>
-                                            <li><a asp-area="Customer" asp-controller="Product" asp-action="Details" asp-route-id="22">Audit</a></li>
-                                            <li><a asp-area="Customer" asp-controller="Product" asp-action="Details" asp-route-id="28">Direct Tax</a></li>
-                                            <li><a asp-area="Customer" asp-controller="Product" asp-action="Details" asp-route-id="27">Indirect Tax</a></li>
-                                            <li><a asp-area="Customer" asp-controller="Product" asp-action="Index">Combos</a></li>
+                                            @foreach (var item in Model.Subjects)
+                                            {
+                                                if (item.CategoryId == 10)
+                                                {
+                                                    <li><a href="/Customer/Product?productCategory=CA&Course=@item.CategoryId&Subject=@item.Id">@item.SubjectName</a></li>
+                                                }
+                                            }
                                         </ul>
                                     </li>
                                 </ul>
@@ -147,32 +153,39 @@
                                         <h6 class="menu-title">CA INTER GROUP 1</h6>
 
                                         <ul class="submenu mega-sub-menu-01 mb-4">
-                                            <li>
-                                                <a asp-area="Customer" asp-controller="Product" asp-action="Details" asp-route-id="11">Advanced Accounting</a>
-                                            </li>
-                                            <li><a asp-area="Customer" asp-controller="Product" asp-action="Details" asp-route-id="12">Corporate Law</a></li>
-                                            <li><a asp-area="Customer" asp-controller="Product" asp-action="Details" asp-route-id="13">Taxation</a></li>
-                                            <li><a asp-area="Customer" asp-controller="Product" asp-action="Index">Group 1 Combo</a></li>
+                                            @foreach (var item in Model.Subjects)
+                                            {
+                                                if (item.CategoryId == 2)
+                                                {
+                                                    <li><a href="/Customer/Product?productCategory=CA&Course=@item.CategoryId&Subject=@item.Id">@item.SubjectName</a></li>
+                                                }
+                                            }
                                         </ul>
                                     </li>
 
                                     <li>
                                         <h6 class="menu-title">CA INTER GROUP 2</h6>
                                         <ul class="submenu mega-sub-menu-01 mb-4">
-                                            <li><a asp-area="Customer" asp-controller="Product" asp-action="Details" asp-route-id="15">Cost & Management Accounting</a></li>
-                                            <li><a asp-area="Customer" asp-controller="Product" asp-action="Details" asp-route-id="17">Auditing & Ethics</a></li>
-                                            <li><a asp-area="Customer" asp-controller="Product" asp-action="Details" asp-route-id="18">FM SM</a></li>
-                                            <li><a asp-area="Customer" asp-controller="Product" asp-action="Index">Group 2 Combo</a></li>
+                                            @foreach (var item in Model.Subjects)
+                                            {
+                                                if (item.CategoryId == 3)
+                                                {
+                                                    <li><a href="/Customer/Product?productCategory=CA&Course=@item.CategoryId&Subject=@item.Id">@item.SubjectName</a></li>
+                                                }
+                                            }
                                         </ul>
                                     </li>
 
                                     <li>
                                         <h6 class="menu-title">CA FOUNDATION</h6>
                                         <ul class="submenu mega-sub-menu-01">
-                                            <li><a asp-area="Customer" asp-controller="Product" asp-action="Details" asp-route-id="6">Accounting</a></li>
-                                            <li><a asp-area="Customer" asp-controller="Product" asp-action="Details" asp-route-id="7">Business Laws</a></li>
-                                            <li><a asp-area="Customer" asp-controller="Product" asp-action="Details" asp-route-id="8">Quantitative Aptitude</a></li>
-                                            <li><a asp-area="Customer" asp-controller="Product" asp-action="Details" asp-route-id="9">Business Economics</a></li>
+                                            @foreach (var item in Model.Subjects)
+                                            {
+                                                if(item.CategoryId == 1)
+                                                {
+                                                    <li><a href="/Customer/Product?productCategory=CA&Course=1&Subject=@item.Id">@item.SubjectName</a></li>
+                                                }
+                                            }
                                         </ul>
                                     </li>
                                 </ul>
@@ -247,34 +260,24 @@
                                         <h6 class="menu-title">Group I</h6>
 
                                         <ul class="submenu mega-sub-menu-01 mb-4">
-                                            <li>
-                                                <a asp-area="Customer" asp-controller="Product" asp-action="Index">Business Laws & Ethics (Paper 5)</a>
-                                            </li>
-                                            <li>
-                                                <a asp-area="Customer" asp-controller="Product" asp-action="Index">Financial Accounting (Paper 6)</a>
-                                            </li>
-                                            <li>
-                                                <a asp-area="Customer" asp-controller="Product" asp-action="Index">Direct & Indirect Taxation (Paper 7)</a>
-                                            </li>
-                                            <li>
-                                                <a asp-area="Customer" asp-controller="Product" asp-action="Index">Cost Accounting (Paper 8)</a>
-                                            </li>
+                                            @foreach (var item in Model.Subjects)
+                                            {
+                                                if (item.CategoryId == 13)
+                                                {
+                                                    <li><a href="/Customer/Product?productCategory=CA&Course=@item.CategoryId&Subject=@item.Id">@item.SubjectName</a></li>
+                                                }
+                                            }
                                         </ul>
 
                                         <h6 class="menu-title">Group II</h6>
                                         <ul class="submenu mega-sub-menu-01 mb-4">
-                                            <li>
-                                                <a asp-area="Customer" asp-controller="Product" asp-action="Index">Oparations Management & Strategic Management (Paper 9)</a>
-                                            </li>
-                                            <li>
-                                                <a asp-area="Customer" asp-controller="Product" asp-action="Index">Corporate Accounting and Auditing (Paper 10)</a>
-                                            </li>
-                                            <li>
-                                                <a asp-area="Customer" asp-controller="Product" asp-action="Index">Financial Management & Data Analytics (Paper 11)</a>
-                                            </li>
-                                            <li>
-                                                <a asp-area="Customer" asp-controller="Product" asp-action="Index">Mgmt Accounting (Paper 12)</a>
-                                            </li>
+                                            @foreach (var item in Model.Subjects)
+                                            {
+                                                if (item.CategoryId == 14)
+                                                {
+                                                    <li><a href="/Customer/Product?productCategory=CA&Course=@item.CategoryId&Subject=@item.Id">@item.SubjectName</a></li>
+                                                }
+                                            }
                                         </ul>
                                     </li>
 
@@ -282,18 +285,13 @@
                                         <h6 class="menu-title">CMA FOUNDATION</h6>
 
                                         <ul class="submenu mega-sub-menu-01 mb-4">
-                                            <li>
-                                                <a asp-area="Customer" asp-controller="Product" asp-action="Index">Business Law & Comm (Paper 1)</a>
-                                            </li>
-                                            <li>
-                                                <a asp-area="Customer" asp-controller="Product" asp-action="Index">Financial & Cost Accounting (Paper 2)</a>
-                                            </li>
-                                            <li>
-                                                <a asp-area="Customer" asp-controller="Product" asp-action="Index">Business Maths & Stats (Paper 3)</a>
-                                            </li>
-                                            <li>
-                                                <a asp-area="Customer" asp-controller="Product" asp-action="Index">Business Economics & Mgmt (Paper 4)</a>
-                                            </li>
+                                            @foreach (var item in Model.Subjects)
+                                            {
+                                                if (item.CategoryId == 12)
+                                                {
+                                                    <li><a href="/Customer/Product?productCategory=CA&Course=@item.CategoryId&Subject=@item.Id">@item.SubjectName</a></li>
+                                                }
+                                            }
                                         </ul>
                                     </li>
                                 </ul>
@@ -380,32 +378,39 @@
                             <h6 class="menu-title">CA FINAL GROUP 1</h6>
 
                             <ul class="submenu mega-sub-menu-01 mb-4">
-                                <li><a asp-area="Customer" asp-controller="Product" asp-action="Index">Financial Reporting</a></li>
-                                <li><a asp-area="Customer" asp-controller="Product" asp-action="Index">AFM</a></li>
-                                <li><a asp-area="Customer" asp-controller="Product" asp-action="Index">Auditing & Professional Ethics</a></li>
+                                @foreach (var item in Model.Subjects)
+                                {
+                                    if (item.CategoryId == 4)
+                                    {
+                                        <li><a href="/Customer/Product?productCategory=CA&Course=@item.CategoryId&Subject=@item.Id">@item.SubjectName</a></li>
+                                    }
+                                }
                             </ul>
                         </li>
 
                         <li>
                             <h6 class="menu-title">CA FINAL GROUP 2</h6>
                             <ul class="submenu mega-sub-menu-01 mb-4">
-                                <li><a asp-area="Customer" asp-controller="Product" asp-action="Index">Direct Tax Laws & International Taxation</a></li>
-                                <li><a asp-area="Customer" asp-controller="Product" asp-action="Index">Indirect Tax Laws</a></li>
-                                <li>
-                                    <a asp-area="Customer" asp-controller="Product" asp-action="Index">Integrated Business Solution</a>
-                                </li>
+                                @foreach (var item in Model.Subjects)
+                                {
+                                    if (item.CategoryId == 5)
+                                    {
+                                        <li><a href="/Customer/Product?productCategory=CA&Course=@item.CategoryId&Subject=@item.Id">@item.SubjectName</a></li>
+                                    }
+                                }
                             </ul>
                         </li>
 
                         <li>
                             <h6 class="menu-title">CA FINAL FAST TRACK</h6>
                             <ul class="submenu mega-sub-menu-01">
-                                <li><a asp-area="Customer" asp-controller="Product" asp-action="Index">FRM</a></li>
-                                <li><a asp-area="Customer" asp-controller="Product" asp-action="Index">AFM</a></li>
-                                <li><a asp-area="Customer" asp-controller="Product" asp-action="Index">Audit</a></li>
-                                <li><a asp-area="Customer" asp-controller="Product" asp-action="Index">Direct Tax</a></li>
-                                <li><a asp-area="Customer" asp-controller="Product" asp-action="Index">Indirect Tax</a></li>
-                                <li><a asp-area="Customer" asp-controller="Product" asp-action="Index">Combos</a></li>
+                                @foreach (var item in Model.Subjects)
+                                {
+                                    if (item.CategoryId == 10)
+                                    {
+                                        <li><a href="/Customer/Product?productCategory=CA&Course=@item.CategoryId&Subject=@item.Id">@item.SubjectName</a></li>
+                                    }
+                                }
                             </ul>
                         </li>
                     </ul>
@@ -420,32 +425,39 @@
                             <h6 class="menu-title">CA INTER GROUP 1</h6>
 
                             <ul class="submenu mega-sub-menu-01 mb-4">
-                                <li>
-                                    <a asp-area="Customer" asp-controller="Product" asp-action="Index">Advanced Accounting</a>
-                                </li>
-                                <li><a asp-area="Customer" asp-controller="Product" asp-action="Index">Corporate Law</a></li>
-                                <li><a asp-area="Customer" asp-controller="Product" asp-action="Index">Taxation</a></li>
-                                <li><a asp-area="Customer" asp-controller="Product" asp-action="Index">Group 1 Combo</a></li>
+                                @foreach (var item in Model.Subjects)
+                                {
+                                    if (item.CategoryId == 2)
+                                    {
+                                        <li><a href="/Customer/Product?productCategory=CA&Course=@item.CategoryId&Subject=@item.Id">@item.SubjectName</a></li>
+                                    }
+                                }
                             </ul>
                         </li>
 
                         <li>
                             <h6 class="menu-title">CA INTER GROUP 2</h6>
                             <ul class="submenu mega-sub-menu-01 mb-4">
-                                <li><a asp-area="Customer" asp-controller="Product" asp-action="Index">Cost & Management Accounting</a></li>
-                                <li><a asp-area="Customer" asp-controller="Product" asp-action="Index">Auditing & Ethics</a></li>
-                                <li><a asp-area="Customer" asp-controller="Product" asp-action="Index">FM SM</a></li>
-                                <li><a asp-area="Customer" asp-controller="Product" asp-action="Index">Group 2 Combo</a></li>
+                                @foreach (var item in Model.Subjects)
+                                {
+                                    if (item.CategoryId == 3)
+                                    {
+                                        <li><a href="/Customer/Product?productCategory=CA&Course=@item.CategoryId&Subject=@item.Id">@item.SubjectName</a></li>
+                                    }
+                                }
                             </ul>
                         </li>
 
                         <li>
                             <h6 class="menu-title">CA FOUNDATION</h6>
                             <ul class="submenu mega-sub-menu-01">
-                                <li><a asp-area="Customer" asp-controller="Product" asp-action="Index">Accounting</a></li>
-                                <li><a asp-area="Customer" asp-controller="Product" asp-action="Index">Business Laws</a></li>
-                                <li><a asp-area="Customer" asp-controller="Product" asp-action="Index">Quantitative Aptitude</a></li>
-                                <li><a asp-area="Customer" asp-controller="Product" asp-action="Index">Business Economics</a></li>
+                                @foreach (var item in Model.Subjects)
+                                {
+                                    if (item.CategoryId == 1)
+                                    {
+                                        <li><a href="/Customer/Product?productCategory=CA&Course=@item.CategoryId&Subject=@item.Id">@item.SubjectName</a></li>
+                                    }
+                                }
                             </ul>
                         </li>
                     </ul>
@@ -484,11 +496,11 @@
                             <h6 class="menu-title">Group IV</h6>
                             <ul class="submenu mega-sub-menu-01 mb-4">
                                 <li>
-                                    <a asp-area="Customer" asp-controller="Product" asp-action="Index">Cost & Management Audit (Paper 17)</a>
-                                </li>
-                                <li><a asp-area="Customer" asp-controller="Product" asp-action="Index">Corporate Financial Reporting (Paper 18) </a></li>
-                                <li>
-                                    <a asp-area="Customer" asp-controller="Product" asp-action="Index">Indirect Tax Laws & Practice (Paper 19)</a>
+                                    <a asp-area="Customer" asp-controller="Product" asp-action="Index" >Cost & Management Audit (Paper 17)</a>
+                                </li>                                                                  
+                                <li><a asp-area="Customer" asp-controller="Product" asp-action="Index" >Corporate Financial Reporting (Paper 18) </a></li>
+                                <li>                                                                   
+                                    <a asp-area="Customer" asp-controller="Product" asp-action="Index" >Indirect Tax Laws & Practice (Paper 19)</a>
                                 </li>
                             </ul>
 
@@ -520,34 +532,24 @@
                             <h6 class="menu-title">Group I</h6>
 
                             <ul class="submenu mega-sub-menu-01 mb-4">
-                                <li>
-                                    <a asp-area="Customer" asp-controller="Product" asp-action="Index">Business Laws & Ethics (Paper 5)</a>
-                                </li>
-                                <li>
-                                    <a asp-area="Customer" asp-controller="Product" asp-action="Index">Financial Accounting (Paper 6)</a>
-                                </li>
-                                <li>
-                                    <a asp-area="Customer" asp-controller="Product" asp-action="Index">Direct & Indirect Taxation (Paper 7)</a>
-                                </li>
-                                <li>
-                                    <a asp-area="Customer" asp-controller="Product" asp-action="Index">Cost Accounting (Paper 8)</a>
-                                </li>
+                                @foreach (var item in Model.Subjects)
+                                {
+                                    if (item.CategoryId == 13)
+                                    {
+                                        <li><a href="/Customer/Product?productCategory=CA&Course=@item.CategoryId&Subject=@item.Id">@item.SubjectName</a></li>
+                                    }
+                                }
                             </ul>
 
                             <h6 class="menu-title">Group II</h6>
                             <ul class="submenu mega-sub-menu-01 mb-4">
-                                <li>
-                                    <a asp-area="Customer" asp-controller="Product" asp-action="Index">Oparations Management & Strategic Management (Paper 9)</a>
-                                </li>
-                                <li>
-                                    <a asp-area="Customer" asp-controller="Product" asp-action="Index">Corporate Accounting and Auditing (Paper 10)</a>
-                                </li>
-                                <li>
-                                    <a asp-area="Customer" asp-controller="Product" asp-action="Index">Financial Management & Data Analytics (Paper 11)</a>
-                                </li>
-                                <li>
-                                    <a asp-area="Customer" asp-controller="Product" asp-action="Index">Mgmt Accounting (Paper 12)</a>
-                                </li>
+                                @foreach (var item in Model.Subjects)
+                                {
+                                    if (item.CategoryId == 14)
+                                    {
+                                        <li><a href="/Customer/Product?productCategory=CA&Course=@item.CategoryId&Subject=@item.Id">@item.SubjectName</a></li>
+                                    }
+                                }
                             </ul>
                         </li>
 
@@ -555,18 +557,13 @@
                             <h6 class="menu-title">CMA FOUNDATION</h6>
 
                             <ul class="submenu mega-sub-menu-01 mb-4">
-                                <li>
-                                    <a asp-area="Customer" asp-controller="Product" asp-action="Index">Business Law & Comm (Paper 1)</a>
-                                </li>
-                                <li>
-                                    <a asp-area="Customer" asp-controller="Product" asp-action="Index">Financial & Cost Accounting (Paper 2)</a>
-                                </li>
-                                <li>
-                                    <a asp-area="Customer" asp-controller="Product" asp-action="Index">Business Maths & Stats (Paper 3)</a>
-                                </li>
-                                <li>
-                                    <a asp-area="Customer" asp-controller="Product" asp-action="Index">Business Economics & Mgmt (Paper 4)</a>
-                                </li>
+                                @foreach (var item in Model.Subjects)
+                                {
+                                    if (item.CategoryId == 12)
+                                    {
+                                        <li><a href="/Customer/Product?productCategory=CA&Course=@item.CategoryId&Subject=@item.Id">@item.SubjectName</a></li>
+                                    }
+                                }
                             </ul>
                         </li>
                     </ul>
@@ -574,7 +571,7 @@
                 <li>
                     <a asp-area="Customer" asp-controller="Home" asp-action="Achivements">OUR ACHIEVEMENTS</a>
                 </li>
-                <li><a href="#testimonial">TESTIMONIALS</a></li>
+                <li><a href="/#testimonial">TESTIMONIALS</a></li>
                 <li><a asp-area="Customer" asp-controller="Home" asp-action="Contact">Contact Us</a></li>
             </ul>
         </div>

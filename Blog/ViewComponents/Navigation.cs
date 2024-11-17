@@ -53,12 +53,16 @@ namespace Blog.ViewComponents
 
             // Get social media links and user information
             IEnumerable<SosalMedia> sosalMediaLinks = await _uniteOfWork.SosalMedia.GetAllAsync() ?? new List<SosalMedia>();
+            IEnumerable<Category> categories = await _uniteOfWork.Category.GetAllAsync();
+            IEnumerable<Subject> subjects = await _uniteOfWork.Subject.GetAllAsync();
             ApplicationUser user = await _uniteOfWork.ApplicationUser.GetAsync(u => u.Id == userId);
             string userName = user?.FirstName ?? "";
 
             // Return the view with the calculated data
             return View("Index", new NavigationVM()
             {
+                Categories = categories,
+                Subjects = subjects,
                 SosalMedia = sosalMediaLinks.FirstOrDefault(),
                 TotalCart = totalCart,
                 UserName = userName

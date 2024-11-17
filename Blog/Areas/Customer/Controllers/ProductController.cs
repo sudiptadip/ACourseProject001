@@ -60,7 +60,7 @@ namespace Blog.Areas.Customer.Controllers
 
 
             var facultyList = await _uniteOfWork.Faculty.GetAllAsync();
-            facultyList = facultyList.Where(x => x.IsShowMentorPage == true).OrderBy(y => y.SortedOrder);
+            facultyList = facultyList.Where(x => x.IsShowMenuPage == true).OrderBy(y => y.SortedOrder);
             var subjectList = await _uniteOfWork.Subject.GetAllAsync();
 
             int totalItems = productList.Count();

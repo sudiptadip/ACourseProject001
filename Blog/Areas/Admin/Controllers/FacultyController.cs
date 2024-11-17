@@ -106,6 +106,7 @@ namespace Blog.Areas.Admin.Controllers
                     existingFaculty.FacultyName = faculty.FacultyName;
                     existingFaculty.Description = faculty.Description;
                     existingFaculty.SortedOrder = faculty.SortedOrder;
+                    existingFaculty.IsShowMenuPage = faculty.IsShowMenuPage;
                     existingFaculty.ImageUrl = faculty.ImageUrl ?? existingFaculty.ImageUrl;
                     existingFaculty.IsShowMentorPage = faculty.IsShowMentorPage;
                     existingFaculty.ModifiedOn = DateTime.Now;

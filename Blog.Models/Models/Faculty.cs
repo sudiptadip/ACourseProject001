@@ -24,6 +24,9 @@ namespace Blog.Models.Models
         [Required]
         public bool IsShowMentorPage { get; set; }
 
+        [Required]
+        public bool IsShowMenuPage { get; set; }
+
         [ValidateNever]
         public DateTime CreatedOn { get; set; }
         [ValidateNever]

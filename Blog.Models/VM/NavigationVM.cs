@@ -11,6 +11,8 @@ namespace Blog.Models.VM
     {
         public int TotalCart { get; set; }
         public string UserName { get; set; }
+        public IEnumerable<Category> Categories { get; set; }
+        public IEnumerable<Subject> Subjects { get; set; }
         public SosalMedia SosalMedia { get; set; }
     }
 }
