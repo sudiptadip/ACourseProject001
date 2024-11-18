@@ -195,10 +195,10 @@
                                 <a asp-area="Customer" asp-controller="Product" asp-action="Index" asp-route-productCategory="CS">CS</a>
                                 <ul class="submenu">
                                     <li>
-                                        <a asp-area="Customer" asp-controller="Product" asp-action="Index">Foundation</a>
+                                        <a asp-area="Customer" asp-controller="Product" asp-action="Index" asp-route-productCategory="CS">Foundation</a>
                                     </li>
-                                    <li><a asp-area="Customer" asp-controller="Product" asp-action="Index">Executive</a></li>
-                                    <li><a asp-area="Customer" asp-controller="Product" asp-action="Index">Professional</a></li>
+                                    <li><a asp-area="Customer" asp-controller="Product" asp-action="Index" asp-route-productCategory="CS">Executive</a></li>
+                                    <li><a asp-area="Customer" asp-controller="Product" asp-action="Index" asp-route-productCategory="CS">Professional</a></li>
                                 </ul>
                             </li>
 
@@ -212,45 +212,43 @@
 
                                         <ul class="submenu mega-sub-menu-01 mb-4">
                                             <li>
-                                                <a asp-area="Customer" asp-controller="Product" asp-action="Index">Corporate & Economic Laws (Paper 13)</a>
-                                            </li>
-                                            <li><a asp-area="Customer" asp-controller="Product" asp-action="Index">Strategic Financial Management (Paper 14)</a></li>
-                                            <li>
-                                                <a asp-area="Customer" asp-controller="Product" asp-action="Index">Direct Tax Laws & International Taxation (Paper 15)</a>
-                                            </li>
-                                            <li><a asp-area="Customer" asp-controller="Product" asp-action="Index">Strategic Cost Management (Paper 16)</a></li>
+                                                <a asp-area="Customer" asp-controller="Product" asp-action="Index" asp-route-productCategory="CMA" >Corporate & Economic Laws (Paper 13)</a>
+                                            </li>                                                                   
+                                            <li><a asp-area="Customer" asp-controller="Product" asp-action="Index" asp-route-productCategory="CMA" >Strategic Financial Management (Paper 14)</a></li>
+                                            <li>                                                                   
+                                                <a asp-area="Customer" asp-controller="Product" asp-action="Index" asp-route-productCategory="CMA" >Direct Tax Laws & International Taxation (Paper 15)</a>
+                                            </li>                                                                  
+                                            <li><a asp-area="Customer" asp-controller="Product" asp-action="Index" asp-route-productCategory="CMA" >Strategic Cost Management (Paper 16)</a></li>
                                         </ul>
 
                                         <h6 class="menu-title">Group IV</h6>
                                         <ul class="submenu mega-sub-menu-01 mb-4">
                                             <li>
-                                                <a asp-area="Customer" asp-controller="Product" asp-action="Index">Cost & Management Audit (Paper 17)</a>
+                                                <a asp-area="Customer" asp-controller="Product" asp-action="Index" asp-route-productCategory="CMA" >Cost & Management Audit (Paper 17)</a>
                                             </li>
-                                            <li><a asp-area="Customer" asp-controller="Product" asp-action="Index">Corporate Financial Reporting (Paper 18) </a></li>
+                                            <li><a asp-area="Customer" asp-controller="Product" asp-action="Index" asp-route-productCategory="CMA" >Corporate Financial Reporting (Paper 18) </a></li>
                                             <li>
-                                                <a asp-area="Customer" asp-controller="Product" asp-action="Index">Indirect Tax Laws & Practice (Paper 19)</a>
+                                                <a asp-area="Customer" asp-controller="Product" asp-action="Index" asp-route-productCategory="CMA" >Indirect Tax Laws & Practice (Paper 19)</a>
                                             </li>
                                         </ul>
 
                                         <h6 class="menu-title">Electives</h6>
                                         <ul class="submenu mega-sub-menu-01">
                                             <li>
-                                                <a asp-area="Customer" asp-controller="Product" asp-action="Index">
+                                                <a asp-area="Customer" asp-controller="Product" asp-action="Index" asp-route-productCategory="CMA">
                                                     Strategic Performance Management & Business Valuation (Paper 20A)
                                                 </a>
                                             </li>
                                             <li>
-                                                <a asp-area="Customer" asp-controller="Product" asp-action="Index">Risk Management in Banking & Insurance (Paper 20B)</a>
+                                                <a asp-area="Customer" asp-controller="Product" asp-action="Index" asp-route-productCategory="CMA">Risk Management in Banking & Insurance (Paper 20B)</a>
                                             </li>
                                             <li>
-                                                <a asp-area="Customer" asp-controller="Product" asp-action="Index">
+                                                <a asp-area="Customer" asp-controller="Product" asp-action="Index" asp-route-productCategory="CMA">
                                                     Enterpreneurship and Startup (Paper
                                                     20C)
                                                 </a>
                                             </li>
                                         </ul>
-
-
                                     </li>
 
 
@@ -264,7 +262,7 @@
                                             {
                                                 if (item.CategoryId == 13)
                                                 {
-                                                    <li><a href="/Customer/Product?productCategory=CA&Course=@item.CategoryId&Subject=@item.Id">@item.SubjectName</a></li>
+                                                    <li><a href="/Customer/Product?productCategory=CMA&Course=@item.CategoryId&Subject=@item.Id">@item.SubjectName</a></li>
                                                 }
                                             }
                                         </ul>
@@ -275,7 +273,7 @@
                                             {
                                                 if (item.CategoryId == 14)
                                                 {
-                                                    <li><a href="/Customer/Product?productCategory=CA&Course=@item.CategoryId&Subject=@item.Id">@item.SubjectName</a></li>
+                                                    <li><a href="/Customer/Product?productCategory=CMA&Course=@item.CategoryId&Subject=@item.Id">@item.SubjectName</a></li>
                                                 }
                                             }
                                         </ul>
@@ -289,7 +287,7 @@
                                             {
                                                 if (item.CategoryId == 12)
                                                 {
-                                                    <li><a href="/Customer/Product?productCategory=CA&Course=@item.CategoryId&Subject=@item.Id">@item.SubjectName</a></li>
+                                                    <li><a href="/Customer/Product?productCategory=CMA&Course=@item.CategoryId&Subject=@item.Id">@item.SubjectName</a></li>
                                                 }
                                             }
                                         </ul>
@@ -467,10 +465,10 @@
                     <a asp-area="Customer" asp-controller="Product" asp-action="Index" asp-route-productCategory="CS" >CS</a>
                     <ul class="submenu">
                         <li>
-                            <a asp-area="Customer" asp-controller="Product" asp-action="Index">Foundation</a>
+                            <a asp-area="Customer" asp-controller="Product" asp-action="Index" asp-route-productCategory="CS" >Foundation</a>
                         </li>
-                        <li><a asp-area="Customer" asp-controller="Product" asp-action="Index">Executive</a></li>
-                        <li><a asp-area="Customer" asp-controller="Product" asp-action="Index">Professional</a></li>
+                        <li><a asp-area="Customer" asp-controller="Product" asp-action="Index" asp-route-productCategory="CS" >Executive</a></li>
+                        <li><a asp-area="Customer" asp-controller="Product" asp-action="Index" asp-route-productCategory="CS" >Professional</a></li>
                     </ul>
                 </li>
 
@@ -496,26 +494,26 @@
                             <h6 class="menu-title">Group IV</h6>
                             <ul class="submenu mega-sub-menu-01 mb-4">
                                 <li>
-                                    <a asp-area="Customer" asp-controller="Product" asp-action="Index" >Cost & Management Audit (Paper 17)</a>
+                                    <a asp-area="Customer" asp-controller="Product" asp-action="Index" asp-route-productCategory="CMA">Cost & Management Audit (Paper 17)</a>
                                 </li>                                                                  
-                                <li><a asp-area="Customer" asp-controller="Product" asp-action="Index" >Corporate Financial Reporting (Paper 18) </a></li>
+                                <li><a asp-area="Customer" asp-controller="Product" asp-action="Index" asp-route-productCategory="CMA">Corporate Financial Reporting (Paper 18) </a></li>
                                 <li>                                                                   
-                                    <a asp-area="Customer" asp-controller="Product" asp-action="Index" >Indirect Tax Laws & Practice (Paper 19)</a>
+                                    <a asp-area="Customer" asp-controller="Product" asp-action="Index" asp-route-productCategory="CMA">Indirect Tax Laws & Practice (Paper 19)</a>
                                 </li>
                             </ul>
 
                             <h6 class="menu-title">Electives</h6>
                             <ul class="submenu mega-sub-menu-01">
                                 <li>
-                                    <a asp-area="Customer" asp-controller="Product" asp-action="Index">
+                                    <a asp-area="Customer" asp-controller="Product" asp-action="Index" asp-route-productCategory="CMA">
                                         Strategic Performance Management & Business Valuation (Paper 20A)
                                     </a>
                                 </li>
                                 <li>
-                                    <a asp-area="Customer" asp-controller="Product" asp-action="Index">Risk Management in Banking & Insurance (Paper 20B)</a>
+                                    <a asp-area="Customer" asp-controller="Product" asp-action="Index" asp-route-productCategory="CMA">Risk Management in Banking & Insurance (Paper 20B)</a>
                                 </li>
                                 <li>
-                                    <a asp-area="Customer" asp-controller="Product" asp-action="Index">
+                                    <a asp-area="Customer" asp-controller="Product" asp-action="Index" asp-route-productCategory="CMA">
                                         Enterpreneurship and Startup (Paper
                                         20C)
                                     </a>
@@ -536,7 +534,7 @@
                                 {
                                     if (item.CategoryId == 13)
                                     {
-                                        <li><a href="/Customer/Product?productCategory=CA&Course=@item.CategoryId&Subject=@item.Id">@item.SubjectName</a></li>
+                                        <li><a href="/Customer/Product?productCategory=CMA&Course=@item.CategoryId&Subject=@item.Id">@item.SubjectName</a></li>
                                     }
                                 }
                             </ul>
@@ -547,7 +545,7 @@
                                 {
                                     if (item.CategoryId == 14)
                                     {
-                                        <li><a href="/Customer/Product?productCategory=CA&Course=@item.CategoryId&Subject=@item.Id">@item.SubjectName</a></li>
+                                        <li><a href="/Customer/Product?productCategory=CMA&Course=@item.CategoryId&Subject=@item.Id">@item.SubjectName</a></li>
                                     }
                                 }
                             </ul>
@@ -561,7 +559,7 @@
                                 {
                                     if (item.CategoryId == 12)
                                     {
-                                        <li><a href="/Customer/Product?productCategory=CA&Course=@item.CategoryId&Subject=@item.Id">@item.SubjectName</a></li>
+                                        <li><a href="/Customer/Product?productCategory=CMA&Course=@item.CategoryId&Subject=@item.Id">@item.SubjectName</a></li>
                                     }
                                 }
                             </ul>
