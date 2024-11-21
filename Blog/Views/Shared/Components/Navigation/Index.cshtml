@@ -18,15 +18,6 @@
                     </ul>
                 </div>
 
-                @* <div class="header-top-center wrap">
-                <div class="search">
-                <input type="text" class="searchTerm" placeholder="Search Here....." />
-                <button type="submit" class="searchButton">
-                <i class="fas fa-search"></i>
-                </button>
-                </div>
-                </div> *@
-
                 <div class="header-top-right">
                     <ul class="header-info">
                         @if (SignInManager.IsSignedIn(User))
@@ -160,6 +151,7 @@
                                                     <li><a href="/Customer/Product?productCategory=CA&Course=@item.CategoryId&Subject=@item.Id">@item.SubjectName</a></li>
                                                 }
                                             }
+                                            <li><a href="/Customer/Product?productCategory=CA&Course=6&Subject=25">Group 1 Combo</a></li>
                                         </ul>
                                     </li>
 
@@ -173,6 +165,7 @@
                                                     <li><a href="/Customer/Product?productCategory=CA&Course=@item.CategoryId&Subject=@item.Id">@item.SubjectName</a></li>
                                                 }
                                             }
+                                            <li><a href="/Customer/Product?productCategory=CA&Course=7&Subject=29">Group 2 Combo</a></li>
                                         </ul>
                                     </li>
 
@@ -181,11 +174,12 @@
                                         <ul class="submenu mega-sub-menu-01">
                                             @foreach (var item in Model.Subjects)
                                             {
-                                                if(item.CategoryId == 1)
+                                                if(item.CategoryId == 1 && item.SortedOrder != 42)
                                                 {
                                                     <li><a href="/Customer/Product?productCategory=CA&Course=1&Subject=@item.Id">@item.SubjectName</a></li>
                                                 }
                                             }
+                                            <li><a href="/Customer/Product?productCategory=CA&Course=11&Subject=36">CA Foundation Combo </a></li>
                                         </ul>
                                     </li>
                                 </ul>
@@ -430,6 +424,7 @@
                                         <li><a href="/Customer/Product?productCategory=CA&Course=@item.CategoryId&Subject=@item.Id">@item.SubjectName</a></li>
                                     }
                                 }
+                                <li><a href="/Customer/Product?productCategory=CA&Course=6&Subject=25">Group 1 Combo</a></li>
                             </ul>
                         </li>
 
@@ -443,6 +438,7 @@
                                         <li><a href="/Customer/Product?productCategory=CA&Course=@item.CategoryId&Subject=@item.Id">@item.SubjectName</a></li>
                                     }
                                 }
+                                <li><a href="/Customer/Product?productCategory=CA&Course=7&Subject=29">Group 2 Combo</a></li>
                             </ul>
                         </li>
 
@@ -451,11 +447,12 @@
                             <ul class="submenu mega-sub-menu-01">
                                 @foreach (var item in Model.Subjects)
                                 {
-                                    if (item.CategoryId == 1)
+                                    if (item.CategoryId == 1 && item.SortedOrder != 42)
                                     {
                                         <li><a href="/Customer/Product?productCategory=CA&Course=@item.CategoryId&Subject=@item.Id">@item.SubjectName</a></li>
                                     }
                                 }
+                                <li><a href="/Customer/Product?productCategory=CA&Course=11&Subject=36">CA Foundation Combo </a></li>
                             </ul>
                         </li>
                     </ul>
