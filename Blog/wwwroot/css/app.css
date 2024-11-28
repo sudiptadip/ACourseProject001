@@ -8594,11 +8594,13 @@ body.sal-disabled [data-sal|="flip"] {
 }
 
 .edu-course.course-style-1 .course-hover-content-wrapper {
+  display: none;
   -webkit-transition: var(--transition-2);
   transition: var(--transition-2);
 }
 
 .edu-course.course-style-1 .course-hover-content {
+  display: none;
   -webkit-transition: var(--transition-2);
   transition: var(--transition-2);
 }
@@ -8774,7 +8776,7 @@ body.sal-disabled [data-sal|="flip"] {
 
 .edu-course .content .course-price .dis_price {
   padding-left: 5px;
-  font-size: 12px;
+  font-size: 11px;
   color: #a60909;
 }
 
@@ -24664,6 +24666,9 @@ ul li.tick::after {
 
 
 @media only screen and (max-width: 768px){
+  .ftr-innr {
+    display: none;
+  }
     .edu-header .header-navbar .header-mainnav {
         display: none;
     }
