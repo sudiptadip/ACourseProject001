@@ -13,5 +13,6 @@ namespace Blog.Models.VM
         public IEnumerable<Product> Products { get; set; }
         public IEnumerable<BlogCategoryViewModel> BlogCategoryViewModel { get; set; }
         public IEnumerable<Testmonials> Testmonials { get; set; }
+        public IEnumerable<Achevements> Achevements { get; set; }
     }
 }

@@ -35,6 +35,8 @@ namespace Blog.Areas.Customer.Controllers
             var sosalMedia = await _uniteOfWork.SosalMedia.GetAllAsync();
             var testmonials = await _db.Testmonials.ToListAsync();
 
+            List<Achevements> achevementList = _db.Achevements.FromSqlInterpolated($"SELECT * FROM Achevements ORDER BY CAST(SortedOrder AS INT) DESC").ToList();
+
 
             var homePageVM = new HomePageVM
             {
@@ -46,7 +48,8 @@ namespace Blog.Areas.Customer.Controllers
                             })
                             .ToList(),
                 Products = products.OrderBy(b => b.CreatedOn).Take(10),
-                Testmonials = testmonials
+                Testmonials = testmonials,
+                Achevements = achevementList.Take(5)
             };
 
             if(homePageVM.SosalMedia == null)

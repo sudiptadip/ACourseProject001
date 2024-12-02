@@ -182,7 +182,7 @@
                                 <div class="content p-0">
                                     <a asp-area="Customer" asp-controller="Product" asp-action="Details" asp-route-id="@item.Id" class="edu-btn btn-small">View <i class="icon-4"></i></a>
                                 </div>
-                           </div>
+                            </div>
                         </div>
                     </div>
                     <div class="course-hover-content-wrapper">
@@ -230,7 +230,7 @@
             <div class="col-lg-7">
                 <div class="testimonial-activation-3 swiper">
                     <div class="swiper-wrapper">
-                        
+
                         @foreach (var item in Model.Testmonials)
                         {
                             if (item.Gender == "MAIL") // true = Mail
@@ -308,50 +308,37 @@
 
 
 <!--=====================================-->
-        <!--=       Achivements Area Start      =-->
-        <!--=====================================-->
-        <!-- Start Achivements Area  -->
-        <div class="testimonial-area-2 section-gap-large">
-            <div class="container edublink-animated-shape">
-                <div class="row justify-content-center">
-                    <div class="col-lg-6">
-                        <div class="section-title section-center mb-3" data-sal-delay="150" data-sal="slide-up" data-sal-duration="800">
-                            <span class="pre-title">Achivements</span>
-                            <h2 class="title">What Our Students <br> Have To Say</h2>
-                        </div>
-                    </div>
+<!--=       Achivements Area Start      =-->
+<!--=====================================-->
+<!-- Start Achivements Area  -->
+<div class="testimonial-area-2 section-gap-large">
+    <div class="container edublink-animated-shape">
+        <div class="row justify-content-center">
+            <div class="col-lg-6">
+                <div class="section-title section-center mb-3" data-sal-delay="150" data-sal="slide-up" data-sal-duration="800">
+                    <h2 class="title">Our Achivements</h2>
                 </div>
-                <div class="testimonial-activation swiper">
-                    <div class="swiper-wrapper">
-                        <div class="swiper-slide">
-                            <div class="testimonial-slide w-100">
-                                <img src="https://topclasses.in/uploads/17.%202024%20sep%20fou%20Rajoreet-Sett-2_21lbvnnm.zte.jpg" alt="">
-                            </div>
-                        </div>
-                        <div class="swiper-slide">
-                            <div class="testimonial-slide w-100">
-                                <img src="https://topclasses.in/uploads/17.%202024%20sep%20fou%20Rajoreet-Sett-2_21lbvnnm.zte.jpg" alt="">
-                            </div>
-                        </div>
-                        <div class="swiper-slide">
-                            <div class="testimonial-slide w-100">
-                                <img src="https://topclasses.in/uploads/17.%202024%20sep%20fou%20Rajoreet-Sett-2_21lbvnnm.zte.jpg" alt="">
-                            </div>
-                        </div>
-                        <div class="swiper-slide">
-                            <div class="testimonial-slide w-100">
-                                <img src="https://topclasses.in/uploads/17.%202024%20sep%20fou%20Rajoreet-Sett-2_21lbvnnm.zte.jpg" alt="">
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="swiper-pagination"></div>
-            </div>
-            <div class="event-view-all-btn sal-animate" data-sal-delay="150" data-sal="slide-up" data-sal-duration="1200">
-                    <h6 class="view-text">The Latest Achivements from TopClasses. <a  asp-area="Customer" asp-controller="Home" asp-action="Achivements" class="btn-transparent">View All <i class="icon-4"></i></a></h6>
             </div>
         </div>
-        <!-- End Achivements Area  -->
+        <div class="testimonial-activation swiper">
+            <div class="swiper-wrapper">
+                @foreach (var item in Model.Achevements)
+                {
+                    <div class="swiper-slide">
+                        <div class="testimonial-slide w-100">
+                            <img src="@item.ImageUrl" alt="@item.SortedOrder">
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+        <div class="swiper-pagination"></div>
+    </div>
+    <div class="event-view-all-btn sal-animate" data-sal-delay="150" data-sal="slide-up" data-sal-duration="1200">
+        <h6 class="view-text"> <a asp-area="Customer" asp-controller="Home" asp-action="Achivements" class="btn-transparent">View All <i class="icon-4"></i></a></h6>
+    </div>
+</div>
+<!-- End Achivements Area  -->
 
 
 
@@ -396,7 +383,7 @@
                                         <h5 class="title">
                                             <a asp-area="Customer" asp-controller="Home" asp-action="BlogDetails" asp-route-id="@blog.Id">@blog.Title</a>
                                         </h5>
-                                        <div class="clamp-text" >
+                                        <div class="clamp-text">
                                             @Html.Raw(blog.Description)
                                         </div>
 
