@@ -84,7 +84,7 @@ namespace Blog.Areas.Customer.Controllers
         public async Task<IActionResult> Details(int id)
         {
 
-            var product = await _uniteOfWork.Product.GetAsync(p => p.Id == id, includeProperties: "ProductAttributes,Category,Faculty,Subject");
+            var product = await _uniteOfWork.Product.GetAsync(p => p.Id == id && p.IsActive == true, includeProperties: "ProductAttributes,Category,Faculty,Subject");
 
             if (product == null)
             {
@@ -179,7 +179,7 @@ namespace Blog.Areas.Customer.Controllers
             IEnumerable<Product> filteredProducts = await _uniteOfWork.Product.GetAllAsync(
                 p => (categories.Count == 0 || categories.Contains(p.CategoryId)) &&
                      (faculties.Count == 0 || faculties.Contains(p.FacultyId)) &&
-                     (subjects.Count == 0 || subjects.Contains(p.SubjectId)),
+                     (subjects.Count == 0 || subjects.Contains(p.SubjectId) && p.IsActive == true),
                 includeProperties: "Category,Faculty,Subject");
 
             if (productCategory != null)

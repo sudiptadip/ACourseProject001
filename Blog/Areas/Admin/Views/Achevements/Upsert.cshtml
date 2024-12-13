@@ -7,7 +7,7 @@
 <div class="container">
     <form method="post" enctype="multipart/form-data">
         <div class="modal-header">
-            <h5 class="modal-title" id="categoryModalLabel">@(Model.Id != 0 ? "Edit Achivement" : "Add Achivement")</h5>
+            <h5 class="modal-title" id="categoryModalLabel">@(Model.Id != 0 ? "Edit Achievements" : "Add Achievements")</h5>
         </div>
         <div class="modal-body">
             @if (Model.Id != 0 && !string.IsNullOrEmpty(Model.ImageUrl))
@@ -23,7 +23,7 @@
                 <span class="text-danger" asp-validation-for="SortedOrder"></span>
             </div>
             <div class="mb-3">
-                <label class="form-label">Upload Achivement Image</label>
+                <label class="form-label">Upload Achievements Image</label>
                 <input name="file" type="file" class="form-control">
             </div>
         </div>
